@@ -27,15 +27,6 @@ jobs:
         run: |
           git remote add destination git@github.com:vivek-somarapu/project-3-deployment.git
 
-      - name: Fetch and Rebase with Destination Repo
-        run: |
-          git fetch destination main || true  # Fetch main branch from destination, ignore if it doesn’t exist
-          git rebase destination/main || true # Rebase with destination main, ignore conflicts
-
-      - name: Clean Git Objects
-        run: |
-          git gc --prune=now
-
-      - name: Push changes to destination repo
+      - name: Force push to destination repo
         run: |
           git push destination main --force
