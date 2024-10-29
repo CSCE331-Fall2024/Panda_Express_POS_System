@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout source repo
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
 
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.5.3
