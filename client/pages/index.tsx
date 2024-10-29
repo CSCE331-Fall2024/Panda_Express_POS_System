@@ -69,7 +69,7 @@ export default function PandaExpressPOS() {
               Cashier
             </DropdownMenu.Item>
             <DropdownMenu.Item onClick={() => handleModeChange("Customer Self-Service")} className="cursor-pointer px-2 py-1 hover:bg-gray-200">
-              Customer Kiosk
+              Customer POS
             </DropdownMenu.Item>
             <DropdownMenu.Item onClick={() => handleModeChange("Manager")} className="cursor-pointer px-2 py-1 hover:bg-gray-200">
               Manager
