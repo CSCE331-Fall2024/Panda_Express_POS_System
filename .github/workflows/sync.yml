@@ -25,7 +25,7 @@ jobs:
 
       - name: Add destination repo as remote
         run: |
-          git remote add destination git@github.com:<your-username>/<destination-repo>.git
+          git remote add destination git@github.com:vivek-somarapu/project-3-deployment.git
 
       - name: Fetch and Rebase with Destination Repo
         run: |
