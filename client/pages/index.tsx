@@ -22,6 +22,7 @@ const menuItems = {
     "Black Pepper Chicken",
     "Firecracker Shrimp",
     "Honey Walnut Shrimp",
+    "Beef and Broccoli",
   ],
 }
 
