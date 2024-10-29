@@ -12,18 +12,30 @@ jobs:
     steps:
       - name: Checkout source repo
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 1
 
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.5.3
         with:
           ssh-private-key: ${{ secrets.SYNC_REPO_SSH_KEY }}
 
-      - name: Push changes to destination repo
+      - name: Configure Git
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-          git remote add destination git@github.com:vivek-somarapu/project-3-deployment.git
+      - name: Add destination repo as remote
+        run: |
+          git remote add destination git@github.com:<your-username>/<destination-repo>.git
+
+      - name: Fetch and Rebase with Destination Repo
+        run: |
+          git fetch destination main || true  # Fetch main branch from destination, ignore if it doesn’t exist
+          git rebase destination/main || true # Rebase with destination main, ignore conflicts
+
+      - name: Clean Git Objects
+        run: |
+          git gc --prune=now
+
+      - name: Push changes to destination repo
+        run: |
           git push destination main --force
