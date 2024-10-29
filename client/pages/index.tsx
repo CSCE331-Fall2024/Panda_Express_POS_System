@@ -150,11 +150,11 @@ export default function PandaExpressPOS() {
               </div>
               <div className="flex justify-between w-full mb-2">
                 <span>Tax:</span>
-                <span>${(total * 0.0725).toFixed(2)}</span>
+                <span>${(total * 0.0825).toFixed(2)}</span>
               </div>
               <div className="flex justify-between w-full font-bold">
                 <span>Total:</span>
-                <span>${(total * 1.0725).toFixed(2)}</span>
+                <span>${(total * 1.0825).toFixed(2)}</span>
               </div>
               <Button 
                 className="w-full mt-4" 
