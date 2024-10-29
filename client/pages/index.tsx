@@ -1,11 +1,13 @@
 import * as React from "react"
-import { Menu, Home, } from "lucide-react"
+import { useRouter } from "next/router" // Import useRouter
+import { Menu, Home } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Separator } from "@/components/ui/separator"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
 
 const menuItems = {
   combos: ["Bowl", "Plate", "Bigger Plate", "Biggest Plate"],
@@ -23,14 +25,14 @@ const menuItems = {
 }
 
 export default function PandaExpressPOS() {
+  const router = useRouter() // Initialize useRouter for navigation
   const [order, setOrder] = React.useState<string[]>([])
   const [total, setTotal] = React.useState(0)
-  const [step, setStep] = React.useState(0)
+  const [mode, setMode] = React.useState("Customer Self-Service") // Default mode set to "Customer Self-Service"
 
   const addToOrder = (item: string) => {
     setOrder([...order, item])
     setTotal(total + 7.00) 
-    setStep(step + 1)
   }
 
   const removeFromOrder = (index: number) => {
@@ -39,20 +41,47 @@ export default function PandaExpressPOS() {
     setTotal(total - 7.00) 
   }
 
+  // Handle navigation based on selected mode
+  const handleModeChange = (newMode: string) => {
+    setMode(newMode)
+    if (newMode === "Cashier") {
+      router.push("/cashier") 
+    } else if (newMode === "Manager") {
+      router.push("/manager") 
+    }
+  }
+
   return (
     <div className="flex h-screen bg-background">
       <aside className="w-16 bg-muted flex flex-col items-center py-4 space-y-4">
         <Button variant="ghost" size="icon">
           <Home className="h-6 w-6" />
         </Button>
-        <Button variant="ghost" size="icon">
-          <Menu className="h-6 w-6" />
-        </Button>
+
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger asChild>
+            <Button variant="ghost" size="icon">
+              <Menu className="h-6 w-6" />
+            </Button>
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Content className="bg-white p-2 rounded-md shadow-lg">
+            <DropdownMenu.Item onClick={() => handleModeChange("Cashier")} className="cursor-pointer px-2 py-1 hover:bg-gray-200">
+              Cashier
+            </DropdownMenu.Item>
+            <DropdownMenu.Item onClick={() => handleModeChange("Customer Self-Service")} className="cursor-pointer px-2 py-1 hover:bg-gray-200">
+              Customer Self-Service
+            </DropdownMenu.Item>
+            <DropdownMenu.Item onClick={() => handleModeChange("Manager")} className="cursor-pointer px-2 py-1 hover:bg-gray-200">
+              Manager
+            </DropdownMenu.Item>
+          </DropdownMenu.Content>
+        </DropdownMenu.Root>
       </aside>
       <main className="flex-1 p-6 space-y-6">
         <header>
           <h1 className="text-3xl font-bold text-primary">Welcome to Panda Express</h1>
           <p className="text-muted-foreground">We Wok For You</p>
+          <h2 className="text-2xl font-semibold text-black mt-4">{mode} Mode</h2> 
         </header>
         <div className="flex gap-6">
           <Card className="flex-1">
@@ -127,10 +156,15 @@ export default function PandaExpressPOS() {
                 <span>Total:</span>
                 <span>${(total * 1.0725).toFixed(2)}</span>
               </div>
-              <Button className="w-full mt-4" disabled={order.length === 0}>
+              <Button 
+                className="w-full mt-4" 
+                disabled={order.length === 0}
+                onClick={() => router.push("/payment")} 
+              >
                 Checkout
               </Button>
             </CardFooter>
+
           </Card>
         </div>
       </main>
