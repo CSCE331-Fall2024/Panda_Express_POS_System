@@ -1,0 +1,27 @@
+name: Sync to Destination Repository
+
+on:
+  push:
+    branches:
+      - main  # Trigger on changes to the 'main' branch; update this if your main branch is named differently
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source repo
+        uses: actions/checkout@v2
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SYNC_REPO_SSH_KEY }}
+
+      - name: Push changes to destination repo
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          git remote add destination git@github.com:CSCE331-Fall2024/project-3-deployment.git
+          git push -u destination main --force
