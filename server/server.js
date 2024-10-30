@@ -9,7 +9,11 @@ const pool = new Pool({
     database: process.env.PSQL_DATABASE,
     password: process.env.PSQL_PASSWORD,
     port: process.env.PSQL_PORT,
-    ssl: {rejectUnauthorized: false}
+    ssl: false
+});
+
+app.get('/', (req, res) => {
+    res.send('Welcome to the home page!');
 });
 
 app.get("/api/home", (req, res) => {
