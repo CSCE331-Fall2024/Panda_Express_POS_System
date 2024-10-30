@@ -1,12 +1,12 @@
 import React from 'react';
 import { Link, Route, Routes } from 'react-router-dom';
-import Home from './';
+import Home from './customer';
 import Orders from './manager_orders';
 import Employees from './manager_employees';
 import Reports from './manager_reports';
 import MenuItems from './manager_menuitems';
 import InventoryItems from './manager_inventoryitems';
-import Login from './login';
+import Login from '.';
 
 const Manager: React.FC = () => {
   return (
