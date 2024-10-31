@@ -1,0 +1,15 @@
+{
+    "name": "project-root",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+      "build": "npm run build --prefix client",
+      "start": "npm run start --prefix server & npm run start --prefix client",
+      "dev": "npm run dev --prefix client & npm run dev --prefix server",
+      "client:build": "npm run build --prefix client",
+      "client:start": "npm run start --prefix client",
+      "server:start": "npm run start --prefix server"
+    },
+    "dependencies": {},
+    "devDependencies": {}
+}
