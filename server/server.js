@@ -1,5 +1,7 @@
+require('dotenv').config();
 const express = require('express');
 const { Pool } = require('pg');
+const path = require('path')
 const app = express();
 const PORT = 8080;
 
@@ -9,8 +11,13 @@ const pool = new Pool({
     database: process.env.PSQL_DATABASE,
     password: process.env.PSQL_PASSWORD,
     port: process.env.PSQL_PORT,
-    ssl: false
+    ssl: { rejectUnauthorized: false }
 });
+
+// Set EJS as the view engine
+app.set('view engine', 'ejs');
+
+app.set('views', path.join(__dirname, 'views'));
 
 app.get('/', (req, res) => {
     res.send('Welcome to the home page!');
@@ -21,6 +28,7 @@ app.get("/api/home", (req, res) => {
 });
 
 app.get('/user', async (req, res) => {
+    // console.log('Object:', pool);
     try {
         const query_res = await pool.query('SELECT * FROM teammembers;');
         const teammembers = query_res.rows;
