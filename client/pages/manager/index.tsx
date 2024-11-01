@@ -1,5 +1,5 @@
 import React from 'react';
-import Home from '../customer';
+import Home from '../cashier';
 import Orders from './manager_orders';
 import Employees from './manager_employees';
 import Reports from './manager_reports';

@@ -55,7 +55,7 @@ const LoginPage: React.FC = () => {
         </div>
 
         {/* Order Now Icon aligned to the right */}
-        <a href="/customer" style={{ color: '#FFFFFF', textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+        <a href="/cashier" style={{ color: '#FFFFFF', textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
           <ShoppingBag size={20} style={{ marginRight: '5px' }} />
           <span style={{ fontWeight: 'bold' }}>Order Now</span>
         </a>

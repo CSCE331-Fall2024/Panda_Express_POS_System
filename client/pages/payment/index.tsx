@@ -15,17 +15,17 @@ export default function PaymentScreen() {
 
   const handlePayHere = () => {
     console.log("Processing payment via Pay Here method...")
-    router.push("/orderSuccess")
+    router.push("/payment/payHereOptions")
   }
 
   const handlePayAtCounter = () => {
     console.log("Proceeding to pay at counter...")
-    router.push("/orderSuccess")
+    router.push("/payment/orderSuccess")
   }
 
   const handleCancelOrder = () => {
     console.log("Order canceled.")
-    router.push("/orderCanceled")
+    router.push("/payment/orderCanceled")
   }
 
   return (
