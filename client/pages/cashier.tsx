@@ -56,7 +56,7 @@ export default function PandaExpressPOS() {
   return (
     <div className="flex h-screen bg-background">
       <aside className="w-16 bg-muted flex flex-col items-center py-4 space-y-4">
-        <Button variant="ghost" size="icon">
+        <Button variant="ghost" size="icon" onClick={() => router.push("/cashier")}>
           <Home className="h-6 w-6" />
         </Button>
 
@@ -161,7 +161,7 @@ export default function PandaExpressPOS() {
               <Button 
                 className="w-full mt-4" 
                 disabled={order.length === 0}
-                onClick={() => router.push("/payment")} 
+                onClick={() => router.push("/orderType")} 
               >
                 Checkout
               </Button>

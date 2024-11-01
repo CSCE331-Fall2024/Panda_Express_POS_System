@@ -12,6 +12,7 @@ import {
 
 export default function PaymentScreen() {
   const router = useRouter()
+  const orderType = router.query.orderType // Retrieve orderType from the query
 
   const handlePayHere = () => {
     console.log("Processing payment via Pay Here method...")
@@ -31,7 +32,7 @@ export default function PaymentScreen() {
   return (
     <div className="flex h-screen bg-background">
       <aside className="w-16 bg-muted flex flex-col items-center py-4 space-y-4">
-        <Button variant="ghost" size="icon" onClick={() => router.push("/")}>
+        <Button variant="ghost" size="icon" onClick={() => router.push("/cashier")}>
           <Home className="h-6 w-6" />
         </Button>
       </aside>
@@ -39,7 +40,7 @@ export default function PaymentScreen() {
         <header>
           <h1 className="text-3xl font-bold text-primary">Payment</h1>
           <p className="text-muted-foreground">
-            Select your payment method
+            Order Type: {orderType === "here" ? "Here" : "To Go"} {/* Display order type */}
           </p>
         </header>
         <div className="flex justify-center">
