@@ -30,7 +30,7 @@ export default function PandaExpressPOS() {
   const router = useRouter() // Initialize useRouter for navigation
   const [order, setOrder] = React.useState<string[]>([])
   const [total, setTotal] = React.useState(0)
-  const [mode, setMode] = React.useState("Customer Self-Service") // Default mode set to "Customer Self-Service"
+  const [mode, setMode] = React.useState("Cashier") // Default mode set to "Cashier"
 
   const addToOrder = (item: string) => {
     setOrder([...order, item])
@@ -50,8 +50,9 @@ export default function PandaExpressPOS() {
       router.push("/cashier") 
     } else if (newMode === "Manager") {
       router.push("/manager") 
-    }
-  }
+    } else if (newMode === "Customer Self-Service") {
+      router.push("/customer")
+  }}
 
   return (
     <div className="flex h-screen bg-background">
