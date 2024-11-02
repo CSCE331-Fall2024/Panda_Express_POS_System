@@ -254,7 +254,7 @@ const CustomerKiosk: React.FC = () => {
                 <Menu className="h-6 w-6" />
               </Button>
             </DropdownMenu.Trigger>
-            <DropdownMenu.Content className="bg-white p-2 rounded-md shadow-lg">
+            <DropdownMenu.Content className="text-black bg-white p-2 rounded-md shadow-lg">
               <DropdownMenu.Item
                 onClick={() => handleModeChange("Cashier")}
                 className="cursor-pointer px-2 py-1 hover:bg-gray-200"
