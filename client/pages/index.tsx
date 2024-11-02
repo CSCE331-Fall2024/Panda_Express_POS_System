@@ -49,9 +49,8 @@ const LoginPage: React.FC = () => {
           style={{ width: '80px' }}
         />
 
-        {/* Menu Text */}
-        <a href="/menuboard" style={{ color: '#FFFFFF', textDecoration: 'none', display: 'flex', transform: 'translateX(50%)' }}>
-          {/* <Menu size={20} style={{marginRight: '5px'}}></Menu> */}
+        {/* Menu Text */}          
+        <a href="/menuboard" style={{ color: '#FFFFFF', textDecoration: 'none', display: 'flex', alignItems: 'center', position: 'absolute', left: '50%', transform: 'translateX(-50%)'}}>
           <span style={{ fontWeight: 'bold' }}>Menu</span>
         </a>
 
