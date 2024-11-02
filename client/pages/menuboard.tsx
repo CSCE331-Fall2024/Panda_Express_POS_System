@@ -91,12 +91,8 @@ const menuboard: React.FC = () => {
         />
 
         {/* Sign In Text */}
-        <a href="/" style={{ color: '#FFFFFF', textDecoration: 'none', display: 'flex', transform: 'translateX(-50%)' }}>
+        <a href="/" style={{ color: '#FFFFFF', textDecoration: 'none', display: 'flex', alignItems: 'center', position: 'absolute', left: '50%', transform: 'translateX(-50%)', }}>
           <span style={{ fontWeight: 'bold' }}>Sign In</span>
-        </a>
-        {/* Menu Text */}
-        <a href="/menuboard" style={{ color: '#FFFFFF', textDecoration: 'none', display: 'flex', transform: 'translateX(50%)' }}>
-          <span style={{ fontWeight: 'bold' }}>Menu</span>
         </a>
 
         {/* Order Now Icon aligned to the right [TODO]:CHANGE HREF TO CUSTOMER */}
