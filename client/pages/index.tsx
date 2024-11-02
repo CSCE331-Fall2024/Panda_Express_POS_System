@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShoppingBag } from 'lucide-react';
+import { Menu, ShoppingBag } from 'lucide-react';
 
 const LoginPage: React.FC = () => {
   return (
@@ -49,18 +49,14 @@ const LoginPage: React.FC = () => {
           style={{ width: '80px' }}
         />
 
-        {/* Sign In Text */}
-        
-        <a href="/" style={{ color: '#FFFFFF', textDecoration: 'none', display: 'flex', transform: 'translateX(-50%)' }}>
-          <span style={{ fontWeight: 'bold' }}>Sign In</span>
-        </a>
         {/* Menu Text */}
         <a href="/menuboard" style={{ color: '#FFFFFF', textDecoration: 'none', display: 'flex', transform: 'translateX(50%)' }}>
+          {/* <Menu size={20} style={{marginRight: '5px'}}></Menu> */}
           <span style={{ fontWeight: 'bold' }}>Menu</span>
         </a>
 
         {/* Order Now Icon aligned to the right */}
-        <a href="/cashier" style={{ color: '#FFFFFF', textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+        <a href="/customer" style={{ color: '#FFFFFF', textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
           <ShoppingBag size={20} style={{ marginRight: '5px' }} />
           <span style={{ fontWeight: 'bold' }}>Order Now</span>
         </a>
@@ -95,8 +91,8 @@ const LoginPage: React.FC = () => {
           {/* Form */}
           <form>
             <input
-              type="email"
-              placeholder="Email Address"
+              type="username"
+              placeholder="Username"
               style={{
                 width: '100%',
                 padding: '10px',

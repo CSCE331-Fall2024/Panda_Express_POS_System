@@ -100,7 +100,7 @@ const menuboard: React.FC = () => {
         </a>
 
         {/* Order Now Icon aligned to the right [TODO]:CHANGE HREF TO CUSTOMER */}
-        <a href="/menuboard" style={{ color: '#FFFFFF', textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+        <a href="/customer" style={{ color: '#FFFFFF', textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
           <ShoppingBag size={20} style={{ marginRight: '5px' }} />
           <span style={{ fontWeight: 'bold' }}>Order Now</span>
         </a>
@@ -186,8 +186,7 @@ const menuboard: React.FC = () => {
             ))}
             </div>
         </div>
-            {/* <h1>MenuBoard</h1> */}
-        </div>
+      </div>
     );
   };
   

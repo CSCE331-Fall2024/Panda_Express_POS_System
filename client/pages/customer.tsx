@@ -224,7 +224,7 @@ const CustomerKiosk: React.FC = () => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => router.push("/cashier")}
+            onClick={() => router.push("/")}
             className="text-white hover:text-white hover:bg-red-700"
           >
             <Home className="h-6 w-6" />
