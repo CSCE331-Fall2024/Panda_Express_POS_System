@@ -1,7 +1,47 @@
 import React from 'react';
+import { useState } from 'react';
 import { Menu, ShoppingBag } from 'lucide-react';
+import { useRouter } from 'next/router';
 
 const LoginPage: React.FC = () => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const router = useRouter();
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+  
+    try {
+      const response = await fetch('http://localhost:8080/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Login failed');
+      }
+  
+      const data = await response.json();
+      console.log('Login response data:', data);
+      
+      // Check the role and navigate accordingly
+      if (data.role === 'cashier') {
+        window.location.href = '/cashier';
+      } else if (data.role === 'manager') {
+        window.location.href = '/manager';
+      } else {
+        setError('Unauthorized role');
+      }
+    } catch (err) {
+      console.error('Login error:', err);
+      setError('Network error or server not reachable');
+    }
+  };
+
   return (
     <div
       style={{
@@ -88,10 +128,12 @@ const LoginPage: React.FC = () => {
           <p style={{ color: '#888', fontSize: '14px' }}>Log in below to get started.</p>
 
           {/* Form */}
-          <form>
+          <form onSubmit={handleLogin}>
             <input
-              type="username"
+              type="text"
               placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               style={{
                 width: '100%',
                 padding: '10px',
@@ -103,6 +145,8 @@ const LoginPage: React.FC = () => {
             <input
               type="password"
               placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               style={{
                 width: '100%',
                 padding: '10px',
@@ -128,6 +172,8 @@ const LoginPage: React.FC = () => {
               SIGN IN
             </button>
           </form>
+
+          {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
 
           {/* Sign Up Link */}
           <p style={{ fontSize: '14px', color: '#888', marginTop: '15px' }}>

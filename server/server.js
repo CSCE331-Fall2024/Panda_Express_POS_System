@@ -14,6 +14,11 @@ const pool = new Pool({
     ssl: { rejectUnauthorized: false }
 });
 
+const cors = require('cors');
+
+app.use(express.json());
+app.use(cors({ origin: 'http://localhost:3000' }));
+
 // Set EJS as the view engine
 app.set('view engine', 'ejs');
 
@@ -41,7 +46,45 @@ app.get('/user', async (req, res) => {
     }
 });
 
-
+app.post('/api/login', async (req, res) => {
+    const { username, password } = req.body;
+    console.log('Received login request:', { username, password });
+  
+    try {
+      const query = 'SELECT username, password, position FROM staff WHERE username = $1';
+      const result = await pool.query(query, [username]);
+      
+      console.log('Database result:', result.rows);
+  
+      if (result.rows.length === 0) {
+        console.log('No user found with this username.');
+        return res.status(401).json({ message: 'Invalid username or password' });
+      }
+  
+      const user = result.rows[0];
+      
+      const isPasswordValid = user.password === password; // Update to bcrypt.compare if using hashed passwords
+      if (!isPasswordValid) {
+        console.log('Password is incorrect.');
+        return res.status(401).json({ message: 'Invalid username or password' });
+      }
+  
+      console.log('User authenticated successfully:', user);
+  
+      // Return role based on position
+      if (user.position === 'Manager') {
+        res.json({ role: 'manager' });
+      } else if (user.position === 'Cashier') {
+        res.json({ role: 'cashier' });
+      } else {
+        console.log('User has an unauthorized position:', user.position);
+        res.status(403).json({ message: 'Unauthorized position' });
+      }
+    } catch (error) {
+      console.error('Error during login:', error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`); 
