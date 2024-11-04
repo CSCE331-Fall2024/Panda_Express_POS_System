@@ -94,27 +94,27 @@ app.get('/api/auth/google/callback',
 // });
 
 // OpenWeather endpoint
-// app.get('/api/weather', async (req, res) => {
-//   const { city } = req.query;
-//   const apiKey = process.env.OPENWEATHER_API_KEY;
+app.get('/api/weather', async (req, res) => {
+  const { city } = req.query;
+  const apiKey = process.env.OPENWEATHER_API_KEY;
 
-//   console.log('Requesting weather data for:', city);
+  console.log('Requesting weather data for:', city);
 
-//   try {
-//     const response = await axios.get('https://api.openweathermap.org/data/2.5/weather', {
-//       params: {
-//         q: city,
-//         appid: apiKey,
-//         units: 'imperial' // Optional, 'imperial': Fahrenheit, 'metric': Celsius
-//       }
-//     });
-//     console.log('Weather API response:', response.data); // Log the response data
-//     res.json(response.data);
-//   } catch (error) {
-//     console.error('Weather API error:', error.response ? error.response.data : error.message); // Show detailed error
-//     res.status(500).json({ error: 'Weather data retrieval failed' });
-//   }
-// });
+  try {
+    const response = await axios.get('https://api.openweathermap.org/data/2.5/weather', {
+      params: {
+        q: city,
+        APPID: apiKey,
+        units: 'imperial'
+      }
+    });
+    console.log('Weather API response:', response.data); // Log the response data
+    res.json(response.data);
+  } catch (error) {
+    console.error('Weather API error:', error.response ? error.response.data : error.message); // Show detailed error
+    res.status(500).json({ error: 'Weather data retrieval failed' });
+  }
+});
 
 
 app.post('/api/login', async (req, res) => {
