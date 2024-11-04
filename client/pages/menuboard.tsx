@@ -1,9 +1,27 @@
 import React, { useState } from 'react';
 import { ShoppingBag } from 'lucide-react';
 
+interface MenuItem {
+  name: string;
+  price: string;
+  image: string;
+  description: string;
+}
+
+interface MenuItems {
+  Combos: MenuItem[];
+  Sides: MenuItem[];
+  Entrees: MenuItem[];
+  Appetizers: MenuItem[];
+  Drinks: MenuItem[];
+}
+
+type MenuCategory = keyof MenuItems;
+
 
 const menuboard: React.FC = () => {
-    const categories = ['Combos', 'Appetizers', 'Entrees', 'Sides', 'Drinks'];
+  const categories: MenuCategory[] = ['Combos', 'Appetizers', 'Entrees', 'Sides', 'Drinks'];
+
     const menuItems = {
         Combos: [
             {name: "A La Carte", price: '$3', image: 'https://olo-images-live.imgix.net/27/272ad84a8af2494ba7cb2eecbe0c2b7e.png?auto=format%2Ccompress&q=60&cs=tinysrgb&w=716&h=474&fit=crop&fm=png32&s=fb32dcae532d307a7bbc5d7cfd83278a', description: 'Individual entrees & sides'},
@@ -41,7 +59,7 @@ const menuboard: React.FC = () => {
             {name: "Fountain Drink", price: '$2.50', image: 'https://olo-images-live.imgix.net/05/0543dea3f26343c197194e1102d44d25.png?auto=format%2Ccompress&q=60&cs=tinysrgb&w=716&h=474&fit=crop&fm=png32&s=875daff9982b3bafd3f9d890f31f50cb', description: '1 fountain drink.'} 
         ],
       }
-      const [selectedCategory, setSelectedCategory] = useState('Combos');
+      const [selectedCategory, setSelectedCategory] = React.useState<MenuCategory>("Combos");
 
     return (
       <div
