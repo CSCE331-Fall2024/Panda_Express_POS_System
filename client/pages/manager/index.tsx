@@ -52,12 +52,11 @@ const Manager: React.FC = () => {
         <h2 style={{ fontSize: '24px', color: '#D32F2F', marginBottom: '20px' }}>Manager View</h2>
         {/* Navigation Links Styled as Buttons */}
         <nav style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-          <Link href="/manager" style={buttonStyle}>Home</Link>
-          <Link href="/manager/orders" style={buttonStyle}>Orders</Link>
-          <Link href="/manager/employees" style={buttonStyle}>Employees</Link>
-          <Link href="/manager/reports" style={buttonStyle}>Reports</Link>
-          <Link href="/manager/menu-items" style={buttonStyle}>Menu Items</Link>
-          <Link href="/manager/inventory-items" style={buttonStyle}>Inventory Items</Link>
+          <Link href="/manager/manager_orders" style={buttonStyle}>Orders</Link>
+          <Link href="/manager/manager_employees" style={buttonStyle}>Employees</Link>
+          <Link href="/manager/manager_reports" style={buttonStyle}>Reports</Link>
+          <Link href="/manager/manager_menuitems" style={buttonStyle}>Menu Items</Link>
+          <Link href="/manager/manager_inventoryitems" style={buttonStyle}>Inventory Items</Link>
           <Link href="/" style={buttonStyle}>Logout</Link>
         </nav>
       </div>
