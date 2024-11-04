@@ -1,5 +1,8 @@
 require('dotenv').config();
 const express = require('express');
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const axios = require('axios');
 const { Pool } = require('pg');
 const path = require('path')
 const app = express();
@@ -16,8 +19,20 @@ const pool = new Pool({
 
 const cors = require('cors');
 
+passport.use(new GoogleStrategy({
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: "http://localhost:8080/api/auth/google/callback"
+},
+(accessToken, refreshToken, profile, done) => {
+  // Saving the user's profile info to the database
+  return done(null, profile);
+}
+));
+
 app.use(express.json());
 app.use(cors({ origin: 'http://localhost:3000' }));
+app.use(passport.initialize());
 
 // Set EJS as the view engine
 app.set('view engine', 'ejs');
@@ -45,6 +60,62 @@ app.get('/user', async (req, res) => {
         res.status(500).send('Error retrieving team members');
     }
 });
+
+// Endpoint to start Google OAuth2 authentication
+app.get('/api/auth/google',
+  passport.authenticate('google', { scope: ['profile', 'email'] })
+);
+
+// Callback endpoint
+app.get('/api/auth/google/callback',
+  passport.authenticate('google', { failureRedirect: '/' }),
+  (req, res) => {
+    res.send('Logged in with Google');
+  }
+);
+
+// // Google Translate endpoint
+// app.post('/api/translate', async (req, res) => {
+//   const { text, targetLanguage } = req.body;
+
+//   try {
+//     const response = await axios.post(`https://translation.googleapis.com/language/translate/v2`, {}, {
+//       params: {
+//         q: text,
+//         target: targetLanguage,
+//         key: process.env.GOOGLE_TRANSLATE_API_KEY
+//       }
+//     });
+//     res.json(response.data.data.translations[0].translatedText);
+//   } catch (error) {
+//     console.error('Translation error:', error);
+//     res.status(500).json({ error: 'Translation failed' });
+//   }
+// });
+
+// OpenWeather endpoint
+// app.get('/api/weather', async (req, res) => {
+//   const { city } = req.query;
+//   const apiKey = process.env.OPENWEATHER_API_KEY;
+
+//   console.log('Requesting weather data for:', city);
+
+//   try {
+//     const response = await axios.get('https://api.openweathermap.org/data/2.5/weather', {
+//       params: {
+//         q: city,
+//         appid: apiKey,
+//         units: 'imperial' // Optional, 'imperial': Fahrenheit, 'metric': Celsius
+//       }
+//     });
+//     console.log('Weather API response:', response.data); // Log the response data
+//     res.json(response.data);
+//   } catch (error) {
+//     console.error('Weather API error:', error.response ? error.response.data : error.message); // Show detailed error
+//     res.status(500).json({ error: 'Weather data retrieval failed' });
+//   }
+// });
+
 
 app.post('/api/login', async (req, res) => {
     const { username, password } = req.body;
