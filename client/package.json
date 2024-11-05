@@ -19,6 +19,7 @@
     "clsx": "^2.1.1",
     "lucide-react": "^0.454.0",
     "next": "15.0.1",
+    "pg": "^8.13.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-router-dom": "^6.27.0",
@@ -28,6 +29,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.17.3",
+    "@types/pg": "^8.11.10",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "postcss": "^8",
