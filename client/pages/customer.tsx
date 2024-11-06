@@ -10,7 +10,8 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { Menu, Home, ShoppingBag } from "lucide-react";
+import { getUserLocation, getWeatherData } from "@/utils/apiHelpers"
+import { Menu, Home, ShoppingBag, Cloud } from "lucide-react";
 import { useRouter } from "next/router";
 import * as React from "react";
 
@@ -194,6 +195,7 @@ const CustomerKiosk: React.FC = () => {
   const [selectedCategory, setSelectedCategory] =
     React.useState<string>("Combos");
   const [mode, setMode] = React.useState<string>("Customer Self-Service");
+  const [weather, setWeather] = React.useState<{ temperature: number; description: string } | null>(null);
 
   const addToOrder = (item: MenuItem): void => {
     setOrder([...order, item]);
@@ -215,6 +217,21 @@ const CustomerKiosk: React.FC = () => {
       router.push("/manager");
     }
   };
+
+  // Get weather data based on the location
+  React.useEffect(() => {
+    const fetchWeatherForLocation = async () => {
+      try {
+        const { latitude, longitude } = await getUserLocation();
+        const weatherData = await getWeatherData(latitude, longitude);
+        setWeather(weatherData);
+      } catch (error) {
+        console.error("Error fetching weather or location:", error);
+      }
+    };
+
+    fetchWeatherForLocation();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -239,6 +256,14 @@ const CustomerKiosk: React.FC = () => {
         <h1 className="text-xl font-bold">{mode}</h1>
 
         <div className="flex items-center gap-4">
+          {/* Weather display */}
+          {weather && (
+            <div className="flex items-center gap-2">
+              <Cloud className="h-6 w-6" /> {/* Weather icon */}
+              <span>{Math.round(weather.temperature)}°F - {weather.description}</span>
+            </div>
+          )}
+
           <div className="flex items-center gap-2">
             <ShoppingBag className="h-6 w-6" />
             <span className="font-bold">{order.length} items</span>

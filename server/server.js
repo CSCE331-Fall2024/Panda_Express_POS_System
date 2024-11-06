@@ -95,23 +95,27 @@ app.get('/api/auth/google/callback',
 
 // OpenWeather endpoint
 app.get('/api/weather', async (req, res) => {
-  const { city } = req.query;
+  const { lat, lon } = req.query;
   const apiKey = process.env.OPENWEATHER_API_KEY;
 
-  console.log('Requesting weather data for:', city);
+  if (!lat || !lon) {
+    return res.status(400).json({ error: 'Latitude and longitude are required' });
+  }
 
   try {
     const response = await axios.get('https://api.openweathermap.org/data/2.5/weather', {
       params: {
-        q: city,
-        APPID: apiKey,
-        units: 'imperial'
+        lat: lat,
+        lon: lon,
+        appid: apiKey,
+        units: 'imperial' // or 'metric' for Celsius
       }
     });
-    console.log('Weather API response:', response.data); // Log the response data
+    
+    console.log('Weather API response:', response.data); // Log the response data for debugging
     res.json(response.data);
   } catch (error) {
-    console.error('Weather API error:', error.response ? error.response.data : error.message); // Show detailed error
+    console.error('Weather API error:', error.response ? error.response.data : error.message); // Log detailed error
     res.status(500).json({ error: 'Weather data retrieval failed' });
   }
 });
