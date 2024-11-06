@@ -197,6 +197,9 @@ const weatherIcons = {
 
 const CustomerKiosk: React.FC = () => {
   const router = useRouter();
+  const [selectedSides, setSelectedSides] = React.useState<number>(0);
+  const [currentItemType, setCurrentItemType] = React.useState<string | null>(null);
+  const [selectedEntrees, setSelectedEntrees] = React.useState<number>(0);
   const [order, setOrder] = React.useState<MenuItem[]>([]);
   const [total, setTotal] = React.useState<number>(0);
   const [selectedCategory, setSelectedCategory] =
@@ -204,16 +207,71 @@ const CustomerKiosk: React.FC = () => {
   const [mode, setMode] = React.useState<string>("Customer Self-Service");
   const [weather, setWeather] = React.useState<{ temperature?: number; description?: string } | null>(null);
 
-  const addToOrder = (item: MenuItem): void => {
+  const addToOrder = (item: MenuItem, category: string): void => {
+    if (category === 'Combos') {
+      if (item.name === "Plate") {
+        setCurrentItemType("Plate");
+        setSelectedSides(0);
+        setSelectedEntrees(0);
+      } else if (item.name === "Bigger Plate") {
+        setCurrentItemType("Bigger Plate");
+        setSelectedSides(0);
+        setSelectedEntrees(0);
+      } else if (item.name === "Bowl") {
+        setCurrentItemType("Bowl");
+        setSelectedSides(0);
+        setSelectedEntrees(0);
+      }
+    }
+      if (currentItemType === "Plate") {
+      if (category === 'Sides' && selectedSides >= 1) return;
+      if (category === 'Entrees' && selectedEntrees >= 2) return;
+    } else if (currentItemType === "Bigger Plate") {
+      if (category === 'Sides' && selectedSides >= 1) return;
+      if (category === 'Entrees' && selectedEntrees >= 3) return;
+    } else if (currentItemType === "Bowl") {
+      if (category === 'Sides' && selectedSides >= 1) return;
+      if (category === 'Entrees' && selectedEntrees >= 1) return;
+    }
+
     setOrder([...order, item]);
     setTotal(total + parseFloat(item.price.replace("$", "")));
+
+    if (category === 'Sides') setSelectedSides(selectedSides + 1);
+    if (category === 'Entrees') setSelectedEntrees(selectedEntrees + 1);
+    
   };
 
   const removeFromOrder = (index: number): void => {
-    const itemPrice = parseFloat(order[index].price.replace("$", ""));
+    const item = order[index];
+    const itemPrice = parseFloat(item.price.replace("$", ""));
     const newOrder = order.filter((_, i) => i !== index);
+  
+    // Adjust counters based on the item category
+    if (selectedCategory === 'Sides') {
+      setSelectedSides(Math.max(0, selectedSides - 1));
+    } else if (selectedCategory === 'Entrees') {
+      setSelectedEntrees(Math.max(0, selectedEntrees - 1));
+    }
+  
+    // Reset item type only if removing all main items or if the main item itself is removed
+    if (["Plate", "Bowl", "Bigger Plate"].includes(item.name)) {
+      setCurrentItemType(null);
+      setSelectedSides(0);
+      setSelectedEntrees(0);
+    }
+  
     setOrder(newOrder);
     setTotal(total - itemPrice);
+  };
+  
+  
+
+  const clearOrder = () => {
+    setOrder([]);
+    setTotal(0);
+    setSelectedSides(0);
+    setSelectedEntrees(0);
   };
 
   const handleModeChange = (newMode: string): void => {
@@ -360,7 +418,22 @@ const CustomerKiosk: React.FC = () => {
                 </CardHeader>
                 <CardFooter className="flex justify-between items-center">
                   <span className="font-bold">{item.price}</span>
-                  <Button onClick={() => addToOrder(item)}>Add to Order</Button>
+                  <Button
+                  onClick={() => addToOrder(item, selectedCategory)}
+                  disabled={
+                    currentItemType === "Plate" &&
+                    ((selectedCategory === 'Sides' && selectedSides >= 1) ||
+                    (selectedCategory === 'Entrees' && selectedEntrees >= 2)) ||
+
+                    currentItemType === "Bigger Plate" &&
+                    ((selectedCategory === 'Sides' && selectedSides >= 1) ||
+                    (selectedCategory === 'Entrees' && selectedEntrees >= 3)) ||
+
+                    currentItemType === "Bowl" &&
+                    ((selectedCategory === 'Sides' && selectedSides >= 1) ||
+                    (selectedCategory === 'Entrees' && selectedEntrees >= 1))
+                  }
+                >Add to Order</Button>
                 </CardFooter>
               </Card>
             ))}
