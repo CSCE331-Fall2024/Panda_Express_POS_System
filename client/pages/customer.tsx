@@ -11,7 +11,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { getUserLocation, getWeatherData } from "@/utils/apiHelpers"
-import { Menu, Home, ShoppingBag, Cloud } from "lucide-react";
+import { Menu, Home, ShoppingBag, Cloud, Sun, CloudRain, CloudSnow } from "lucide-react";
 import { useRouter } from "next/router";
 import * as React from "react";
 
@@ -188,6 +188,13 @@ const menuItems: MenuItems = {
 ],
 };
 
+const weatherIcons = {
+  clear: <Sun className="h-6 w-6" />,
+  clouds: <Cloud className="h-6 w-6" />,
+  rain: <CloudRain className="h-6 w-6" />,
+  snow: <CloudSnow className="h-6 w-6" />,
+};
+
 const CustomerKiosk: React.FC = () => {
   const router = useRouter();
   const [order, setOrder] = React.useState<MenuItem[]>([]);
@@ -195,7 +202,7 @@ const CustomerKiosk: React.FC = () => {
   const [selectedCategory, setSelectedCategory] =
     React.useState<string>("Combos");
   const [mode, setMode] = React.useState<string>("Customer Self-Service");
-  const [weather, setWeather] = React.useState<{ temperature: number; description: string } | null>(null);
+  const [weather, setWeather] = React.useState<{ temperature?: number; description?: string } | null>(null);
 
   const addToOrder = (item: MenuItem): void => {
     setOrder([...order, item]);
@@ -222,9 +229,13 @@ const CustomerKiosk: React.FC = () => {
   React.useEffect(() => {
     const fetchWeatherForLocation = async () => {
       try {
-        const { latitude, longitude } = await getUserLocation();
-        const weatherData = await getWeatherData(latitude, longitude);
-        setWeather(weatherData);
+        const location = await getUserLocation();
+        if (location) {
+          const weatherData = await getWeatherData(location.latitude, location.longitude);
+          setWeather(weatherData);
+        } else {
+          console.log("Location access denied or unavailable.");
+        }
       } catch (error) {
         console.error("Error fetching weather or location:", error);
       }
@@ -232,6 +243,18 @@ const CustomerKiosk: React.FC = () => {
 
     fetchWeatherForLocation();
   }, []);
+
+  const getWeatherIcon = () => {
+    if (!weather?.description) return null;
+    const description = weather.description.toLowerCase();
+
+    if (description.includes('clear')) return weatherIcons.clear;
+    if (description.includes('cloud')) return weatherIcons.clouds;
+    if (description.includes('rain')) return weatherIcons.rain;
+    if (description.includes('snow')) return weatherIcons.snow;
+
+    return <Cloud className="h-6 w-6" />; // Default icon
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -259,8 +282,8 @@ const CustomerKiosk: React.FC = () => {
           {/* Weather display */}
           {weather && (
             <div className="flex items-center gap-2">
-              <Cloud className="h-6 w-6" /> {/* Weather icon */}
-              <span>{Math.round(weather.temperature)}°F - {weather.description}</span>
+              {getWeatherIcon()} {/* Weather icon */}
+              <span style={{ marginLeft: '5px' }}>{weather.temperature}°F, {weather.description}</span>
             </div>
           )}
 

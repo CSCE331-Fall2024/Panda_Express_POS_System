@@ -22,19 +22,20 @@ export const getWeatherData = async (latitude, longitude) => {
 export const getUserLocation = () => {
     return new Promise((resolve, reject) => {
         if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-            const { latitude, longitude } = position.coords;
-            resolve({ latitude, longitude });
-            },
-            (error) => {
-            console.error("Geolocation error:", error);
-            reject(new Error("Unable to retrieve location"));
-            },
-            { enableHighAccuracy: true }
-        );
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    resolve({ latitude, longitude });
+                },
+                (error) => {
+                    console.error("Geolocation error:", error);
+                    reject(null);
+                },
+                { enableHighAccuracy: true }
+            );
         } else {
-        reject(new Error("Geolocation not supported by the browser"));
+            console.error("Geolocation not supported by this browser.");
+            resolve(null); // Return null if geolocation is not supported
         }
     });
 };

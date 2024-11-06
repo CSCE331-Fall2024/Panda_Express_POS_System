@@ -1,14 +1,21 @@
 import React from 'react';
 import { useState } from 'react';
-import { Cloud, Menu, ShoppingBag } from 'lucide-react';
+import { Cloud, Menu, ShoppingBag, Sun, CloudRain, CloudSnow } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { getWeatherData, getUserLocation } from '../utils/apiHelpers';
+
+const weatherIcons = {
+  clear: <Sun className="h-6 w-6" />,
+  clouds: <Cloud className="h-6 w-6" />,
+  rain: <CloudRain className="h-6 w-6" />,
+  snow: <CloudSnow className="h-6 w-6" />,
+};
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [weather, setWeather] = useState({ temperature: null, description: '' });
+  const [weather, setWeather] = React.useState<{ temperature?: number; description?: string } | null>(null);
   const router = useRouter();  
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -48,9 +55,13 @@ const LoginPage: React.FC = () => {
   React.useEffect(() => {
     const fetchWeatherForLocation = async () => {
       try {
-        const { latitude, longitude } = await getUserLocation();
-        const weatherData = await getWeatherData(latitude, longitude);
-        setWeather(weatherData);
+        const location = await getUserLocation();
+        if (location) {
+          const weatherData = await getWeatherData(location.latitude, location.longitude);
+          setWeather(weatherData);
+        } else {
+          console.log("Location access denied or unavailable.");
+        }
       } catch (error) {
         console.error("Error fetching weather or location:", error);
       }
@@ -58,6 +69,18 @@ const LoginPage: React.FC = () => {
 
     fetchWeatherForLocation();
   }, []);
+
+  const getWeatherIcon = () => {
+    if (!weather?.description) return null;
+    const description = weather.description.toLowerCase();
+
+    if (description.includes('clear')) return weatherIcons.clear;
+    if (description.includes('cloud')) return weatherIcons.clouds;
+    if (description.includes('rain')) return weatherIcons.rain;
+    if (description.includes('snow')) return weatherIcons.snow;
+
+    return <Cloud className="h-6 w-6" />; // Default icon
+  };
 
   return (
     <div
@@ -114,12 +137,10 @@ const LoginPage: React.FC = () => {
         {/* Order Now Icon and Weather Data aligned to the right */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           {/* Weather Data */}
-          <Cloud className="h-6 w-6" /> {/* Weather icon */}
-          {weather.temperature && (
-            <div style={{ display: 'flex', alignItems: 'center', color: '#FFFFFF' }}>
-              <span style={{ marginRight: '5px' }}>
-                {Math.round(weather.temperature)}°F, {weather.description}
-              </span>
+          {weather && (
+            <div className="flex items-center gap-2">
+              {getWeatherIcon()} {/* Weather icon */}
+              <span style={{ marginLeft: '5px' }}>{weather.temperature}°F, {weather.description}</span>
             </div>
           )}
 
