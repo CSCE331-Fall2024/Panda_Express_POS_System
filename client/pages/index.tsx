@@ -1,13 +1,15 @@
 import React from 'react';
 import { useState } from 'react';
-import { Menu, ShoppingBag } from 'lucide-react';
+import { Cloud, Menu, ShoppingBag } from 'lucide-react';
 import { useRouter } from 'next/router';
+import { getWeatherData, getUserLocation } from '../utils/apiHelpers';
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const router = useRouter();
+  const [weather, setWeather] = useState({ temperature: null, description: '' });
+  const router = useRouter();  
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,6 +43,21 @@ const LoginPage: React.FC = () => {
       setError('Network error or server not reachable');
     }
   };
+
+  // Get weather data based on the location
+  React.useEffect(() => {
+    const fetchWeatherForLocation = async () => {
+      try {
+        const { latitude, longitude } = await getUserLocation();
+        const weatherData = await getWeatherData(latitude, longitude);
+        setWeather(weatherData);
+      } catch (error) {
+        console.error("Error fetching weather or location:", error);
+      }
+    };
+
+    fetchWeatherForLocation();
+  }, []);
 
   return (
     <div
@@ -94,11 +111,24 @@ const LoginPage: React.FC = () => {
           <span style={{ fontWeight: 'bold' }}>Menu</span>
         </a>
 
-        {/* Order Now Icon aligned to the right */}
-        <a href="/customer" style={{ color: '#FFFFFF', textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
-          <ShoppingBag size={20} style={{ marginRight: '5px' }} />
-          <span style={{ fontWeight: 'bold' }}>Order Now</span>
-        </a>
+        {/* Order Now Icon and Weather Data aligned to the right */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          {/* Weather Data */}
+          <Cloud className="h-6 w-6" /> {/* Weather icon */}
+          {weather.temperature && (
+            <div style={{ display: 'flex', alignItems: 'center', color: '#FFFFFF' }}>
+              <span style={{ marginRight: '5px' }}>
+                {Math.round(weather.temperature)}°F, {weather.description}
+              </span>
+            </div>
+          )}
+
+          {/* Order Now Icon */}
+          <a href="/customer" style={{ color: '#FFFFFF', textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+            <ShoppingBag size={20} style={{ marginRight: '5px' }} />
+            <span style={{ fontWeight: 'bold' }}>Order Now</span>
+          </a>
+        </div>
       </nav>
 
       {/* Login Box - Spans Full Screen Width */}
