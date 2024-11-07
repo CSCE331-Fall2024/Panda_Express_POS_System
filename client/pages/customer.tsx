@@ -79,6 +79,7 @@ const CustomerKiosk: React.FC = () => {
       });
   }, []);
   
+  
 
   const addToOrder = (item: MenuItem, category: string): void => {
     if (category === 'Combos') {
@@ -143,6 +144,11 @@ const CustomerKiosk: React.FC = () => {
     setTotal(0);
     setSelectedSides(0);
     setSelectedEntrees(0);
+  };
+
+  const handleCheckout = () => {
+    sessionStorage.setItem('paymentAmount', parseFloat((total * 1.0825).toFixed(2)).toString());
+    router.push('/orderType'); 
   };
 
   const handleModeChange = (newMode: string): void => {
@@ -380,7 +386,7 @@ const CustomerKiosk: React.FC = () => {
             <Button
               className="w-full mt-4"
               disabled={order.length === 0}
-              onClick={() => router.push("/orderType")}
+              onClick={handleCheckout}
             >
               Checkout ({order.length} items)
             </Button>
