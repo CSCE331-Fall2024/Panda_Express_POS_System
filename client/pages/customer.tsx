@@ -283,8 +283,8 @@ const CustomerKiosk: React.FC = () => {
           {weather && (
             <div className="flex items-center gap-2">
               {getWeatherIcon()} {/* Weather icon */}
-              <span style={{ marginLeft: '5px' }}>
-                {weather.temperature !== undefined ? `${Math.round(weather.temperature)}°F` : 'N/A'}, {weather.description}
+              <span style={{ marginLeft: '1px' }}>
+                {weather.temperature !== undefined ? `${Math.round(weather.temperature)}°F` : 'N/A'}
               </span>
             </div>
           )}
