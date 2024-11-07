@@ -123,7 +123,7 @@ const CustomerKiosk: React.FC = () => {
     // Adjust counters based on the item category
     if (selectedCategory === 'Side') {
 
-      setSelec>tedSides(Math.max(0, selectedSides - 1));
+      setSelectedSides(Math.max(0, selectedSides - 1));
     } else if (selectedCategory === 'Entree') {
       setSelectedEntrees(Math.max(0, selectedEntrees - 1));
     }
