@@ -119,14 +119,15 @@ const CustomerKiosk: React.FC = () => {
     const itemPrice = item.price;
     const newOrder = order.filter((_, i) => i !== index);
 
+
     // Adjust counters based on the item category
     if (selectedCategory === 'Side') {
-      setSelectedSides(Math.max(0, selectedSides - 1));
+
+      setSelec>tedSides(Math.max(0, selectedSides - 1));
     } else if (selectedCategory === 'Entree') {
       setSelectedEntrees(Math.max(0, selectedEntrees - 1));
     }
 
-    // Reset item type only if removing all main items or if the main item itself is removed
     if (["Plate", "Bowl", "Bigger Plate"].includes(item.name)) {
       setCurrentItemType(null);
       setSelectedSides(0);
