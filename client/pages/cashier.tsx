@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useRouter } from "next/router" // Import useRouter
-import { Menu, Home } from "lucide-react"
+import { Menu, Home, LogOut } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -57,8 +57,8 @@ export default function PandaExpressPOS() {
   return (
     <div className="flex h-screen bg-background">
       <aside className="w-16 bg-muted flex flex-col items-center py-4 space-y-4">
-        <Button variant="ghost" size="icon" onClick={() => router.push("/cashier")}>
-          <Home className="h-6 w-6" />
+        <Button variant="ghost" size="icon" onClick={() => router.push("/login")}>
+          <LogOut className="h-6 w-6" />
         </Button>
 
         <DropdownMenu.Root>

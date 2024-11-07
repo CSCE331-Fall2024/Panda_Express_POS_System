@@ -1,11 +1,4 @@
 import React from 'react';
-import Home from '../cashier';
-import Orders from './manager_orders';
-import Employees from './manager_employees';
-import Reports from './manager_reports';
-import MenuItems from './manager_menuitems';
-import InventoryItems from './manager_inventoryitems';
-import Login from '..';
 import Link from 'next/link'
 
 const Manager: React.FC = () => {
@@ -57,7 +50,7 @@ const Manager: React.FC = () => {
           <Link href="/manager/manager_reports" style={buttonStyle}>Reports</Link>
           <Link href="/manager/manager_menuitems" style={buttonStyle}>Menu Items</Link>
           <Link href="/manager/manager_inventoryitems" style={buttonStyle}>Inventory Items</Link>
-          <Link href="/" style={buttonStyle}>Logout</Link>
+          <Link href="/login" style={buttonStyle}>Logout</Link>
         </nav>
       </div>
     </div>

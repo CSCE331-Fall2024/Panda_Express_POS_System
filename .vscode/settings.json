@@ -1,0 +1,14 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "csce-315-db.engr.tamu.edu",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "project_3",
+            "database": "team_0b_db",
+            "username": "team_0b",
+            "password": "treecko17"
+        }
+    ]
+}

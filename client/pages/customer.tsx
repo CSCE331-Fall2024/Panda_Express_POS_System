@@ -1,4 +1,6 @@
 import { Button } from "@/components/ui/button";
+import { useEffect, useState } from 'react';
+
 import {
   Card,
   CardContent,
@@ -10,13 +12,16 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { Menu, Home, ShoppingBag } from "lucide-react";
+import { getUserLocation, getWeatherData } from "@/utils/apiHelpers"
+import { Menu, Home, ShoppingBag, Cloud, Sun, CloudRain, CloudSnow } from "lucide-react";
 import { useRouter } from "next/router";
 import * as React from "react";
 
 interface MenuItem {
+  menu_item_id: number;
+  price: number;
+  item_type: string;
   name: string;
-  price: string;
   image: string;
   description: string;
 }
@@ -25,178 +30,55 @@ interface MenuItems {
   [key: string]: MenuItem[];
 }
 
-const menuItems: MenuItems = {
-  Combos: [
-    {
-      name: "A La Carte",
-      price: "$3",
-      image:
-        "https://olo-images-live.imgix.net/27/272ad84a8af2494ba7cb2eecbe0c2b7e.png?auto=format%2Ccompress&q=60&cs=tinysrgb&w=716&h=474&fit=crop&fm=png32&s=fb32dcae532d307a7bbc5d7cfd83278a",
-      description: "Individual entrees & sides",
-    },
-    {
-      name: "Bowl",
-      price: "$7",
-      image:
-        "https://olo-images-live.imgix.net/72/7288570f72a54140a41afdcfbd0e8980.png?auto=format%2Ccompress&q=60&cs=tinysrgb&w=716&h=474&fit=crop&fm=png32&s=5c543defe38946e36a8694d0b149fda4",
-      description: "1 side & 1 entree.",
-    },
-    {
-      name: "Plate",
-      price: "$10",
-      image:
-        "https://olo-images-live.imgix.net/dd/dd91fc53f7124f86ae7833eede4a802f.png?auto=format%2Ccompress&q=60&cs=tinysrgb&w=716&h=474&fit=crop&fm=png32&s=b08d9fd5cc269c84f2b223298752819d",
-      description: "1 side & 2 entree.",
-    },
-    {
-      name: "Bigger Plate",
-      price: "$13",
-      image:
-        "https://olo-images-live.imgix.net/39/39cf53c131764ddbb70efaedaaf60201.png?auto=format%2Ccompress&q=60&cs=tinysrgb&w=716&h=474&fit=crop&fm=png32&s=c60acecc206a1ae26f7ce8c6cef07399",
-      description: "1 side & 3 entree.",
-    },
-  ],
-  Sides: [
-    {
-      name: "White Rice",
-      price: "$7",
-      image:
-        "https://nomnom-files.pandaexpress.com/global/assets/modifiers/Sides_WhiteSteamedRice.png",
-      description: "1 side & 1 entree.",
-    },
-    {
-      name: "Brown Rice",
-      price: "$7",
-      image:
-        "https://www.pandaexpress.kr/sites/jp/files/how-to-panda/product-2-3.jpg",
-      description: "1 side & 1 entree.",
-    },
-    {
-      name: "Chow Mein",
-      price: "$7",
-      image:
-        "https://nomnom-files.pandaexpress.com/global/assets/modifiers/Sides_ChowMein.png",
-      description: "1 side & 1 entree.",
-    },
-    {
-      name: "Super Greens",
-      price: "$7",
-      image:
-        "https://nomnom-files.pandaexpress.com/global/assets/modifiers/Vegetables_SuperGreens.png",
-      description: "1 side & 1 entree.",
-    },
-    {
-      name: "Fried Rice",
-      price: "$7",
-      image:
-        "https://nomnom-files.pandaexpress.com/global/assets/modifiers/Sides_FriedRice.png",
-      description: "1 side & 1 entree.",
-    },
-
-  ],
-  Entrees: [
-    {
-      name: "Orange Chicken",
-      price: "$3.50",
-      image:
-        "https://nomnom-files.pandaexpress.com/global/assets/modifiers/Chicken_OrangeChicken.png",
-      description: "Crispy chicken in tangy orange sauce.",
-    },
-    {
-      name: "Beijing Beef",
-      price: "$3.50",
-      image:
-        "https://nomnom-files.pandaexpress.com/global/assets/modifiers/Beef_BeijingBeef.png",
-      description: "Savory beef with peppers and onions.",
-    },
-    {
-      name: "Mushroom Chicken",
-      price: "$3.50",
-      image:
-        "https://olo-images-live.imgix.net/8b/8b254283b24a4643949f9dc649a5bbca.png?auto=format%2Ccompress&q=60&cs=tinysrgb&w=810&h=540&fit=crop&fm=png32&s=5c71dcc68a77256b11d3628316d777cd",
-      description: "Tender chicken with mushrooms and zucchini.",
-    },
-    {
-      name: "Teriyaki Chicken",
-      price: "$3.50",
-      image:
-        "https://nomnom-files.pandaexpress.com/global/assets/modifiers/Chicken_GrilledTeriyakiChicken.png",
-      description: "Grilled chicken with teriyaki sauce.",
-    },
-    {
-      name: "Kung Pao Chicken",
-      price: "$3.50",
-      image:
-        "https://nomnom-files.pandaexpress.com/global/assets/modifiers/Chicken_KungPaoChicken.png",
-      description: "Spicy chicken with peanuts and vegetables.",
-    },
-    {
-      name: "Black Pepper Chicken",
-      price: "$3.50",
-      image:
-        "https://olo-images-live.imgix.net/53/53efafba80ed4363b8a3a632a4806565.png?auto=format%2Ccompress&q=60&cs=tinysrgb&w=810&h=540&fit=crop&fm=png32&s=8807d429304c6d38fb8c40203de6e3cd",
-      description: "Chicken with black pepper and celery.",
-    },
-    {
-      name: "Firecracker Shrimp",
-      price: "$3.50",
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbuO4WDiqaVBQWvxzs5iCaoPQiaoBzpjkYzw&s",
-      description: "Spicy shrimp with bell peppers.",
-    },
-    {
-      name: "Honey Walnut Shrimp",
-      price: "$3.50",
-      image:
-        "https://nomnom-files.pandaexpress.com/global/assets/modifiers/Seafood_HoneyWalnutShrimp.png",
-      description: "Crispy shrimp with honey sauce and walnuts.",
-    },
-    {
-      name: "Broccoli Beef",
-      price: "$3.50",
-      image:
-        "https://nomnom-files.pandaexpress.com/global/assets/modifiers/Beef_BroccoliBeef.png",
-      description: "Beef with broccoli in savory sauce.",
-    },
-  ],
-  Appetizers: [
-    {
-      name: "Cream Cheese Rangoon",
-      price: "$2",
-      image:
-        "https://olo-images-live.imgix.net/fe/fef7db209d7d41e6ae065af16afa1577.png?auto=format%2Ccompress&q=60&cs=tinysrgb&w=810&h=540&fit=crop&fm=png32&s=f14d518edf4e7ee0fd22b4d3cddc59b8",
-      description: "3 Cream Cheese Rangoons.",
-    },
-    {
-      name: "Chicken Egg Roll",
-      price: "$2",
-      image:
-        "https://olo-images-live.imgix.net/52/524bbb9023e2409b8d3fceae944a808f.png?auto=format%2Ccompress&q=60&cs=tinysrgb&w=810&h=540&fit=crop&fm=png32&s=4f4cc30df356786bbe3968181f8c5160",
-      description: "2 Chicken Egg Rolls.",
-    },
-    {
-      name: "Veggie Spring Roll",
-      price: "$2",
-      image:
-        "https://olo-images-live.imgix.net/18/183834b8a35a4737a73a28421f68b4f0.png?auto=format%2Ccompress&q=60&cs=tinysrgb&w=810&h=540&fit=crop&fm=png32&s=0d4be7c417ec1998251da41d5bfe13fb",
-      description: "2 Veggie Spring Rolls.",
-    },
-  ],
-  Drinks: [
-    {name: "Fountain Drink", price: '$2.50', image: 'https://olo-images-live.imgix.net/05/0543dea3f26343c197194e1102d44d25.png?auto=format%2Ccompress&q=60&cs=tinysrgb&w=716&h=474&fit=crop&fm=png32&s=875daff9982b3bafd3f9d890f31f50cb', description: '1 fountain drink.'} 
-],
+const weatherIcons = {
+  clear: <Sun className="h-6 w-6" />,
+  clouds: <Cloud className="h-6 w-6" />,
+  rain: <CloudRain className="h-6 w-6" />,
+  snow: <CloudSnow className="h-6 w-6" />,
 };
 
 const CustomerKiosk: React.FC = () => {
   const router = useRouter();
+  const [menuItems, setMenuItems] = React.useState<MenuItems>({});
+  const [loading, setLoading] = React.useState<boolean>(true);
   const [selectedSides, setSelectedSides] = React.useState<number>(0);
   const [currentItemType, setCurrentItemType] = React.useState<string | null>(null);
   const [selectedEntrees, setSelectedEntrees] = React.useState<number>(0);
   const [order, setOrder] = React.useState<MenuItem[]>([]);
   const [total, setTotal] = React.useState<number>(0);
-  const [selectedCategory, setSelectedCategory] =
-    React.useState<string>("Combos");
+  const [selectedCategory, setSelectedCategory] = React.useState<string>("Combos");
   const [mode, setMode] = React.useState<string>("Customer Self-Service");
+  const [weather, setWeather] = React.useState<{ temperature?: number; description?: string } | null>(null);
+
+  const categoryOrder = ["Combos", "Side", "Entree", "Appetizer", "Drink"];
+
+
+  useEffect(() => {
+    fetch('/api/menu')
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          const itemsByCategory = data.menuItems.reduce((acc: MenuItems, item: MenuItem) => {
+            const category = item.item_type;
+            if (!acc[category]) {
+              acc[category] = [];
+            }
+            acc[category].push(item);
+            return acc;
+          }, {});
+          setMenuItems(itemsByCategory);
+          setLoading(false);
+        } else {
+          console.error('Failed to fetch menu items');
+          setLoading(false);
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching menu items:', error);
+        setLoading(false);
+      });
+  }, []);
+  
 
   const addToOrder = (item: MenuItem, category: string): void => {
     if (category === 'Combos') {
@@ -214,47 +96,47 @@ const CustomerKiosk: React.FC = () => {
         setSelectedEntrees(0);
       }
     }
-      if (currentItemType === "Plate") {
-      if (category === 'Sides' && selectedSides >= 1) return;
-      if (category === 'Entrees' && selectedEntrees >= 2) return;
+    if (currentItemType === "Plate") {
+      if (category === 'Side' && selectedSides >= 1) return;
+      if (category === 'Entree' && selectedEntrees >= 2) return;
     } else if (currentItemType === "Bigger Plate") {
-      if (category === 'Sides' && selectedSides >= 1) return;
-      if (category === 'Entrees' && selectedEntrees >= 3) return;
+      if (category === 'Side' && selectedSides >= 1) return;
+      if (category === 'Entree' && selectedEntrees >= 3) return;
     } else if (currentItemType === "Bowl") {
-      if (category === 'Sides' && selectedSides >= 1) return;
-      if (category === 'Entrees' && selectedEntrees >= 1) return;
+      if (category === 'Side' && selectedSides >= 1) return;
+      if (category === 'Entree' && selectedEntrees >= 1) return;
     }
 
     setOrder([...order, item]);
-    setTotal(total + parseFloat(item.price.replace("$", "")));
+    setTotal(total + item.price);
 
-    if (category === 'Sides') setSelectedSides(selectedSides + 1);
-    if (category === 'Entrees') setSelectedEntrees(selectedEntrees + 1);
-    
+    if (category === 'Side') setSelectedSides(selectedSides + 1);
+    if (category === 'Entree') setSelectedEntrees(selectedEntrees + 1);
   };
 
   const removeFromOrder = (index: number): void => {
     const item = order[index];
-    const itemPrice = parseFloat(item.price.replace("$", ""));
+    const itemPrice = item.price;
     const newOrder = order.filter((_, i) => i !== index);
-  
-    if (selectedCategory === 'Sides') {
-      setSelectedSides(Math.max(0, selectedSides - 1));
-    } else if (selectedCategory === 'Entrees') {
+
+
+    // Adjust counters based on the item category
+    if (selectedCategory === 'Side') {
+
+      setSelec>tedSides(Math.max(0, selectedSides - 1));
+    } else if (selectedCategory === 'Entree') {
       setSelectedEntrees(Math.max(0, selectedEntrees - 1));
     }
-  
+
     if (["Plate", "Bowl", "Bigger Plate"].includes(item.name)) {
       setCurrentItemType(null);
       setSelectedSides(0);
       setSelectedEntrees(0);
     }
-  
+
     setOrder(newOrder);
     setTotal(total - itemPrice);
   };
-  
-  
 
   const clearOrder = () => {
     setOrder([]);
@@ -271,6 +153,45 @@ const CustomerKiosk: React.FC = () => {
       router.push("/manager");
     }
   };
+
+  // Get weather data based on the location
+  React.useEffect(() => {
+    const fetchWeatherForLocation = async () => {
+      try {
+        const location = await getUserLocation();
+        if (location) {
+          const weatherData = await getWeatherData(location.latitude, location.longitude);
+          setWeather(weatherData);
+        } else {
+          console.log("Location access denied or unavailable.");
+        }
+      } catch (error) {
+        console.error("Error fetching weather or location:", error);
+      }
+    };
+
+    fetchWeatherForLocation();
+  }, []);
+
+  const getWeatherIcon = () => {
+    if (!weather?.description) return null;
+    const description = weather.description.toLowerCase();
+
+    if (description.includes('clear')) return weatherIcons.clear;
+    if (description.includes('cloud')) return weatherIcons.clouds;
+    if (description.includes('rain')) return weatherIcons.rain;
+    if (description.includes('snow')) return weatherIcons.snow;
+
+    return <Cloud className="h-6 w-6" />; // Default icon
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex justify-center items-center">
+        <span>Loading menu items...</span>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -295,6 +216,16 @@ const CustomerKiosk: React.FC = () => {
         <h1 className="text-xl font-bold">{mode}</h1>
 
         <div className="flex items-center gap-4">
+          {/* Weather display */}
+          {weather && (
+            <div className="flex items-center gap-2">
+              {getWeatherIcon()} {/* Weather icon */}
+              <span style={{ marginLeft: '1px' }}>
+                {weather.temperature !== undefined ? `${Math.round(weather.temperature)}°F` : 'N/A'}
+              </span>
+            </div>
+          )}
+
           <div className="flex items-center gap-2">
             <ShoppingBag className="h-6 w-6" />
             <span className="font-bold">{order.length} items</span>
@@ -337,7 +268,7 @@ const CustomerKiosk: React.FC = () => {
       <div className="container mx-auto p-6 flex gap-6">
         {/* Menu Section */}
         <div className="flex-1">
-          <div className="flex gap-4 mb-6">
+          {/* <div className="flex gap-4 mb-6">
             {Object.keys(menuItems).map((category) => (
               <Button
                 key={category}
@@ -348,10 +279,26 @@ const CustomerKiosk: React.FC = () => {
                 {category}
               </Button>
             ))}
+          </div> */}
+
+          <div className="flex gap-4 mb-6">
+            {categoryOrder.map((category) => (
+              menuItems[category] && (
+                <Button
+                  key={category}
+                  onClick={() => setSelectedCategory(category)}
+                  variant={selectedCategory === category ? "default" : "outline"}
+                  className="flex-1"
+                >
+                  {category}
+                </Button>
+              )
+            ))}
           </div>
 
+
           <div className="grid grid-cols-2 gap-4">
-            {menuItems[selectedCategory].map((item) => (
+            {menuItems[selectedCategory]?.map((item) => (
               <Card key={item.name} className="overflow-hidden">
                 <div className="relative h-40 overflow-hidden">
                   <img
@@ -365,21 +312,21 @@ const CustomerKiosk: React.FC = () => {
                   <CardDescription>{item.description}</CardDescription>
                 </CardHeader>
                 <CardFooter className="flex justify-between items-center">
-                  <span className="font-bold">{item.price}</span>
+                <span className="font-bold">${item.price.toFixed(2)}</span>
                   <Button
                   onClick={() => addToOrder(item, selectedCategory)}
                   disabled={
                     currentItemType === "Plate" &&
-                    ((selectedCategory === 'Sides' && selectedSides >= 1) ||
-                    (selectedCategory === 'Entrees' && selectedEntrees >= 2)) ||
+                    ((selectedCategory === 'Side' && selectedSides >= 1) ||
+                    (selectedCategory === 'Entree' && selectedEntrees >= 2)) ||
 
                     currentItemType === "Bigger Plate" &&
-                    ((selectedCategory === 'Sides' && selectedSides >= 1) ||
-                    (selectedCategory === 'Entrees' && selectedEntrees >= 3)) ||
+                    ((selectedCategory === 'Side' && selectedSides >= 1) ||
+                    (selectedCategory === 'Entree' && selectedEntrees >= 3)) ||
 
                     currentItemType === "Bowl" &&
-                    ((selectedCategory === 'Sides' && selectedSides >= 1) ||
-                    (selectedCategory === 'Entrees' && selectedEntrees >= 1))
+                    ((selectedCategory === 'Side' && selectedSides >= 1) ||
+                    (selectedCategory === 'Entree' && selectedEntrees >= 1))
                   }
                 >Add to Order</Button>
                 </CardFooter>
@@ -403,7 +350,7 @@ const CustomerKiosk: React.FC = () => {
                 >
                   <div>
                     <div className="font-medium">{item.name}</div>
-                    <div className="text-sm text-gray-500">{item.price}</div>
+                    <div className="text-sm text-gray-500">${item.price.toFixed(2)}</div>
                   </div>
                   <Button
                     variant="ghost"
