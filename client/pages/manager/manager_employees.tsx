@@ -1,34 +1,48 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
+import { GetServerSideProps } from 'next';
+import { Pool } from 'pg';
 
-const ManagerEmployees: React.FC = () => {
-  interface Employee {
-    staff_id: number;
-    name: string;
-    position: string;
-    username: string;
-  }
+interface Employee {
+  staff_id: number;
+  name: string;
+  position: string;
+  username: string;
+}
 
-  const [employees, setEmployees] = useState<Employee[]>([]);
+interface ManagerEmployeesProps {
+  employees: Employee[];
+}
+
+const ManagerEmployees: React.FC<ManagerEmployeesProps> = ({ employees }) => {
+  const [localEmployees, setLocalEmployees] = useState<Employee[]>(employees);
   const [editingEmployeeId, setEditingEmployeeId] = useState<number | null>(null);
   const [newRole, setNewRole] = useState('');
 
-  // Fetch employees on component mount
-  useEffect(() => {
-    axios.get('/api/employees')
-      .then(response => setEmployees(response.data as Employee[]))
-      .catch(error => console.error('Error fetching employees:', error));
-  }, []);
-
   // Update employee role
-  const updateRole = (id: number) => {
-    axios.put(`/api/employees/${id}`, { position: newRole })
-      .then(response => {
-        setEmployees(employees.map(emp => emp.staff_id === id ? { ...emp, position: newRole } : emp));
+  const updateRole = async (id: number) => {
+    try {
+      const response = await fetch(`/api/employees/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ staffId: id, newPosition: newRole }),
+      });
+
+      if (response.ok) {
+        setLocalEmployees(
+          localEmployees.map((emp) =>
+            emp.staff_id === id ? { ...emp, position: newRole } : emp
+          )
+        );
         setEditingEmployeeId(null);
         setNewRole('');
-      })
-      .catch(error => console.error('Error updating role:', error));
+      } else {
+        console.error('Error updating role:', await response.json());
+      }
+    } catch (error) {
+      console.error('Error updating role:', error);
+    }
   };
 
   return (
@@ -43,18 +57,20 @@ const ManagerEmployees: React.FC = () => {
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
         position: 'relative',
-        overflow: 'hidden'
+        overflow: 'hidden',
       }}
     >
       {/* Dim Overlay */}
-      <div style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)' // 50% black overlay to dim background
-      }}></div>
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)', // 50% black overlay to dim background
+        }}
+      ></div>
 
       {/* Employee Table */}
       <div
@@ -65,14 +81,14 @@ const ManagerEmployees: React.FC = () => {
           padding: '20px',
           width: '90%',
           maxWidth: '800px',
-          backgroundColor: 'rgba(255, 255, 255, 0.9)', // Slight white background for readability
+          backgroundColor: 'rgba(255, 255, 255, 0.9)',
           borderRadius: '8px',
           position: 'relative',
-          zIndex: 2
+          zIndex: 2,
         }}
       >
         <h2 style={{ fontSize: '24px', color: '#D32F2F', marginBottom: '20px' }}>Manage Employees</h2>
-        
+
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr>
@@ -84,7 +100,7 @@ const ManagerEmployees: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {employees.map((employee) => (
+            {localEmployees.map((employee) => (
               <tr key={employee.staff_id}>
                 <td style={tableCellStyle}>{employee.staff_id}</td>
                 <td style={tableCellStyle}>{employee.name}</td>
@@ -104,11 +120,17 @@ const ManagerEmployees: React.FC = () => {
                 <td style={tableCellStyle}>
                   {editingEmployeeId === employee.staff_id ? (
                     <>
-                      <button onClick={() => updateRole(employee.staff_id)} style={buttonStyle}>Save</button>
-                      <button onClick={() => setEditingEmployeeId(null)} style={buttonStyle}>Cancel</button>
+                      <button onClick={() => updateRole(employee.staff_id)} style={buttonStyle}>
+                        Save
+                      </button>
+                      <button onClick={() => setEditingEmployeeId(null)} style={buttonStyle}>
+                        Cancel
+                      </button>
                     </>
                   ) : (
-                    <button onClick={() => setEditingEmployeeId(employee.staff_id)} style={buttonStyle}>Edit Role</button>
+                    <button onClick={() => setEditingEmployeeId(employee.staff_id)} style={buttonStyle}>
+                      Edit Role
+                    </button>
                   )}
                 </td>
               </tr>
@@ -149,5 +171,27 @@ const inputStyle: React.CSSProperties = {
   borderRadius: '4px',
   border: '1px solid #cccccc',
 };
+
+// Fetch employees server-side
+// export const getServerSideProps: GetServerSideProps = async () => {
+//   const pool = new Pool({
+//     user: process.env.PSQL_USER,
+//     host: process.env.PSQL_HOST,
+//     database: process.env.PSQL_DATABASE,
+//     password: process.env.PSQL_PASSWORD,
+//     port: Number(process.env.PSQL_PORT),
+//     ssl: { rejectUnauthorized: false },
+//   });
+
+//   try {
+//     const result = await pool.query('SELECT * FROM staff');
+//     return { props: { employees: result.rows } };
+//   } catch (error) {
+//     console.error('Error fetching employees:', error);
+//     return { props: { employees: [] } };
+//   } finally {
+//     pool.end();
+//   }
+// };
 
 export default ManagerEmployees;
