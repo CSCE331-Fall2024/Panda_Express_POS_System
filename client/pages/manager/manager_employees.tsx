@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useRouter } from 'next/router';
 import { GetServerSideProps } from 'next';
 import { Pool } from 'pg';
 
@@ -17,6 +18,7 @@ const ManagerEmployees: React.FC<ManagerEmployeesProps> = ({ employees }) => {
   const [localEmployees, setLocalEmployees] = useState<Employee[]>(employees);
   const [editingEmployeeId, setEditingEmployeeId] = useState<number | null>(null);
   const [newRole, setNewRole] = useState('');
+  const router = useRouter();
 
   // Update employee role
   const updateRole = async (id: number) => {
