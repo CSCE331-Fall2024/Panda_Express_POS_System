@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { GetServerSideProps } from 'next';
 import { Pool } from 'pg';
+import BackButton from '@/components/ui/back_button';
 
 interface Employee {
   staff_id: number;
@@ -91,6 +92,7 @@ const ManagerEmployees: React.FC<ManagerEmployeesProps> = ({ employees }) => {
           maxHeight: '80vh',
         }}
       >
+        <BackButton/>
         <h2 style={{ fontSize: '24px', color: '#D32F2F', marginBottom: '20px' }}>Manage Employees</h2>
 
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>

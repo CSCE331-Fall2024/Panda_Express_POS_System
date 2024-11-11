@@ -55,15 +55,20 @@ export const pageStyle: React.CSSProperties = {
   };
   
   export const buttonStyle: React.CSSProperties = {
-    margin: '0 5px',
-    padding: '8px',
+    position: 'absolute',
+    top: '20px',
+    left: '20px',
+    padding: '10px 20px',
     backgroundColor: '#D32F2F',
     color: '#FFFFFF',
     border: 'none',
     borderRadius: '4px',
     cursor: 'pointer',
+    fontSize: '16px',
+    fontWeight: 'bold',
+    zIndex: 2,
   };
-  
+
   export const inputStyle: React.CSSProperties = {
     padding: '8px',
     borderRadius: '4px',

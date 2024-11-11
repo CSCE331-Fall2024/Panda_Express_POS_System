@@ -1,14 +1,13 @@
 import React from 'react';
-import { useRouter } from 'next/router';
 import { pageStyle, overlayStyle, contentStyle, headingStyle, tableHeaderStyle, tableCellStyle } from '@/utils/tableStyles';
+import BackButton from '@/components/ui/back_button';
 
 const ManagerMenuItems: React.FC = () => {
-  const router = useRouter();
-
   return (
     <div style={pageStyle}>
       <div style={overlayStyle}></div>
       <div style={contentStyle}>
+        <BackButton/>
         <h2 style={headingStyle}>Manage Menu Items</h2>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>

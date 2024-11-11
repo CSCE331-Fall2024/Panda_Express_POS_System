@@ -1,14 +1,14 @@
 import React from 'react';
-import { useRouter } from 'next/router';
 import { pageStyle, overlayStyle, contentStyle, headingStyle } from '@/utils/tableStyles';
+import BackButton from '@/components/ui/back_button';
 
 const ManagerReports: React.FC = () => {
-  const router = useRouter();
 
   return (
     <div style={pageStyle}>
       <div style={overlayStyle}></div>
       <div style={contentStyle}>
+        <BackButton/>
         <h2 style={headingStyle}>Generate Reports</h2>
         <div style={{ padding: '10px' }}>
           <p>Select a report type to view or generate a detailed report:</p>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/router';
-import { pageStyle, overlayStyle, contentStyle, headingStyle, tableHeaderStyle, tableCellStyle } from '@/utils/tableStyles';
+import { pageStyle, overlayStyle, contentStyle, headingStyle, tableHeaderStyle, tableCellStyle, buttonStyle } from '@/utils/tableStyles';
+import BackButton from '@/components/ui/back_button';
 
 const ManagerOrders: React.FC = () => {
   const router = useRouter();
@@ -9,6 +10,8 @@ const ManagerOrders: React.FC = () => {
     <div style={pageStyle}>
       <div style={overlayStyle}></div>
       <div style={contentStyle}>
+        {/* Back Button */}
+        <BackButton/>
         <h2 style={headingStyle}>Manage Orders</h2>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
