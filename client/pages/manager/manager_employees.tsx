@@ -173,25 +173,25 @@ const inputStyle: React.CSSProperties = {
 };
 
 // Fetch employees server-side
-// export const getServerSideProps: GetServerSideProps = async () => {
-//   const pool = new Pool({
-//     user: process.env.PSQL_USER,
-//     host: process.env.PSQL_HOST,
-//     database: process.env.PSQL_DATABASE,
-//     password: process.env.PSQL_PASSWORD,
-//     port: Number(process.env.PSQL_PORT),
-//     ssl: { rejectUnauthorized: false },
-//   });
+export const getServerSideProps: GetServerSideProps = async () => {
+  const pool = new Pool({
+    user: process.env.PSQL_USER,
+    host: process.env.PSQL_HOST,
+    database: process.env.PSQL_DATABASE,
+    password: process.env.PSQL_PASSWORD,
+    port: Number(process.env.PSQL_PORT),
+    ssl: { rejectUnauthorized: false },
+  });
 
-//   try {
-//     const result = await pool.query('SELECT * FROM staff');
-//     return { props: { employees: result.rows } };
-//   } catch (error) {
-//     console.error('Error fetching employees:', error);
-//     return { props: { employees: [] } };
-//   } finally {
-//     pool.end();
-//   }
-// };
+  try {
+    const result = await pool.query('SELECT * FROM staff');
+    return { props: { employees: result.rows } };
+  } catch (error) {
+    console.error('Error fetching employees:', error);
+    return { props: { employees: [] } };
+  } finally {
+    pool.end();
+  }
+};
 
 export default ManagerEmployees;
