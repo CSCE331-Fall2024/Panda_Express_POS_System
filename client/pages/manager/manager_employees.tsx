@@ -85,6 +85,8 @@ const ManagerEmployees: React.FC<ManagerEmployeesProps> = ({ employees }) => {
           borderRadius: '8px',
           position: 'relative',
           zIndex: 2,
+          overflowY: 'auto',
+          maxHeight: '80vh',
         }}
       >
         <h2 style={{ fontSize: '24px', color: '#D32F2F', marginBottom: '20px' }}>Manage Employees</h2>
@@ -106,12 +108,15 @@ const ManagerEmployees: React.FC<ManagerEmployeesProps> = ({ employees }) => {
                 <td style={tableCellStyle}>{employee.name}</td>
                 <td style={tableCellStyle}>
                   {editingEmployeeId === employee.staff_id ? (
-                    <input
-                      type="text"
-                      value={newRole}
-                      onChange={(e) => setNewRole(e.target.value)}
-                      style={inputStyle}
-                    />
+                    <select
+                    value={newRole}
+                    onChange={(e) => setNewRole(e.target.value)}
+                    style={inputStyle} 
+                  >
+                    <option value="">Select Role</option>
+                    <option value="Manager">Manager</option>
+                    <option value="Cashier">Cashier</option>
+                  </select>
                   ) : (
                     employee.position
                   )}
