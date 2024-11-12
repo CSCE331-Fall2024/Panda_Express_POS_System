@@ -1,7 +1,7 @@
 import * as React from "react"
 import { useRouter } from "next/router" // Import useRouter
-import { Menu, Home, LogOut } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { Menu, LogOut } from "lucide-react"
+// import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"

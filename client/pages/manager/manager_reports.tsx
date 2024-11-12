@@ -3,7 +3,6 @@ import { pageStyle, overlayStyle, contentStyle, headingStyle } from '@/utils/tab
 import BackButton from '@/components/ui/back_button';
 
 const ManagerReports: React.FC = () => {
-
   return (
     <div style={pageStyle}>
       <div style={overlayStyle}></div>

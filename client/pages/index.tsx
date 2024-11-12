@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Cloud, Sun, CloudRain, CloudSnow, ShoppingBag, User } from 'lucide-react';
+import React from 'react';
+import { Cloud, Sun, CloudRain, CloudSnow, User } from 'lucide-react';
 import { getWeatherData, getUserLocation } from '../utils/apiHelpers';
 
 interface MenuItem {
