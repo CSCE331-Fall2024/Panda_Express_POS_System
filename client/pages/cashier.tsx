@@ -43,13 +43,18 @@ export default function PandaExpressPOS() {
     setTotal(total - 7.00) 
   }
 
+  const handleCheckout = () => {
+    sessionStorage.setItem('paymentAmount', parseFloat((total * 1.0825).toFixed(2)).toString());
+    router.push('/orderType'); 
+  };
+
   // Handle navigation based on selected mode
   const handleModeChange = (newMode: string) => {
     setMode(newMode)
     if (newMode === "Cashier") {
       router.push("/cashier") 
     } else if (newMode === "Manager") {
-      router.push("/manager") 
+      router.push("/manager")
     } else if (newMode === "Customer Self-Service") {
       router.push("/customer")
   }}
@@ -162,7 +167,7 @@ export default function PandaExpressPOS() {
               <Button 
                 className="w-full mt-4" 
                 disabled={order.length === 0}
-                onClick={() => router.push("/orderType")} 
+                onClick={handleCheckout} 
               >
                 Checkout
               </Button>

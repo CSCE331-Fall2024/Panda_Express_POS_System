@@ -52,6 +52,57 @@ const CustomerKiosk: React.FC = () => {
 
   const categoryOrder = ["Combos", "Side", "Entree", "Appetizer", "Drink"];
 
+  useEffect(() => {
+    console.log('Loading from sessionStorage', {
+      order: sessionStorage.getItem('order'),
+    });
+    const storedOrder = sessionStorage.getItem('order');
+    const storedTotal = sessionStorage.getItem('total');
+    const storedSelectedSides = sessionStorage.getItem('selectedSides');
+    const storedSelectedEntrees = sessionStorage.getItem('selectedEntrees');
+    const storedCurrentItemType = sessionStorage.getItem('currentItemType');
+
+    if (storedOrder) {
+      setOrder(JSON.parse(storedOrder));
+    }
+
+    if (storedTotal) {
+      setTotal(parseFloat(storedTotal));
+    }
+
+    if (storedSelectedSides) {
+      setSelectedSides(parseInt(storedSelectedSides));
+    }
+
+    if (storedSelectedEntrees) {
+      setSelectedEntrees(parseInt(storedSelectedEntrees));
+    }
+
+    if (storedCurrentItemType) {
+      setCurrentItemType(storedCurrentItemType || null);
+    }
+  }, []);
+
+  useEffect(() => {
+    console.log('Saving to sessionStorage:', {
+      order,
+      total,
+      selectedSides,
+      selectedEntrees,
+      currentItemType,
+    });
+
+    sessionStorage.setItem('order', JSON.stringify(order));
+    sessionStorage.setItem('total', total.toString());
+    sessionStorage.setItem('selectedSides', selectedSides.toString());
+    sessionStorage.setItem('selectedEntrees', selectedEntrees.toString());
+    sessionStorage.setItem('currentItemType', currentItemType || '');
+
+    // Store menu item IDs
+    const menuItemIds = order.map(item => item.menu_item_id);
+    sessionStorage.setItem('menuItemIds', JSON.stringify(menuItemIds));
+  }, [order, total, selectedSides, selectedEntrees, currentItemType]);
+
 
   useEffect(() => {
     fetch('/api/menu')
@@ -148,6 +199,8 @@ const CustomerKiosk: React.FC = () => {
 
   const handleCheckout = () => {
     sessionStorage.setItem('paymentAmount', parseFloat((total * 1.0825).toFixed(2)).toString());
+    sessionStorage.setItem('order', JSON.stringify(order));
+    sessionStorage.setItem('menuItemIds', JSON.stringify(order.map(item => item.menu_item_id)));
     router.push('/orderType'); 
   };
 

@@ -7,6 +7,7 @@ import { useEffect } from "react"
 export default function CreditCardPayment() {
   const router = useRouter()
   const [paymentAmount, setPaymentAmount] = React.useState<number | null>(null);
+  const staffId = sessionStorage.getItem('staff_id') ? parseInt(sessionStorage.getItem('staff_id') as string) : 0;
 
   useEffect(() => {
     const total = sessionStorage.getItem('paymentAmount');
@@ -32,8 +33,27 @@ export default function CreditCardPayment() {
 
       if (data.success) {
         console.log('Payment processed successfully via Credit Card.');
-        sessionStorage.removeItem('paymentAmount');
-        router.push('/payment/orderSuccess');
+        // sessionStorage.removeItem('paymentAmount');
+
+        const orderResponse = await fetch('/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            total: paymentAmount,
+            staffId: staffId,
+            paymentId: data.paymentId,
+          }),
+        });
+
+        const orderData = await orderResponse.json();
+
+        if (orderData.success) {
+          console.log('Order created successfully with ID:', orderData.orderId);
+          sessionStorage.removeItem('paymentAmount');
+          router.push('/payment/orderSuccess');
+        } else {
+          console.error('Failed to create order:', orderData.message);
+        }
       } else {
         console.error('Payment failed:', data.error);
       }

@@ -24,12 +24,15 @@ const LoginPage: React.FC = () => {
   
       const data = await response.json();
       console.log('Login response data:', data);
-      
-      // Check the role and navigate accordingly
-      if (data.role === 'cashier') {
-        window.location.href = '/cashier';
-      } else if (data.role === 'manager') {
-        window.location.href = '/manager';
+
+      if (data.role) {
+        sessionStorage.setItem('staff_id', data.staff_id);
+
+        if (data.role === 'cashier') {
+          window.location.href = '/cashier';
+        } else if (data.role === 'manager') {
+          window.location.href = '/manager';
+        }
       } else {
         setError('Unauthorized role');
       }
