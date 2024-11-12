@@ -2,6 +2,8 @@ import React from 'react';
 import { pageStyle, overlayStyle, contentStyle, headingStyle, tableHeaderStyle, tableCellStyle } from '@/utils/tableStyles';
 import BackButton from '@/components/ui/back_button';
 
+// SELECT * FROM non_food_inventory_items;
+
 const ManagerInventoryItems: React.FC = () => {
   return (
     <div style={pageStyle}>
