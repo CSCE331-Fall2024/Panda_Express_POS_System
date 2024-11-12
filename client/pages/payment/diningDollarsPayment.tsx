@@ -6,11 +6,14 @@ import { useEffect } from "react"
 
 export default function DiningDollarsPayment() {
   const router = useRouter()
-  const [paymentAmount, setPaymentAmount] = React.useState<number | null>(null);const [staffId, setStaffId] = React.useState<number | null>(null);
+  const [paymentAmount, setPaymentAmount] = React.useState<number | null>(null);
+  const [staffId, setStaffId] = React.useState<number | null>(null);
+  const [menuItemIds, setMenuItemIds] = React.useState<number[] | null>(null);
 
   useEffect(() => {
     const total = sessionStorage.getItem('paymentAmount');
-        
+    // const total = "100";
+    
     if(total) {
       setPaymentAmount(parseFloat(total));
     } else {
@@ -20,9 +23,16 @@ export default function DiningDollarsPayment() {
     const staffId = sessionStorage.getItem('staff_id') ? parseInt(sessionStorage.getItem('staff_id') as string) : 0;
     setStaffId(staffId);
 
+    const menuItemIds = sessionStorage.getItem('menuItemIds');
+    if (menuItemIds) {
+      setMenuItemIds(JSON.parse(menuItemIds));
+    } else {
+      router.push("/customer");
+      console.error('No menu item IDs found in session storage.');
+    }
+
   }, [router]);
 
-  
   const handlePaymentSuccess = async () => {
     try {
       const response = await fetch('/api/payments', {
@@ -50,14 +60,32 @@ export default function DiningDollarsPayment() {
           }),
         });
 
-        const orderData = await orderResponse.json();
+        const orderData = await orderResponse.json()
 
-        if (orderData.success) {
-          console.log('Order created successfully with ID:', orderData.orderId);
-          sessionStorage.removeItem('paymentAmount');
-          router.push('/payment/orderSuccess');
+        if (orderData.success && menuItemIds) {
+          console.log("Order created successfully with ID:", orderData.orderId)
+
+          const jointResponse = await fetch("/api/menu_order_jt", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              orderId: orderData.orderId,
+              menuItemIds: menuItemIds,
+            }),
+          })
+
+          const jointData = await jointResponse.json()
+
+          if (jointData.success) {
+            console.log("Menu items added to menu_item_order_jt successfully.")
+            sessionStorage.removeItem("paymentAmount")
+            sessionStorage.removeItem("menuItemIds")
+            router.push("/payment/orderSuccess")
+          } else {
+            console.error("Failed to add menu items to menu_item_order_jt:", jointData.message)
+          }
         } else {
-          console.error('Failed to create order:', orderData.message);
+          console.error("Failed to create order:", orderData.message)
         }
       } else {
         console.error('Payment failed:', data.error);
@@ -78,7 +106,7 @@ export default function DiningDollarsPayment() {
           <CardTitle>Dining Dollars Payment</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p>Confirm payment with Dining Dollars.</p>
+          <p>Enter your dining dollars information.</p>
           {/* Simulate form fields here */}
           <Button
             onClick={handlePaymentSuccess}
