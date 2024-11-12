@@ -6,25 +6,30 @@ import { useEffect } from "react"
 
 export default function DiningDollarsPayment() {
   const router = useRouter()
-  const [paymentAmount, setPaymentAmount] = React.useState<number | null>(null);
-  const staffId = sessionStorage.getItem('staff_id') ? parseInt(sessionStorage.getItem('staff_id') as string) : 0;
+  const [paymentAmount, setPaymentAmount] = React.useState<number | null>(null);const [staffId, setStaffId] = React.useState<number | null>(null);
 
   useEffect(() => {
     const total = sessionStorage.getItem('paymentAmount');
+        
     if(total) {
       setPaymentAmount(parseFloat(total));
     } else {
       router.push("/customer");
     }
+
+    const staffId = sessionStorage.getItem('staff_id') ? parseInt(sessionStorage.getItem('staff_id') as string) : 0;
+    setStaffId(staffId);
+
   }, [router]);
 
+  
   const handlePaymentSuccess = async () => {
     try {
       const response = await fetch('/api/payments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          paymentType: 'Credit Card',
+          paymentType: 'TAMU_ID',
           paymentAmount: paymentAmount,
         }),
       });
@@ -32,7 +37,7 @@ export default function DiningDollarsPayment() {
       const data = await response.json();
 
       if (data.success) {
-        console.log('Payment processed successfully via Credit Card.');
+        console.log('Payment processed successfully via Dining Dollars.');
         // sessionStorage.removeItem('paymentAmount');
 
         const orderResponse = await fetch('/api/orders', {

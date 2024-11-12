@@ -199,6 +199,8 @@ const CustomerKiosk: React.FC = () => {
     sessionStorage.setItem('paymentAmount', parseFloat((total * 1.0825).toFixed(2)).toString());
     sessionStorage.setItem('order', JSON.stringify(order));
     sessionStorage.setItem('menuItemIds', JSON.stringify(order.map(item => item.menu_item_id)));
+    // console.log('menuItemIds', sessionStorage.getItem('menuItemIds'));
+    sessionStorage.setItem('staff_id', '0');
     router.push('/orderType'); 
   };
 
