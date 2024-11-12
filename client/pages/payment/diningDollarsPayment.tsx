@@ -6,18 +6,23 @@ import { useEffect } from "react"
 
 export default function DiningDollarsPayment() {
   const router = useRouter()
-  const [paymentAmount, setPaymentAmount] = React.useState<number | null>(null);
-  const staffId = sessionStorage.getItem('staff_id') ? parseInt(sessionStorage.getItem('staff_id') as string) : 0;
+  const [paymentAmount, setPaymentAmount] = React.useState<number | null>(null);const [staffId, setStaffId] = React.useState<number | null>(null);
 
   useEffect(() => {
     const total = sessionStorage.getItem('paymentAmount');
+        
     if(total) {
       setPaymentAmount(parseFloat(total));
     } else {
       router.push("/customer");
     }
+
+    const staffId = sessionStorage.getItem('staff_id') ? parseInt(sessionStorage.getItem('staff_id') as string) : 0;
+    setStaffId(staffId);
+
   }, [router]);
 
+  
   const handlePaymentSuccess = async () => {
     try {
       const response = await fetch('/api/payments', {
