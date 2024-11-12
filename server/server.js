@@ -126,7 +126,7 @@ app.post('/api/login', async (req, res) => {
     console.log('Received login request:', { username, password });
   
     try {
-      const query = 'SELECT username, password, position FROM staff WHERE username = $1';
+      const query = 'SELECT staff_id, username, password, position FROM staff WHERE username = $1';
       const result = await pool.query(query, [username]);
       
       console.log('Database result:', result.rows);
@@ -148,9 +148,9 @@ app.post('/api/login', async (req, res) => {
   
       // Return role based on position
       if (user.position === 'Manager') {
-        res.json({ role: 'manager' });
+        res.json({ role: 'manager', staff_id: user.staff_id });
       } else if (user.position === 'Cashier') {
-        res.json({ role: 'cashier' });
+        res.json({ role: 'cashier', staff_id: user.staff_id });
       } else {
         console.log('User has an unauthorized position:', user.position);
         res.status(403).json({ message: 'Unauthorized position' });
