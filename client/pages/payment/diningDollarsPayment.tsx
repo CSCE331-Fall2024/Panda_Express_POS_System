@@ -29,7 +29,7 @@ export default function DiningDollarsPayment() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          paymentType: 'Credit Card',
+          paymentType: 'TAMU_ID',
           paymentAmount: paymentAmount,
         }),
       });
@@ -37,7 +37,7 @@ export default function DiningDollarsPayment() {
       const data = await response.json();
 
       if (data.success) {
-        console.log('Payment processed successfully via Credit Card.');
+        console.log('Payment processed successfully via Dining Dollars.');
         // sessionStorage.removeItem('paymentAmount');
 
         const orderResponse = await fetch('/api/orders', {
