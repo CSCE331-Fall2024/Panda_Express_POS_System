@@ -16,6 +16,23 @@ const EditableTable: React.FC<EditableTableProps> = ({ employees, onUpdateRole }
   const [editingEmployeeId, setEditingEmployeeId] = useState<number | null>(null);
   const [newRole, setNewRole] = useState('');
 
+  const handleEditClick = (employeeId: number, currentRole: string) => {
+    setEditingEmployeeId(employeeId);
+    setNewRole(currentRole); // Set the current role as the initial value for the select input
+  };
+
+  const handleSaveClick = (employeeId: number) => {
+    if (newRole) {
+      onUpdateRole(employeeId, newRole);
+      setEditingEmployeeId(null); // Exit editing mode after saving
+    }
+  };
+
+  const handleCancelClick = () => {
+    setEditingEmployeeId(null);
+    setNewRole(''); // Reset newRole when editing is canceled
+  };
+
   return (
     <table style={{ width: '100%', borderCollapse: 'collapse' }}>
       <thead>
@@ -51,15 +68,15 @@ const EditableTable: React.FC<EditableTableProps> = ({ employees, onUpdateRole }
             <td style={tableCellStyle}>
               {editingEmployeeId === employee.staff_id ? (
                 <>
-                  <button onClick={() => onUpdateRole(employee.staff_id, newRole)} style={buttonStyle}>
+                  <button onClick={() => handleSaveClick(employee.staff_id)} style={buttonStyle}>
                     Save
                   </button>
-                  <button onClick={() => setEditingEmployeeId(null)} style={buttonStyle}>
+                  <button onClick={handleCancelClick} style={buttonStyle}>
                     Cancel
                   </button>
                 </>
               ) : (
-                <button onClick={() => setEditingEmployeeId(employee.staff_id)} style={buttonStyle}>
+                <button onClick={() => handleEditClick(employee.staff_id, employee.position)} style={buttonStyle}>
                   Edit Role
                 </button>
               )}
