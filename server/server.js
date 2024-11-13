@@ -22,7 +22,7 @@ const cors = require('cors');
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: "http://localhost:8080/api/auth/google/callback"
+  callbackURL: "${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/auth/google/callback"
 },
 (accessToken, refreshToken, profile, done) => {
   // Saving the user's profile info to the database
