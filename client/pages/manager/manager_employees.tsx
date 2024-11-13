@@ -17,7 +17,11 @@ interface ManagerEmployeesProps {
 }
 
 const ManagerEmployees: React.FC<ManagerEmployeesProps> = ({ employees }) => {
-  const [localEmployees, setLocalEmployees] = useState<Employee[]>(employees);
+
+  const [localEmployees, setLocalEmployees] = useState<Employee[]>(employees || []);
+  const [editingEmployeeId, setEditingEmployeeId] = useState<number | null>(null);
+  const [newRole, setNewRole] = useState('');
+
 
   // Update employee role
   const updateRole = async (id: number, newRole: string) => {
