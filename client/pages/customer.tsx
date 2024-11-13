@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from 'react';
-
+import { useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -11,9 +10,8 @@ import {
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { getUserLocation, getWeatherData } from "@/utils/apiHelpers"
-import { Menu, Home, ShoppingBag, Cloud, Sun, CloudRain, CloudSnow } from "lucide-react";
+import { Home, ShoppingBag, Cloud, Sun, CloudRain, CloudSnow } from "lucide-react";
 import { useRouter } from "next/router";
 import * as React from "react";
 
@@ -201,6 +199,8 @@ const CustomerKiosk: React.FC = () => {
     sessionStorage.setItem('paymentAmount', parseFloat((total * 1.0825).toFixed(2)).toString());
     sessionStorage.setItem('order', JSON.stringify(order));
     sessionStorage.setItem('menuItemIds', JSON.stringify(order.map(item => item.menu_item_id)));
+    // console.log('menuItemIds', sessionStorage.getItem('menuItemIds'));
+    sessionStorage.setItem('staff_id', '0');
     router.push('/orderType'); 
   };
 
@@ -289,38 +289,6 @@ const CustomerKiosk: React.FC = () => {
             <ShoppingBag className="h-6 w-6" />
             <span className="font-bold">{order.length} items</span>
           </div>
-
-          <DropdownMenu.Root>
-            <DropdownMenu.Trigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-white hover:text-white hover:bg-red-700"
-              >
-                <Menu className="h-6 w-6" />
-              </Button>
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Content className="text-black bg-white p-2 rounded-md shadow-lg">
-              <DropdownMenu.Item
-                onClick={() => handleModeChange("Cashier")}
-                className="cursor-pointer px-2 py-1 hover:bg-gray-200"
-              >
-                Cashier
-              </DropdownMenu.Item>
-              <DropdownMenu.Item
-                onClick={() => handleModeChange("Customer Self-Service")}
-                className="cursor-pointer px-2 py-1 hover:bg-gray-200"
-              >
-                Customer Self-Service
-              </DropdownMenu.Item>
-              <DropdownMenu.Item
-                onClick={() => handleModeChange("Manager")}
-                className="cursor-pointer px-2 py-1 hover:bg-gray-200"
-              >
-                Manager
-              </DropdownMenu.Item>
-            </DropdownMenu.Content>
-          </DropdownMenu.Root>
         </div>
       </nav>
 
