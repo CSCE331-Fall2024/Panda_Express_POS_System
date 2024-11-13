@@ -88,6 +88,7 @@ const ManagerMenuItems: React.FC<ManagerMenuItemsProps> = ({ menuItems }) => {
       <div style={overlayStyle}></div>
       <div style={contentStyle}>
         <BackButton />
+        <BackButton />
         <h2 style={headingStyle}>Manage Menu Items</h2>
         <EditableTable<MenuItem>
           items={localMenuItems}

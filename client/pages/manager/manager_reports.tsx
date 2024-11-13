@@ -2,48 +2,40 @@
 import React from 'react';
 import { pageStyle, overlayStyle, contentStyle, headingStyle, tableHeaderStyle, tableCellStyle } from '@/utils/tableStyles';
 import BackButton from '@/components/ui/back_button';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
+
+
 
 const ManagerReports: React.FC = () => {
   return (
     <div style={pageStyle}>
       <div style={overlayStyle}></div>
       <div style={contentStyle}>
-        <BackButton />
-        <h2 style={headingStyle}>Manage Reports</h2>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr>
-              <th style={tableHeaderStyle}>Report ID</th>
-              <th style={tableHeaderStyle}>Report Name</th>
-              <th style={tableHeaderStyle}>Created Date</th>
-              <th style={tableHeaderStyle}>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {/* Placeholder content */}
-            <tr>
-              <td style={tableCellStyle}>001</td>
-              <td style={tableCellStyle}>Monthly Sales Report</td>
-              <td style={tableCellStyle}>2024-11-12</td>
-              <td style={tableCellStyle}>View / Edit</td>
-            </tr>
-            <tr>
-              <td style={tableCellStyle}>002</td>
-              <td style={tableCellStyle}>X Report</td>
-              <td style={tableCellStyle}>2024-11-12</td>
-              <td style={tableCellStyle}>View / Edit</td>
-            </tr>
-            <tr>
-              <td style={tableCellStyle}>003</td>
-              <td style={tableCellStyle}>Z Report</td>
-              <td style={tableCellStyle}>2024-11-12</td>
-              <td style={tableCellStyle}>View / Edit</td>
-            </tr>
-          </tbody>
-        </table>
+        <BackButton/>
+        <h2 style={headingStyle}>Generate Reports</h2>
+        <div style={{ padding: '3px', marginBottom:'20px' }}>
+          <p style={{marginBottom:'20px' }}>Select a report type to view or generate a detailed report:</p>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', flexWrap: 'wrap' }}>
+              <Link href="/manager/reports/z-report" style={buttonStyle}>Z Report</Link>
+              <Link href="/manager/reports/x-report" style={buttonStyle}>X Report</Link>
+              <Link href="/manager/reports/inventory" style={buttonStyle}>Inventory</Link>
+              <Link href="/manager/reports/sales" style={buttonStyle}>Sales</Link>
+              </div>
+        </div>
       </div>
     </div>
   );
+};
+
+const buttonStyle: React.CSSProperties = {
+  margin: '0 5px',
+  padding: '8px',
+  backgroundColor: '#D32F2F',
+  color: '#FFFFFF',
+  border: 'none',
+  borderRadius: '4px',
+  cursor: 'pointer',
 };
 
 export default ManagerReports;
