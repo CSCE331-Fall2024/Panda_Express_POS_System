@@ -13,15 +13,8 @@ const XReport: React.FC = () => {
       <div style={contentStyle}>
         {/* Back Button */}
         <BackButton/>
-        <h2 style={headingStyle}>X-Reports</h2>
-        <div style={{ padding: '3px', marginBottom:'20px' }}>
-          <p style={{marginBottom:'20px' }}>Select a report type to view or generate a detailed report:</p>
-            {/* <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', flexWrap: 'wrap' }}>
-                <button style={{...buttonStyle, padding: '10px 20px', fontSize: '16px'}}
-                    onClick ={() => handleGenerate(true)}> Generate</button>
-                </div> */}
-            </div>
-        </div>
+        <h2 style={headingStyle}>X-Report</h2>
+      </div>
     </div>
   );
 };
