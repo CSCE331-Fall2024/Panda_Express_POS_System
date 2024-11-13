@@ -10,7 +10,7 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
   
     try {
-      const response = await fetch('http://localhost:8080/api/login', {
+      const response = await fetch('${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
