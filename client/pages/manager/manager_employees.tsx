@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { GetServerSideProps } from 'next';
 import { Pool } from 'pg';
 import BackButton from '@/components/ui/back_button';
-import EditableTable from '@/components/ui/editable_table';
+import EditableTable, { Column } from '@/components/ui/editable_table';
 import { pageStyle, overlayStyle, contentStyle, headingStyle } from '@/utils/tableStyles';
 
 interface Employee {
+  id: number;
   staff_id: number;
   name: string;
   position: string;
@@ -19,30 +20,39 @@ interface ManagerEmployeesProps {
 const ManagerEmployees: React.FC<ManagerEmployeesProps> = ({ employees }) => {
   const [localEmployees, setLocalEmployees] = useState<Employee[]>(employees);
 
-  // Update employee role
-  const updateRole = async (id: number, newRole: string) => {
+  const columns: Column[] = [
+    { key: 'staff_id', header: 'Staff ID' },
+    { key: 'name', header: 'Name' },
+    { 
+      key: 'position', 
+      header: 'Position', 
+      editable: true, 
+      type: 'select',
+      options: ['Manager', 'Cashier']
+    },
+    { key: 'username', header: 'Username' }
+  ];
+
+  const updateEmployee = async (id: number, field: string, value: any) => {
+    const bodyContent: any = { staffId: id };
+    if (field === "position") {
+      bodyContent.newPosition = value;
+    } else {
+      bodyContent[field] = value;
+    }
     try {
       const response = await fetch(`/api/employee/${id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ staffId: id, newPosition: newRole }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bodyContent),
       });
-
-      if (response.ok) {
-        setLocalEmployees(
-          localEmployees.map((emp) =>
-            emp.staff_id === id ? { ...emp, position: newRole } : emp
-          )
-        );
-      } else {
-        console.error('Error updating role:', await response.json());
-      }
+      if (!response.ok) throw new Error(`Failed to update employee: ${await response.text()}`);
+      setLocalEmployees(localEmployees.map(emp => emp.staff_id === id ? { ...emp, [field]: value } : emp));
     } catch (error) {
-      console.error('Error updating role:', error);
+      console.error('Error updating employee:', error);
     }
   };
+  
 
   return (
     <div style={pageStyle}>
@@ -50,13 +60,17 @@ const ManagerEmployees: React.FC<ManagerEmployeesProps> = ({ employees }) => {
       <div style={contentStyle}>
         <BackButton />
         <h2 style={headingStyle}>Manage Employees</h2>
-        <EditableTable employees={localEmployees} onUpdateRole={updateRole} />
+        <EditableTable<Employee>
+          items={localEmployees}
+          columns={columns}
+          idField="staff_id"
+          onUpdate={updateEmployee}
+        />
       </div>
     </div>
   );
 };
 
-// Fetch employees server-side
 export const getServerSideProps: GetServerSideProps = async () => {
   const pool = new Pool({
     user: process.env.PSQL_USER,
@@ -74,7 +88,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
     console.error('Error fetching employees:', error);
     return { props: { employees: [] } };
   } finally {
-    pool.end();
+    await pool.end();
   }
 };
 

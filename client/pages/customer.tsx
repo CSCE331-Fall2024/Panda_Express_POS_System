@@ -103,7 +103,7 @@ const CustomerKiosk: React.FC = () => {
 
 
   useEffect(() => {
-    fetch('/api/menu')
+    fetch('/api/menu_items')
       .then(response => response.json())
       .then(data => {
         if (data.success) {

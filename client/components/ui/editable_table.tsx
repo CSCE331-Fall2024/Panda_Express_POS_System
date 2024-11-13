@@ -1,74 +1,129 @@
 import React, { useState } from 'react';
 
-interface Employee {
-  staff_id: number;
-  name: string;
-  position: string;
-  username: string;
+// Base types and interfaces
+export interface BaseItem {
+  id: number;
+  [key: string]: any;
 }
 
-interface EditableTableProps {
-  employees: Employee[];
-  onUpdateRole: (id: number, newRole: string) => void;
+export interface Column {
+  key: string;
+  header: string;
+  editable?: boolean;
+  type?: 'text' | 'select' | 'number';
+  options?: string[];
+  formatValue?: (value: any) => string;
 }
 
-const EditableTable: React.FC<EditableTableProps> = ({ employees, onUpdateRole }) => {
-  const [editingEmployeeId, setEditingEmployeeId] = useState<number | null>(null);
-  const [newRole, setNewRole] = useState('');
+export interface EditableTableProps<T extends BaseItem> {
+  items: T[];
+  columns: Column[];
+  idField: keyof T;
+  onUpdate: (id: number, field: string, value: any) => void;
+}
 
-  const handleEditClick = (employeeId: number, currentRole: string) => {
-    setEditingEmployeeId(employeeId);
-    setNewRole(currentRole); // Set the current role as the initial value for the select input
+const EditableTable = <T extends BaseItem>({
+  items,
+  columns,
+  idField,
+  onUpdate,
+}: EditableTableProps<T>): JSX.Element => {
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingField, setEditingField] = useState<string | null>(null);
+  const [editValue, setEditValue] = useState<any>(null);
+
+  const handleEditClick = (item: T, field: string) => {
+    setEditingId(item[idField] as number);
+    setEditingField(field);
+    setEditValue(item[field]);
   };
 
-  const handleSaveClick = (employeeId: number) => {
-    if (newRole) {
-      onUpdateRole(employeeId, newRole);
-      setEditingEmployeeId(null); // Exit editing mode after saving
+  const handleSaveClick = (id: number) => {
+    if (editValue !== null && editingField) {
+      onUpdate(id, editingField, editValue);
+      setEditingId(null);
+      setEditingField(null);
+      setEditValue(null);
     }
   };
 
   const handleCancelClick = () => {
-    setEditingEmployeeId(null);
-    setNewRole(''); // Reset newRole when editing is canceled
+    setEditingId(null);
+    setEditingField(null);
+    setEditValue(null);
+  };
+
+  const renderCell = (item: T, column: Column) => {
+    const isEditing = editingId === item[idField] && editingField === column.key;
+    const value = item[column.key];
+
+    if (isEditing && column.editable) {
+      if (column.type === 'select' && column.options) {
+        return (
+          <select
+            value={editValue}
+            onChange={(e) => setEditValue(e.target.value)}
+            style={inputStyle}
+          >
+            <option value="">Select {column.header}</option>
+            {column.options.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        );
+      } else if (column.type === 'number') {
+        return (
+          <input
+            type="number"
+            value={editValue}
+            onChange={(e) => setEditValue(Number(e.target.value))}
+            style={inputStyle}
+            step="0.01"
+          />
+        );
+      }
+      return (
+        <input
+          type="text"
+          value={editValue}
+          onChange={(e) => setEditValue(e.target.value)}
+          style={inputStyle}
+        />
+      );
+    }
+
+    return column.formatValue ? column.formatValue(value) : value;
   };
 
   return (
     <table style={{ width: '100%', borderCollapse: 'collapse' }}>
       <thead>
         <tr>
-          <th style={tableHeaderStyle}>Staff ID</th>
-          <th style={tableHeaderStyle}>Name</th>
-          <th style={tableHeaderStyle}>Position</th>
-          <th style={tableHeaderStyle}>Username</th>
+          {columns.map((column) => (
+            <th key={column.key} style={tableHeaderStyle}>
+              {column.header}
+            </th>
+          ))}
           <th style={tableHeaderStyle}>Actions</th>
         </tr>
       </thead>
       <tbody>
-        {employees.map((employee) => (
-          <tr key={employee.staff_id}>
-            <td style={tableCellStyle}>{employee.staff_id}</td>
-            <td style={tableCellStyle}>{employee.name}</td>
+        {items.map((item) => (
+          <tr key={item[idField] as number}>
+            {columns.map((column) => (
+              <td key={column.key} style={tableCellStyle}>
+                {renderCell(item, column)}
+              </td>
+            ))}
             <td style={tableCellStyle}>
-              {editingEmployeeId === employee.staff_id ? (
-                <select
-                  value={newRole}
-                  onChange={(e) => setNewRole(e.target.value)}
-                  style={inputStyle}
-                >
-                  <option value="">Select Role</option>
-                  <option value="Manager">Manager</option>
-                  <option value="Cashier">Cashier</option>
-                </select>
-              ) : (
-                employee.position
-              )}
-            </td>
-            <td style={tableCellStyle}>{employee.username}</td>
-            <td style={tableCellStyle}>
-              {editingEmployeeId === employee.staff_id ? (
+              {editingId === item[idField] ? (
                 <>
-                  <button onClick={() => handleSaveClick(employee.staff_id)} style={buttonStyle}>
+                  <button
+                    onClick={() => handleSaveClick(item[idField] as number)}
+                    style={buttonStyle}
+                  >
                     Save
                   </button>
                   <button onClick={handleCancelClick} style={buttonStyle}>
@@ -76,9 +131,17 @@ const EditableTable: React.FC<EditableTableProps> = ({ employees, onUpdateRole }
                   </button>
                 </>
               ) : (
-                <button onClick={() => handleEditClick(employee.staff_id, employee.position)} style={buttonStyle}>
-                  Edit Role
-                </button>
+                columns
+                  .filter((column) => column.editable)
+                  .map((column) => (
+                    <button
+                      key={column.key}
+                      onClick={() => handleEditClick(item, column.key)}
+                      style={buttonStyle}
+                    >
+                      Edit {column.header}
+                    </button>
+                  ))
               )}
             </td>
           </tr>
@@ -88,12 +151,11 @@ const EditableTable: React.FC<EditableTableProps> = ({ employees, onUpdateRole }
   );
 };
 
-// Styling for table headers and cells
 const tableHeaderStyle: React.CSSProperties = {
   padding: '12px',
   backgroundColor: '#D32F2F',
   color: '#FFFFFF',
-  textAlign: 'left' as const,
+  textAlign: 'left',
   fontWeight: 'bold',
 };
 
