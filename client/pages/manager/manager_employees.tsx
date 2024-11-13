@@ -22,7 +22,7 @@ const ManagerEmployees: React.FC<ManagerEmployeesProps> = ({ employees }) => {
   // Update employee role
   const updateRole = async (id: number, newRole: string) => {
     try {
-      const response = await fetch(`/api/employees/${id}`, {
+      const response = await fetch(`/api/employee/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
