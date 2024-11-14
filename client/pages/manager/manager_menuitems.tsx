@@ -32,14 +32,14 @@ const ManagerMenuItems: React.FC<ManagerMenuItemsProps> = ({ menuItems }) => {
   };
 
   const columns: Column[] = [
-    { key: 'id', header: 'Item ID' },
+    { key: 'menu_item_id', header: 'Item ID' },
     { key: 'name', header: 'Name', editable: true, type: 'text' },
     { 
-      key: 'category', 
-      header: 'Category', 
+      key: 'item_type', 
+      header: 'Item Type', 
       editable: true, 
       type: 'select',
-      options: ['Appetizer', 'Entree', 'Side', 'Dessert', 'Beverage']
+      options: ['Appetizer', 'Entree', 'Side', 'Beverage']
     },
     { 
       key: 'price', 
@@ -93,7 +93,7 @@ const ManagerMenuItems: React.FC<ManagerMenuItemsProps> = ({ menuItems }) => {
         <EditableTable<MenuItem>
           items={localMenuItems}
           columns={columns}
-          idField="id"
+          idField={"menu_item_id" as keyof MenuItem}
           onUpdate={updateMenuItem}
         />
       </div>
