@@ -26,7 +26,7 @@ export const pageStyle: React.CSSProperties = {
     alignItems: 'center',
     padding: '20px',
     width: '90%',
-    maxWidth: '800px',
+    maxWidth: '1100px',
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
     borderRadius: '8px',
     position: 'relative',
