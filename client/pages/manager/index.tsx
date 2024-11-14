@@ -45,6 +45,7 @@ const Manager: React.FC = () => {
         <h2 style={{ fontSize: '24px', color: '#D32F2F', marginBottom: '20px' }}>Manager View</h2>
         {/* Navigation Links Styled as Buttons */}
         <nav style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+          <Link href="/cashier" style={buttonStyle}>Customer Ordering</Link>
           <Link href="/manager/manager_orders" style={buttonStyle}>Orders</Link>
           <Link href="/manager/manager_employees" style={buttonStyle}>Employees</Link>
           <Link href="/manager/manager_reports" style={buttonStyle}>Reports</Link>
