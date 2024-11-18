@@ -1,8 +1,7 @@
 // pages/manager_reports.tsx
 import React from 'react';
-import { pageStyle, overlayStyle, contentStyle, headingStyle, tableHeaderStyle, tableCellStyle } from '@/utils/tableStyles';
+import { pageStyle, overlayStyle, contentStyle, headingStyle } from '@/utils/tableStyles';
 import BackButton from '@/components/ui/back_button';
-import { useRouter } from 'next/router';
 import Link from 'next/link';
 
 

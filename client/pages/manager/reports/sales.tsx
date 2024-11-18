@@ -1,7 +1,5 @@
-'use client'
-
+// 'use client'
 import React, { useState } from 'react'
-import { useRouter } from 'next/router'
 import { Calendar } from '@/components/ui/calendar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -14,10 +12,8 @@ import {
   tableCellStyle,
 } from '@/utils/tableStyles'
 import BackButton from '@/components/ui/back_button'
-import { useEffect } from 'react'
 
 const Sales: React.FC = () => {
-  const router = useRouter()
   const [dateRange, setDateRange] = useState<{ from: Date; to: Date | undefined }>({
     from: new Date(),
     to: new Date(),

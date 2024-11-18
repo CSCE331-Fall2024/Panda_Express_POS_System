@@ -5,6 +5,9 @@ import { pageStyle, overlayStyle, contentStyle, headingStyle } from '@/utils/tab
 import BackButton from '@/components/ui/back_button';
 import EditableTable, { Column } from '@/components/ui/editable_table';
 
+// Default seasonal item pic link for when you can add a menu item
+// https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_hqWlVhWklVyH_HBjiavsZvZJ-Xx1rm_xqQ&s
+
 interface MenuItem {
   id: number;
   name: string;
@@ -27,7 +30,7 @@ const ManagerMenuItems: React.FC<ManagerMenuItemsProps> = ({ menuItems }) => {
       return `$${numValue.toFixed(2)}`;
     }
     
-    // Return a default value if the price is invalid
+    // Invalid Price
     return '$0.00';
   };
 
