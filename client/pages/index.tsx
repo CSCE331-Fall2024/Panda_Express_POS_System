@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import {
   Card,
-  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
@@ -10,7 +9,6 @@ import {
 } from "@/components/ui/card";
 import { getUserLocation, getWeatherData } from "@/utils/apiHelpers";
 import { Cloud, Sun, CloudRain, CloudSnow, User } from "lucide-react";
-import { useRouter } from "next/router";
 
 interface MenuItem {
   menu_item_id: number;
@@ -35,7 +33,6 @@ const weatherIcons = {
 type MenuCategory = string;
 
 const Menuboard: React.FC = () => {
-  const router = useRouter();
   const [menuItems, setMenuItems] = React.useState<MenuItems>({});
   const [selectedCategory, setSelectedCategory] = React.useState<MenuCategory>('Combos');
   const [weather, setWeather] = React.useState<{ temperature?: number; description?: string } | null>(null);

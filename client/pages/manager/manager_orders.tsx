@@ -1,5 +1,5 @@
 import React from 'react';
-import { pageStyle, overlayStyle, contentStyle, headingStyle, tableHeaderStyle, tableCellStyle, buttonStyle } from '@/utils/tableStyles';
+import { pageStyle, overlayStyle, contentStyle, headingStyle, tableHeaderStyle, tableCellStyle } from '@/utils/tableStyles';
 import BackButton from '@/components/ui/back_button';
 
 const ManagerOrders: React.FC = () => {
