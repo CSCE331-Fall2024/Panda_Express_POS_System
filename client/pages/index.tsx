@@ -98,21 +98,21 @@ const Menuboard: React.FC = () => {
     return <Cloud className="h-6 w-6" />; // Default icon
   };
 
-  if (loading) {
-    return (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh',
-          backgroundColor: '#fff',
-        }}
-      >
-        Loading menu items...
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div
+  //       style={{
+  //         display: 'flex',
+  //         justifyContent: 'center',
+  //         alignItems: 'center',
+  //         height: '100vh',
+  //         backgroundColor: '#fff',
+  //       }}
+  //     >
+  //       Loading menu items...
+  //     </div>
+  //   );
+  // }
 
   return (
     <div

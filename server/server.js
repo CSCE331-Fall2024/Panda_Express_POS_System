@@ -61,6 +61,38 @@ app.get('/user', async (req, res) => {
     }
 });
 
+app.get('/api/orders', async (req, res) => {
+  const { year, month, day } = req.query;
+
+  try {
+      let query = 'SELECT order_id, CAST(total AS FLOAT) AS total, time, staff_id, payment_id FROM orders WHERE 1=1';
+      const params = [];
+
+      if (year) {
+          query += ' AND EXTRACT(YEAR FROM time) = $1';
+          params.push(year);
+      }
+      if (month) {
+          query += ' AND EXTRACT(MONTH FROM time) = $2';
+          params.push(month);
+      }
+      if (day) {
+          query += ' AND EXTRACT(DAY FROM time) = $3';
+          params.push(day);
+      }
+
+      query += ' ORDER BY time ASC';
+
+      const result = await pool.query(query, params);
+      res.status(200).json({ orders: result.rows });
+  } catch (error) {
+      console.error('Error fetching orders:', error);
+      res.status(500).json({ error: 'Failed to retrieve orders' });
+  }
+});
+
+
+
 // Endpoint to start Google OAuth2 authentication
 app.get('/api/auth/google',
   passport.authenticate('google', { scope: ['profile', 'email'] })
