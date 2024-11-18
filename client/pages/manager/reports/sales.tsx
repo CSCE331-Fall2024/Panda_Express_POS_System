@@ -5,18 +5,16 @@ import { useRouter } from 'next/router'
 import { Calendar } from '@/components/ui/calendar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { pageStyle, overlayStyle, contentStyle, headingStyle, tableHeaderStyle, tableCellStyle } from '@/utils/tableStyles'
+import {
+  pageStyle,
+  overlayStyle,
+  contentStyle,
+  headingStyle,
+  tableHeaderStyle,
+  tableCellStyle,
+} from '@/utils/tableStyles'
 import BackButton from '@/components/ui/back_button'
 import { useEffect } from 'react'
-
-interface MenuItem {
-  menu_item_id: number;
-  price: number;
-  item_type: string;
-  name: string;
-  image: string;
-  description: string;
-}
 
 const Sales: React.FC = () => {
   const router = useRouter()
@@ -24,34 +22,29 @@ const Sales: React.FC = () => {
     from: new Date(),
     to: new Date(),
   })
-  const [menuItems, setMenuItems] = useState<MenuItem[]>([])
-  const [loading, setLoading] = useState<boolean>(true)
+  const [salesData, setSalesData] = useState<any[]>([])
+  const [loading, setLoading] = useState<boolean>(false)
 
-  const sampleData = [
-    { menuItem: 'Orange Chicken', salesGenerated: '$1,234.56' },
-    { menuItem: 'Beijing Beef', salesGenerated: '$987.65' },
-    { menuItem: 'Kung Pao Chicken', salesGenerated: '$876.54' },
-    { menuItem: 'Chow Mein', salesGenerated: '$765.43' },
-    { menuItem: 'Fried Rice', salesGenerated: '$654.32' },
-  ]
+  const generateReport = async () => {
+    setLoading(true)
+    try {
+      const fromDate = dateRange.from.toISOString()
+      const toDate = dateRange.to ? dateRange.to.toISOString() : new Date().toISOString()
 
-  useEffect(() => {
-    fetch('/api/menu')
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          setMenuItems(data.menuItems)
-          setLoading(false)
-        } else {
-          console.error('Failed to fetch menu items')
-          setLoading(false)
-        }
-      })
-      .catch((error) => {
-        console.error('Error fetching menu items:', error)
-        setLoading(false)
-      })
-  }, [])
+      const response = await fetch(`/api/reports/sales?from=${fromDate}&to=${toDate}`)
+      const data = await response.json()
+
+      if (data.success) {
+        setSalesData(data.data)
+      } else {
+        console.error('Failed to fetch sales data')
+      }
+    } catch (error) {
+      console.error('Error fetching sales data:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <div style={pageStyle}>
@@ -65,24 +58,30 @@ const Sales: React.FC = () => {
               <CardTitle>Menu Items Sales</CardTitle>
             </CardHeader>
             <CardContent>
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <thead>
-                  <tr>
-                    <th style={{...tableHeaderStyle, textAlign: 'center'}}>Menu Item</th>
-                    <th style={{...tableHeaderStyle, textAlign: 'center'}}>Sales Generated</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {menuItems.map((item, index) => (
-                    <tr key={index}>
-                      <td style={{ ...tableCellStyle, textAlign: 'center' }}>{item.name}</td>
-                      <td style={{ ...tableCellStyle, textAlign: 'center' }}>
-                        ${item.price.toFixed(2)}
-                      </td>
+              {loading ? (
+                <p>Loading sales data...</p>
+              ) : (
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr>
+                      <th style={{ ...tableHeaderStyle, textAlign: 'center' }}>Menu Item</th>
+                      <th style={{ ...tableHeaderStyle, textAlign: 'center' }}>Quantity Sold</th>
+                      <th style={{ ...tableHeaderStyle, textAlign: 'center' }}>Sales Generated</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {salesData.map((item, index) => (
+                      <tr key={index}>
+                        <td style={{ ...tableCellStyle, textAlign: 'center' }}>{item.name}</td>
+                        <td style={{ ...tableCellStyle, textAlign: 'center' }}>{item.quantity_sold}</td>
+                        <td style={{ ...tableCellStyle, textAlign: 'center' }}>
+                          ${Number(item.sales_generated).toFixed(2)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </CardContent>
           </Card>
           <Card className="col-span-1" style={{ maxHeight: '515px' }}>
@@ -93,16 +92,23 @@ const Sales: React.FC = () => {
               <Calendar
                 mode="range"
                 selected={dateRange}
-                onSelect={(range) => setDateRange(range || { from: new Date(), to: undefined })}
+                onSelect={(range) =>
+                  setDateRange({
+                    from: range?.from || new Date(),
+                    to: range?.to || undefined,
+                  })
+                }
                 className="rounded-md border"
               />
               <div className="mt-4 space-y-4 text-center">
                 <div>
                   <p className="text-sm font-medium">From: {dateRange.from.toDateString()}</p>
-                  <p className="text-sm font-medium">To: {dateRange.to ? dateRange.to.toDateString() : 'Not selected'}</p>
+                  <p className="text-sm font-medium">
+                    To: {dateRange.to ? dateRange.to.toDateString() : 'Not selected'}
+                  </p>
                 </div>
-                <Button 
-                  onClick={() => console.log('Generate report for:', dateRange)}
+                <Button
+                  onClick={generateReport}
                   className="w-full bg-red-600 hover:bg-red-700 text-white"
                 >
                   Generate Report
