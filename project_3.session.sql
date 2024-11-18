@@ -13,3 +13,5 @@
 -- WHERE order_id = (SELECT MAX(order_id) FROM orders);
 
 -- SELECT * FROM menu_item;
+
+SELECT * FROM staff;
