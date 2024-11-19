@@ -118,6 +118,7 @@ const EditableTable = <T extends BaseItem>({
               </td>
             ))}
             <td style={tableCellStyle}>
+              <div style={buttonContainerStyle}>
               {editingId === item[idField] ? (
                 <>
                   <button
@@ -143,6 +144,7 @@ const EditableTable = <T extends BaseItem>({
                     </button>
                   ))
               )}
+              </div>
             </td>
           </tr>
         ))}
@@ -179,5 +181,13 @@ const inputStyle: React.CSSProperties = {
   borderRadius: '4px',
   border: '1px solid #cccccc',
 };
+
+const buttonContainerStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  gap: '10px',
+};
+
 
 export default EditableTable;
