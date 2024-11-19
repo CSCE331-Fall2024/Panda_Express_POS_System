@@ -3,11 +3,12 @@ import React from 'react';
 import { pageStyle, overlayStyle, contentStyle, headingStyle } from '@/utils/tableStyles';
 import BackButton from '@/components/ui/back_button';
 import Link from 'next/link';
-
+import ManagerNavBar from '@/components/ui/manager_nav_bar';
 
 
 const ManagerReports: React.FC = () => {
   return (
+    <> <ManagerNavBar />
     <div style={pageStyle}>
       <div style={overlayStyle}></div>
       <div style={contentStyle}>
@@ -24,6 +25,7 @@ const ManagerReports: React.FC = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

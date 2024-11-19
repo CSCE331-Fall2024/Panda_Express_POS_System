@@ -34,7 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     case 'PUT':
       try {
-        const { name, category, price } = req.body;
+        const { name, category, price, is_deleted } = req.body;
         const updateFields = [];
         const values = [];
         let valueCounter = 1;
@@ -52,6 +52,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if (price !== undefined) {
           updateFields.push(`price = $${valueCounter}`);
           values.push(price);
+          valueCounter++;
+        }
+        if (is_deleted !== undefined) {
+          updateFields.push(`is_deleted = $${valueCounter}`);
+          values.push(is_deleted === 'Available' ? false : true);
           valueCounter++;
         }
 

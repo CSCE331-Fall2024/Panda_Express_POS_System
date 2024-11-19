@@ -234,9 +234,6 @@ const Menuboard: React.FC = () => {
           Welcome to Panda Express!
         </h1>
 
-        <h1 style={{ marginBottom: '10px', fontSize: '18px', fontWeight: 'bold' }}>
-          Choose Your Meal Type
-        </h1>
         <div
           style={{
             display: 'flex',
