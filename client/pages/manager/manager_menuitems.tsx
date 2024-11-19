@@ -4,6 +4,7 @@ import { Pool } from 'pg';
 import { pageStyle, overlayStyle, contentStyle, headingStyle } from '@/utils/tableStyles';
 import BackButton from '@/components/ui/back_button';
 import EditableTable, { Column } from '@/components/ui/editable_table';
+import ManagerNavBar from '@/components/ui/manager_nav_bar';
 
 // Default seasonal item pic link for when you can add a menu item
 // https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_hqWlVhWklVyH_HBjiavsZvZJ-Xx1rm_xqQ&s
@@ -87,7 +88,8 @@ const ManagerMenuItems: React.FC<ManagerMenuItemsProps> = ({ menuItems }) => {
   };
 
   return (
-    <div style={pageStyle}>
+    <> <ManagerNavBar />
+    <div style={{...pageStyle, paddingTop:'40px'}}>
       <div style={overlayStyle}></div>
       <div style={contentStyle}>
         <BackButton />
@@ -101,6 +103,7 @@ const ManagerMenuItems: React.FC<ManagerMenuItemsProps> = ({ menuItems }) => {
         />
       </div>
     </div>
+    </>
   );
 };
 

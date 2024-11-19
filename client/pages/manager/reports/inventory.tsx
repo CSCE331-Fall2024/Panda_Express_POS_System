@@ -1,9 +1,11 @@
 import React from 'react';
 import { pageStyle, overlayStyle, contentStyle, headingStyle, tableHeaderStyle, tableCellStyle, buttonStyle } from '@/utils/tableStyles';
 import BackButton from '@/components/ui/back_button';
+import ManagerNavBar from '@/components/ui/manager_nav_bar';
 
 const Inventory: React.FC = () => {
   return (
+    <> <ManagerNavBar />
     <div style={pageStyle}>
       <div style={overlayStyle}></div>
       <div style={contentStyle}>
@@ -33,6 +35,7 @@ const Inventory: React.FC = () => {
         </table>
       </div>
     </div>
+    </>
   );
 };
 

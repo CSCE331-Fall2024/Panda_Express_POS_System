@@ -4,6 +4,7 @@ import { Pool } from 'pg';
 import BackButton from '@/components/ui/back_button';
 import EditableTable, { Column } from '@/components/ui/editable_table';
 import { pageStyle, overlayStyle, contentStyle, headingStyle } from '@/utils/tableStyles';
+import ManagerNavBar from '@/components/ui/manager_nav_bar';
 
 interface Employee {
   id: number;
@@ -59,6 +60,9 @@ const ManagerEmployees: React.FC<ManagerEmployeesProps> = ({ employees }) => {
   
 
   return (
+    <>
+    <ManagerNavBar />
+      
     <div style={pageStyle}>
       <div style={overlayStyle}></div>
       <div style={contentStyle}>
@@ -72,6 +76,7 @@ const ManagerEmployees: React.FC<ManagerEmployeesProps> = ({ employees }) => {
         />
       </div>
     </div>
+    </>
   );
 };
 

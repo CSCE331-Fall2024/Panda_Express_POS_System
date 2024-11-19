@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 // import { useRouter } from 'next/router';
 import { pageStyle, overlayStyle, contentStyle, headingStyle, tableHeaderStyle, tableCellStyle, buttonStyle } from '@/utils/tableStyles';
 import BackButton from '@/components/ui/back_button';
+import ManagerNavBar from '@/components/ui/manager_nav_bar';
 
 interface XReportItem {
   hour: string;
@@ -45,6 +46,7 @@ const XReport: React.FC = () => {
   }, []);
 
   return (
+    <> <ManagerNavBar />
     <div style={pageStyle}>
       <div style={overlayStyle}></div>
       <div style={contentStyle}>
@@ -76,6 +78,7 @@ const XReport: React.FC = () => {
           </table>
       </div>
     </div>
+    </>
   );
 };
 
