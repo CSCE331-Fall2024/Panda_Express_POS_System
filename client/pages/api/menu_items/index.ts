@@ -29,7 +29,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
       const { name, category, price } = req.body;
       const result = await pool.query(
-        'INSERT INTO menu_item (name, category, price) VALUES ($1, $2, $3) RETURNING *',
+        'INSERT INTO menu_item (name, item_type, price) VALUES ($1, $2, $3) RETURNING *',
         [name, category, price]
       );
       const newItem = { ...result.rows[0], price: Number(result.rows[0].price) };

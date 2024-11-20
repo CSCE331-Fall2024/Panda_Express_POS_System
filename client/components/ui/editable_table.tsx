@@ -20,6 +20,7 @@ export interface EditableTableProps<T extends BaseItem> {
   columns: Column[];
   idField: keyof T;
   onUpdate: (id: number, field: string, value: any) => void;
+  onAdd: (item: Omit<T, 'id'>) => void; // Omit the 'id' field from the item
 }
 
 const EditableTable = <T extends BaseItem>({
@@ -27,10 +28,13 @@ const EditableTable = <T extends BaseItem>({
   columns,
   idField,
   onUpdate,
+  onAdd,
 }: EditableTableProps<T>): JSX.Element => {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editingField, setEditingField] = useState<string | null>(null);
   const [editValue, setEditValue] = useState<any>(null);
+
+  const [newItem, setNewItem] = useState<Partial<T> | null>(null);
 
   const handleEditClick = (item: T, field: string) => {
     setEditingId(item[idField] as number);
@@ -51,6 +55,17 @@ const EditableTable = <T extends BaseItem>({
     setEditingId(null);
     setEditingField(null);
     setEditValue(null);
+  };
+
+  const handleNewItemChange = (field: string, value: any) => {
+    setNewItem((prev) => ({ ...prev, [field]: value } as Partial<T>));
+  };
+
+  const handleSaveNewItem = () => {
+    if (newItem) {
+      onAdd(newItem as Omit<T, 'id'>);
+      setNewItem(null);
+    }
   };
 
   const renderCell = (item: T, column: Column) => {
@@ -119,36 +134,102 @@ const EditableTable = <T extends BaseItem>({
             ))}
             <td style={tableCellStyle}>
               <div style={buttonContainerStyle}>
-              {editingId === item[idField] ? (
-                <>
-                  <button
-                    onClick={() => handleSaveClick(item[idField] as number)}
-                    style={buttonStyle}
-                  >
-                    Save
-                  </button>
-                  <button onClick={handleCancelClick} style={buttonStyle}>
-                    Cancel
-                  </button>
-                </>
-              ) : (
-                columns
-                  .filter((column) => column.editable)
-                  .map((column) => (
+                {editingId === item[idField] ? (
+                  <>
                     <button
-                      key={column.key}
-                      onClick={() => handleEditClick(item, column.key)}
+                      onClick={() => handleSaveClick(item[idField] as number)}
                       style={buttonStyle}
                     >
-                      Edit {column.header}
+                      Save
                     </button>
-                  ))
-              )}
+                    <button onClick={handleCancelClick} style={buttonStyle}>
+                      Cancel
+                    </button>
+                  </>
+                ) : (
+                  columns
+                    .filter((column) => column.editable)
+                    .map((column) => (
+                      <button
+                        key={column.key}
+                        onClick={() => handleEditClick(item, column.key)}
+                        style={buttonStyle}
+                      >
+                        Edit {column.header}
+                      </button>
+                    ))
+                )}
               </div>
             </td>
           </tr>
         ))}
+
+        {/* Row for Adding New Item */}
+        {newItem && (
+          <tr>
+            {columns.map((column) => (
+              <td key={column.key} style={tableCellStyle}>
+                {column.editable ? (
+                  column.type === 'select' && column.options ? (
+                    <select
+                      value={newItem[column.key]}
+                      onChange={(e) =>
+                        handleNewItemChange(column.key, e.target.value)
+                      }
+                      style={inputStyle}
+                    >
+                      <option value="">Select {column.header}</option>
+                      {column.options.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+                  ) : column.type === 'number' ? (
+                    <input
+                      type="number"
+                      value={newItem[column.key]}
+                      onChange={(e) =>
+                        handleNewItemChange(column.key, Number(e.target.value))
+                      }
+                      style={inputStyle}
+                      step="0.01"
+                    />
+                  ) : (
+                    <input
+                      type="text"
+                      value={newItem[column.key]}
+                      onChange={(e) =>
+                        handleNewItemChange(column.key, e.target.value)
+                      }
+                      style={inputStyle}
+                    />
+                  )
+                ) : (
+                  ''
+                )}
+              </td>
+            ))}
+            <td style={tableCellStyle}>
+              <button onClick={handleSaveNewItem} style={buttonStyle}>
+                Save
+              </button>
+            </td>
+          </tr>
+        )}
       </tbody>
+      <tfoot>
+        <tr>
+          <td colSpan={columns.length + 1} style={tableCellStyle}>
+            <button
+              onClick={() => setNewItem({})}
+              style={{ ...buttonStyle, width: '100%' }}
+            >
+              Add New Item
+            </button>
+          </td>
+        </tr>
+      </tfoot>
     </table>
   );
 };
@@ -188,6 +269,5 @@ const buttonContainerStyle: React.CSSProperties = {
   alignItems: 'center',
   gap: '10px',
 };
-
 
 export default EditableTable;
