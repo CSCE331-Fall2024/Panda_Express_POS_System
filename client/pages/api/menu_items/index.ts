@@ -27,10 +27,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   } else if (req.method === 'POST') {
     // Add new menu item
     try {
-      const { name, category, price } = req.body;
+      const { name, item_type, price } = req.body;
       const result = await pool.query(
         'INSERT INTO menu_item (name, item_type, price) VALUES ($1, $2, $3) RETURNING *',
-        [name, category, price]
+        [name, item_type, price]
       );
       const newItem = { ...result.rows[0], price: Number(result.rows[0].price) };
       res.status(201).json({ success: true, menuItem: newItem });
