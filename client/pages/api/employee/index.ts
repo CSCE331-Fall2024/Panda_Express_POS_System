@@ -19,8 +19,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       console.error('Error fetching employees:', error);
       res.status(500).json({ success: false, message: 'Failed to fetch employees' });
     }
-  } else {
-    res.setHeader('Allow', ['GET']);
+  } 
+  else if (req.method === 'POST') {
+    const { name, position } = req.body;
+
+    if (!name || !position) {
+      return res.status(400).json({ success: false, message: 'Missing required fields' });
+    }
+
+    try {
+      const result = await pool.query('INSERT INTO staff (name, position) VALUES ($1, $2) RETURNING *', [name, position]);
+      const newItem = { ...result.rows[0], price: Number(result.rows[0].price) };
+      res.status(201).json({ success: true, employee: newItem });
+    } catch (error) {
+      console.error('Error creating employee:', error);
+      res.status(500).json({ success: false, message: 'Failed to create employee' });
+    }
+  } 
+  else {
+    res.setHeader('Allow', ['GET', 'POST']);
     res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }

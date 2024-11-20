@@ -5,6 +5,7 @@ import { pageStyle, overlayStyle, contentStyle, headingStyle } from '@/utils/tab
 import BackButton from '@/components/ui/back_button';
 import EditableTable, { Column } from '@/components/ui/editable_table';
 import ManagerNavBar from '@/components/ui/manager_nav_bar';
+import { add } from 'date-fns';
 
 // Default seasonal item pic link for when you can add a menu item
 // https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_hqWlVhWklVyH_HBjiavsZvZJ-Xx1rm_xqQ&s
@@ -12,7 +13,7 @@ import ManagerNavBar from '@/components/ui/manager_nav_bar';
 interface MenuItem {
   id: number;
   name: string;
-  category: string;
+  item_type: string;
   price: number;
   is_deleted: boolean;
 }
@@ -96,6 +97,27 @@ const ManagerMenuItems: React.FC<ManagerMenuItemsProps> = ({ menuItems }) => {
     }
   };
 
+  const addMenuItem = async (item: Omit<MenuItem, 'id'>) => {
+    try {
+      const response = await fetch('/api/menu_items', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(item),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to add menu item');
+      }
+
+      const { menuItem } = await response.json();
+      setLocalMenuItems([...localMenuItems, menuItem]);
+    } catch (error) {
+      console.error('Error adding menu item:', error);
+    }
+  };
+
   return (
     <> <ManagerNavBar />
     <div style={{...pageStyle, paddingTop:'40px'}}>
@@ -109,6 +131,7 @@ const ManagerMenuItems: React.FC<ManagerMenuItemsProps> = ({ menuItems }) => {
           columns={columns}
           idField={"menu_item_id" as keyof MenuItem}
           onUpdate={updateMenuItem}
+          onAdd={addMenuItem}
         />
       </div>
     </div>
