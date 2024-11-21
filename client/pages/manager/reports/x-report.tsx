@@ -26,45 +26,41 @@ export default function XReport() {
   useEffect(() => {
     const fetchXReport = async () => {
       try {
-        const response = await fetch('/api/reports/xreport')
-        const data = await response.json()
-
+        const response = await fetch('/api/reports/xreport');
+        const data = await response.json();
+  
         if (data.success) {
-          const allHours = Array.from({ length: 8 }, (_, i) => ({
-            hour: `${i + 8}:00`,
-            total_transactions: 0,
-            total_sales: 0.0,
-            tamu_id_sales: 0.0,
-            credit_card_sales: 0.0,
-          }))
-
-          const mergedData = allHours.map(hourItem => {
-            const match = data.report.find((item: XReportItem) => item.hour === hourItem.hour)
-            return match ? { ...hourItem, ...match } : hourItem
-          })
-          setXReportData(mergedData)
-
+          setXReportData(data.report);
+  
           // Calculate totals
-          const totals = mergedData.reduce((acc, item) => ({
-            totalTransactions: acc.totalTransactions + item.total_transactions,
-            totalTamuIdSales: acc.totalTamuIdSales + item.tamu_id_sales,
-            totalCreditCardSales: acc.totalCreditCardSales + item.credit_card_sales,
-            totalSales: acc.totalSales + item.total_sales,
-          }), { totalTransactions: 0, totalTamuIdSales: 0, totalCreditCardSales: 0, totalSales: 0 })
-
-          setTotalTransactions(totals.totalTransactions)
-          setTotalTamuIdTransactions(Math.round(totals.totalTamuIdSales))
-          setTotalCreditCardTransactions(Math.round(totals.totalCreditCardSales))
-          setTotalSales(totals.totalSales)
-          setReportGenerationTime(new Date().toLocaleString())
+          const totals = data.report.reduce(
+            (acc, item) => ({
+              totalTransactions: acc.totalTransactions + item.total_transactions,
+              totalTamuIdSales: acc.totalTamuIdSales + Number(item.tamu_id_sales),
+              totalCreditCardSales: acc.totalCreditCardSales + Number(item.credit_card_sales),
+              totalSales: acc.totalSales + Number(item.total_sales),
+            }),
+            { totalTransactions: 0, totalTamuIdSales: 0, totalCreditCardSales: 0, totalSales: 0 }
+          );
+  
+          setTotalTransactions(totals.totalTransactions);
+          setTotalTamuIdTransactions(Math.round(totals.totalTamuIdSales));
+          setTotalCreditCardTransactions(Math.round(totals.totalCreditCardSales));
+          setTotalSales(totals.totalSales);
+          setReportGenerationTime(new Date().toLocaleString());
         }
       } catch (error) {
-        console.error('Failed to fetch X Report data:', error)
+        console.error('Failed to fetch X Report data:', error);
       }
-    }
+    };
+  
+    fetchXReport();
+  }, []);
 
-    fetchXReport()
-  }, [])
+  const cardStyle = {
+    backgroundColor: '#0a0a0a',
+    color: '#ededed',
+  };
 
   return (
     <div style={pageStyle}>
@@ -78,7 +74,7 @@ export default function XReport() {
               <CardTitle className="text-center">Sales Per Hour</CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col items-center">
-              <div className="w-full max-w-3xl">
+              <div style={{ width: '800px', height: '300px' }} className="w-full">
                 <ChartContainer
                   config={{
                     tamu_id_sales: {
@@ -90,7 +86,7 @@ export default function XReport() {
                       color: "hsl(var(--secondary))",
                     },
                   }}
-                  className="h-[300px]"
+                  className="h-[300px] w-[95%]"
                 >
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={xReportData}>
@@ -112,12 +108,12 @@ export default function XReport() {
                       <ChartTooltip content={<ChartTooltipContent />} />
                       <Bar
                         dataKey="tamu_id_sales"
-                        fill="hsl(var(--primary))"
+                        fill="#D32F2F"
                         radius={[4, 4, 0, 0]}
                       />
                       <Bar
                         dataKey="credit_card_sales"
-                        fill="hsl(var(--secondary))"
+                        fill="#0a0a0a"
                         radius={[4, 4, 0, 0]}
                       />
                     </BarChart>
@@ -151,7 +147,7 @@ export default function XReport() {
                 </div>
                 <div>
                   <p className="font-semibold">Total Sales:</p>
-                  <p>${totalSales.toFixed(2)}</p>
+                  <p>${Number(totalSales).toFixed(2)}</p>
                 </div>
               </div>
             </CardContent>
@@ -178,9 +174,9 @@ export default function XReport() {
                       <tr key={index} className="border-b">
                         <td className="px-6 py-4 text-center">{item.hour}</td>
                         <td className="px-6 py-4 text-center">{item.total_transactions}</td>
-                        <td className="px-6 py-4 text-center">${item.total_sales.toFixed(2)}</td>
-                        <td className="px-6 py-4 text-center">${item.tamu_id_sales.toFixed(2)}</td>
-                        <td className="px-6 py-4 text-center">${item.credit_card_sales.toFixed(2)}</td>
+                        <td className="px-6 py-4 text-center">${Number(item.total_sales).toFixed(2)}</td>
+                        <td className="px-6 py-4 text-center">${Number(item.tamu_id_sales).toFixed(2)}</td>
+                        <td className="px-6 py-4 text-center">${Number(item.credit_card_sales).toFixed(2)}</td>
                       </tr>
                     ))}
                   </tbody>
