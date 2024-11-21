@@ -1,9 +1,15 @@
-import React, { useState } from 'react';
-import { GetServerSideProps } from 'next';
-import { Pool } from 'pg';
-import BackButton from '@/components/ui/back_button';
-import EditableTable, { Column } from '@/components/ui/editable_table';
-import { pageStyle, overlayStyle, contentStyle, headingStyle } from '@/utils/tableStyles';
+import BackButton from "@/components/ui/back_button";
+import EditableTable, { Column } from "@/components/ui/editable_table";
+import ManagerNavBar from "@/components/ui/manager_nav_bar";
+import {
+  pageStyle,
+  overlayStyle,
+  contentStyle,
+  headingStyle,
+} from "@/utils/tableStyles";
+import { GetServerSideProps } from "next";
+import { Pool } from "pg";
+import React, { useState } from "react";
 
 interface Employee {
   id: number;
@@ -18,23 +24,31 @@ interface ManagerEmployeesProps {
 }
 
 const ManagerEmployees: React.FC<ManagerEmployeesProps> = ({ employees }) => {
-
-  const [localEmployees, setLocalEmployees] = useState<Employee[]>(employees || []);
+  const [localEmployees, setLocalEmployees] = useState<Employee[]>(
+    employees || []
+  );
   // const [editingEmployeeId, setEditingEmployeeId] = useState<number | null>(null);
   // const [newRole, setNewRole] = useState('');
 
-
   const columns: Column[] = [
-    { key: 'staff_id', header: 'Staff ID' },
-    { key: 'name', header: 'Name' },
-    { 
-      key: 'position', 
-      header: 'Position', 
-      editable: true, 
-      type: 'select',
-      options: ['Manager', 'Cashier']
+    { key: "staff_id", header: "Staff ID" },
+    { key: "name", header: "Name", editable: true, type: "text" },
+    {
+      key: "position",
+      header: "Position",
+      editable: true,
+      type: "select",
+      options: ["Manager", "Cashier"],
     },
-    { key: 'username', header: 'Username' }
+    { key: "username", header: "Username" },
+    {
+      key: "is_deleted",
+      header: "Currently Employed",
+      editable: true,
+      type: "select",
+      options: ["Employed", "Fired/Resigned"],
+      formatValue: (value: boolean) => (value ? "Fired/Resigned" : "Employed"),
+    },
   ];
 
   const updateEmployee = async (id: number, field: string, value: any) => {
@@ -46,32 +60,62 @@ const ManagerEmployees: React.FC<ManagerEmployeesProps> = ({ employees }) => {
     }
     try {
       const response = await fetch(`/api/employee/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(bodyContent),
       });
-      if (!response.ok) throw new Error(`Failed to update employee: ${await response.text()}`);
-      setLocalEmployees(localEmployees.map(emp => emp.staff_id === id ? { ...emp, [field]: value } : emp));
+      if (!response.ok)
+        throw new Error(`Failed to update employee: ${await response.text()}`);
+      setLocalEmployees(
+        localEmployees.map((emp) =>
+          emp.staff_id === id ? { ...emp, [field]: value } : emp
+        )
+      );
     } catch (error) {
-      console.error('Error updating employee:', error);
+      console.error("Error updating employee:", error);
     }
   };
-  
+
+  const addEmployee = async (item: Omit<Employee, "id">) => {
+    try {
+      const response = await fetch("/api/employee", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(item),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to add menu item");
+      }
+
+      const { employee } = await response.json();
+      setLocalEmployees([...localEmployees, employee]);
+    } catch (error) {
+      console.error("Error adding menu item:", error);
+    }
+  };
 
   return (
-    <div style={pageStyle}>
-      <div style={overlayStyle}></div>
-      <div style={contentStyle}>
-        <BackButton />
-        <h2 style={headingStyle}>Manage Employees</h2>
-        <EditableTable<Employee>
-          items={localEmployees}
-          columns={columns}
-          idField="staff_id"
-          onUpdate={updateEmployee}
-        />
+    <>
+      <ManagerNavBar />
+
+      <div style={pageStyle}>
+        <div style={overlayStyle}></div>
+        <div style={contentStyle}>
+          <BackButton />
+          <h2 style={headingStyle}>Manage Employees</h2>
+          <EditableTable<Employee>
+            items={localEmployees}
+            columns={columns}
+            idField="staff_id"
+            onAdd={addEmployee}
+            onUpdate={updateEmployee}
+          />
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
@@ -86,10 +130,10 @@ export const getServerSideProps: GetServerSideProps = async () => {
   });
 
   try {
-    const result = await pool.query('SELECT * FROM staff');
+    const result = await pool.query("SELECT * FROM staff");
     return { props: { employees: result.rows } };
   } catch (error) {
-    console.error('Error fetching employees:', error);
+    console.error("Error fetching employees:", error);
     return { props: { employees: [] } };
   } finally {
     await pool.end();

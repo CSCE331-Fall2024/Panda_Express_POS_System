@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { pageStyle, overlayStyle, contentStyle, headingStyle, tableHeaderStyle, tableCellStyle } from '@/utils/tableStyles';
 import BackButton from '@/components/ui/back_button';
 import { isDate } from 'date-fns';
+import ManagerNavBar from '@/components/ui/manager_nav_bar';
 
 interface ZReportItem {
   employee_name: string;
@@ -36,6 +37,7 @@ const ZReport: React.FC = () => {
   }, []);
 
   return (
+    <> <ManagerNavBar />
     <div style={pageStyle}>
       <div style={overlayStyle}></div>
       <div style={contentStyle}>
@@ -78,6 +80,7 @@ const ZReport: React.FC = () => {
         </table>
       </div>
     </div>
+    </>
   );
 };
 

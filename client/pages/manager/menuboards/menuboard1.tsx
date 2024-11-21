@@ -122,7 +122,7 @@ const Menuboard: React.FC = () => {
         alignItems: 'center',
         height: '100vh',
         backgroundImage:
-          'url(https://www.pandaexpress.com.ph/sites/ph/files/styles/background_desktop/public/2022-06/img-our-food-desktop.jpg?itok=sa-5OOhz)',
+          'url(https://thecounter.org/wp-content/uploads/2022/02/worker-takes-customers-order-at-panda-express-garden-grove-CA-Nov-17-2021-1.jpg)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -138,7 +138,7 @@ const Menuboard: React.FC = () => {
           left: 0,
           width: '100%',
           height: '100%',
-          backgroundColor: 'rgba(255, 255, 255, 0.2)', // 20% black overlay to dim background
+          backgroundColor: 'rgba(0, 0, 0, 0.5)', // 50% black overlay to dim background
         }}
       ></div>
 
@@ -211,59 +211,30 @@ const Menuboard: React.FC = () => {
           flexDirection: 'column',
           alignItems: 'center',
           padding: '20px',
-          marginTop: '100px',
+          marginTop: '60px',
           width: '100%',
-          maxWidth: '100%',
-          height: '30%',
+          maxWidth: '80%',
+          height: '100%',
           maxHeight: '75%',
-          zIndex: 20,
+          backgroundColor: 'rgba(255, 255, 255, 0.9)', // Slight white background for readability
+          borderRadius: '8px',
+          position: 'relative',
+          zIndex: 2,
         }}
       >
         {/* Welcome Message */}
         <h1
           style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            fontSize: '50px',
+            fontSize: '24px',
             fontWeight: 'bold',
-            color: '#231f20',
-            marginBottom: '10px',
+            color: '#FF0000',
+            marginBottom: '20px',
           }}
         >
-          <img
-            src="https://s3.amazonaws.com/PandaExpressWebsite/www/hyp23/pr-logo.png"
-            alt="Panda Express Logo"
-            style={{ width: '90px' }}
-          />
           Welcome to Panda Express!
         </h1>
-        <h2
-        style={{
-          fontSize:'20px',
-          paddingBottom: '20px',
-          fontStyle: 'italic'
-        }}>
-          Chinese Flavors with American Tastes
-        </h2>
-        <a
-              href="/customer"
-              style={{
-                width: '20%%',
-                padding: '12px',
-                backgroundColor: '#D32F2F',
-                color: '#FFFFFF',
-                border: 'none',
-                borderRadius: '4px',
-                fontSize: '16px',
-                fontWeight: 'bold',
-                cursor: 'pointer'
-              }}
-            >
-              Order Now
-            {/* </button> */}
-            </a>
-        {/* <div
+
+        <div
           style={{
             display: 'flex',
             gap: '10px',
@@ -286,8 +257,8 @@ const Menuboard: React.FC = () => {
               {category}
             </Button>
           ))}
-        </div> */}
-        {/* <div
+        </div>
+        <div
           style={{
             display: 'flex',
             overflow: 'auto',
@@ -336,8 +307,7 @@ const Menuboard: React.FC = () => {
               </CardFooter>
             </Card>
           ))}
-        </div> */}
-        
+        </div>
       </div>
     </div>
   );

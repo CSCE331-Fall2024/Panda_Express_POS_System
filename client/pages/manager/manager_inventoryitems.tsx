@@ -3,6 +3,7 @@ import { GetServerSideProps } from 'next';
 import { Pool } from 'pg';
 import { pageStyle, overlayStyle, contentStyle, headingStyle, tableHeaderStyle, tableCellStyle } from '@/utils/tableStyles';
 import BackButton from '@/components/ui/back_button';
+import ManagerNavBar from '@/components/ui/manager_nav_bar';
 
 interface InventoryItem {
   inventory_item_id: number | string;
@@ -22,12 +23,13 @@ const ManagerInventoryItems: React.FC<ManagerInventoryItemsProps> = ({ inventory
   );
 
   return (
-    <div style={pageStyle}>
+    <> <ManagerNavBar />
+    <div style={{...pageStyle, paddingTop:'40px'}}>
       <div style={overlayStyle}></div>
       <div style={contentStyle}>
         <BackButton />
         <h2 style={headingStyle}>Manage Inventory Items</h2>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse'}}>
           <thead>
             <tr>
               <th style={tableHeaderStyle}>Inventory Item ID</th>
@@ -49,6 +51,7 @@ const ManagerInventoryItems: React.FC<ManagerInventoryItemsProps> = ({ inventory
         </table>
       </div>
     </div>
+    </>
   );
 };
 

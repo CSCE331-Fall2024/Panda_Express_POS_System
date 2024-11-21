@@ -13,7 +13,7 @@ const pool = new Pool({
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     try {
-      const result = await pool.query('SELECT * FROM menu_item ORDER BY menu_item_id');
+      const result = await pool.query('SELECT * FROM menu_item WHERE is_deleted = false ORDER BY menu_item_id');
       const menuItems = result.rows.map(item => ({
         ...item,
         price: Number(item.price),

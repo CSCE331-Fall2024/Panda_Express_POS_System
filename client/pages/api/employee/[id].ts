@@ -13,22 +13,63 @@ const pool = new Pool({
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
 
-  if (req.method === 'PUT') {
-    const { newPosition } = req.body;
+  if (!id || Array.isArray(id)) {
+    return res.status(400).json({ success: false, message: 'Invalid employee ID' });
+  }
 
-    if (!newPosition) {
-      return res.status(400).json({ success: false, message: 'Missing required fields' });
-    }
+  switch (req.method) {
+    case 'PUT':
+      try {
+        const { name, position, is_deleted } = req.body;
+        const updateFields = [];
+        const values = [];
+        let valueCounter = 1;
 
-    try {
-      await pool.query('UPDATE staff SET position = $1 WHERE staff_id = $2', [newPosition, id]);
-      res.status(200).json({ success: true, message: 'Employee role updated successfully' });
-    } catch (error) {
-      console.error('Error updating employee role:', error);
-      res.status(500).json({ success: false, message: 'Failed to update employee role' });
-    }
-  } else {
-    res.setHeader('Allow', ['PUT']);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
+        if (name !== undefined) {
+          updateFields.push(`name = $${valueCounter}`);
+          values.push(name);
+          valueCounter++;
+        }
+
+        if (position !== undefined) {
+          updateFields.push(`position = $${valueCounter}`);
+          values.push(position);
+          valueCounter++;
+        }
+
+        if (is_deleted !== undefined) {
+          updateFields.push(`is_deleted = $${valueCounter}`);
+          values.push(is_deleted === 'Employed' ? false : true);
+          valueCounter++;
+        }
+
+        if (updateFields.length === 0) {
+          return res.status(400).json({ success: false, message: 'No fields to update' });
+        }
+
+        values.push(id);
+        const query = `
+          UPDATE staff
+          SET ${updateFields.join(', ')}
+          WHERE staff_id = $${valueCounter}
+          RETURNING *;
+        `;
+
+        const result = await pool.query(query, values);
+
+        if (result.rows.length === 0) {
+          return res.status(404).json({ success: false, message: 'Employee not found' });
+        }
+
+        res.status(200).json({ success: true, employee: result.rows[0] });
+      } catch (error) {
+        console.error('Error updating employee:', error);
+        res.status(500).json({ success: false, message: 'Failed to update employee' });
+      }
+      break;
+
+    default:
+      res.setHeader('Allow', ['PUT']);
+      res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { pageStyle, overlayStyle, contentStyle, headingStyle, tableHeaderStyle, tableCellStyle } from '@/utils/tableStyles';
 import BackButton from '@/components/ui/back_button';
+import ManagerNavBar from '@/components/ui/manager_nav_bar';
 
 const ManagerOrders: React.FC = () => {
   const [orders, setOrders] = useState([]);
@@ -31,6 +32,7 @@ const ManagerOrders: React.FC = () => {
   };
 
   return (
+    <> <ManagerNavBar />
     <div style={pageStyle}>
       <div style={overlayStyle}></div>
       <div style={contentStyle}>
@@ -109,6 +111,7 @@ const ManagerOrders: React.FC = () => {
         </table>
       </div>
     </div>
+    </>
   );
 };
 
