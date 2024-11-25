@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useEffect } from 'react';
+import Chatbot from "@/components/ui/chatbot";
+
 import {
   Card,
   CardContent,
@@ -414,6 +416,10 @@ const CustomerKiosk: React.FC = () => {
           </CardFooter>
         </Card>
       </div>
+              
+        {/* Chatbot */}
+        <Chatbot />
+     
     </div>
   );
 };
