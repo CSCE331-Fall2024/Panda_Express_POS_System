@@ -1,7 +1,11 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { useRouter } from 'next/router';
+import { useUser } from '@/components/ui/user_context';
+
 
 const LoginPage: React.FC = () => {
+  const router = useRouter();
+  const { setUser } = useUser(); 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -24,16 +28,15 @@ const LoginPage: React.FC = () => {
   
       const data = await response.json();
       console.log('Login response data:', data);
-
+      
+      setUser({role: data.role});
       if (data.role) {
         sessionStorage.setItem('staff_id', data.staff_id);
 
-        if (data.role === 'cashier') {
-          window.location.href = '/cashier';
-        } else if (data.role === 'manager') {
-          window.location.href = '/manager';
-        }
-      } else {
+        if (data.role === 'cashier') router.push('/cashier');
+        else if (data.role === 'manager') router.push('/manager');
+      } else { 
+        router.push('/login');
         setError('Unauthorized role');
       }
     } catch (err) {

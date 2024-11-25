@@ -1,11 +1,22 @@
 import React from 'react';
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import ManagerNavBar from '@/components/ui/manager_nav_bar';
-import { pageStyle, overlayStyle, contentStyle, headingStyle } from '@/utils/tableStyles';
+import { pageStyle, overlayStyle} from '@/utils/tableStyles';
+import { useUser } from '@/components/ui/user_context';
 
 
 const Manager: React.FC = () => {
+  const router = useRouter();
+  const { user } = useUser();
+
+  useEffect(() => {
+    if (user.role !== 'manager') {
+      router.push('/login'); // Redirect unauthorized users to login
+    }
+  }, [user, router]);
+
+  if (user.role !== 'manager') return null;
 
   return (
     <>

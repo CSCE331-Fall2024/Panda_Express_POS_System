@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import SidebarMenu from '@/components/ui/sidebar_menu';
 import Header from '@/components/ui/header';
 import MenuDisplay from '@/components/ui/menu_display';
 import OrderSummary from '@/components/ui/order_summary';
+import { useUser } from '@/components/ui/user_context';
 
 const menuItems = {
   combos: ["Bowl", "Plate", "Bigger Plate", "Biggest Plate"],
@@ -13,6 +14,7 @@ const menuItems = {
 
 export default function PandaExpressPOS() {
   const router = useRouter();
+  const { user } = useUser();
   const [order, setOrder] = useState<string[]>([]);
   const [total, setTotal] = useState(0);
 
@@ -31,6 +33,14 @@ export default function PandaExpressPOS() {
     sessionStorage.setItem('paymentAmount', parseFloat((total * 1.0825).toFixed(2)).toString());
     router.push('/orderType');
   };
+
+  useEffect(() => {
+    if (user.role !== 'cashier') {
+      router.push('/login'); // Redirect unauthorized users to login
+    }
+  }, [user, router]);
+
+  if (user.role !== 'cashier') return null;
 
   return (
     <div className="flex h-screen bg-background">

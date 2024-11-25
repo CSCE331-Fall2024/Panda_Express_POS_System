@@ -91,8 +91,6 @@ app.get('/api/orders', async (req, res) => {
   }
 });
 
-
-
 // Endpoint to start Google OAuth2 authentication
 app.get('/api/auth/google',
   passport.authenticate('google', { scope: ['profile', 'email'] })
