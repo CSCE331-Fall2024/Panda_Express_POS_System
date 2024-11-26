@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { GetServerSideProps } from 'next';
 import { Pool } from 'pg';
-import { pageStyle, overlayStyle, contentStyle, headingStyle, tableHeaderStyle, tableCellStyle } from '@/utils/tableStyles';
+import { pageStyle, overlayStyle, contentStyle, headingStyle } from '@/utils/tableStyles';
 import BackButton from '@/components/ui/back_button';
+import EditableTable, { Column } from '@/components/ui/editable_table';
 import ManagerNavBar from '@/components/ui/manager_nav_bar';
 
 interface InventoryItem {
-  inventory_item_id: number | string;
+  id: number;
   item_name: string;
   quantity: number;
 }
@@ -15,47 +16,73 @@ interface ManagerInventoryItemsProps {
   inventoryItems: InventoryItem[];
 }
 
-// Component to render the inventory items in a table
 const ManagerInventoryItems: React.FC<ManagerInventoryItemsProps> = ({ inventoryItems }) => {
-  // Ensure inventory_item_id is treated as a number for sorting
-  const sortedItems = [...inventoryItems].sort(
-    (a, b) => Number(a.inventory_item_id) - Number(b.inventory_item_id)
-  );
+  const [localInventoryItems, setLocalInventoryItems] = useState<InventoryItem[]>(inventoryItems);
+
+  const columns: Column[] = [
+    { key: 'inventory_item_id', header: 'Item ID' },
+    { key: 'item_name', header: 'Item Name', editable: true, type: 'text' },
+    { key: 'quantity', header: 'Quantity', editable: true, type: 'number' },
+  ];
+
+  const updateInventoryItem = async (id: number, field: string, value: any) => {
+    try {
+      const response = await fetch(`/api/inventory_items/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, [field]: value }),
+      });
+
+      if (!response.ok) throw new Error('Failed to update inventory item');
+
+      setLocalInventoryItems((items) =>
+        items.map((item) =>
+          item.id === id ? { ...item, [field]: value } : item
+        )
+      );
+    } catch (error) {
+      console.error('Error updating inventory item:', error);
+    }
+  };
+
+  const addInventoryItem = async (item: Omit<InventoryItem, 'id'>) => {
+    try {
+      const response = await fetch('/api/inventory_items', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(item),
+      });
+
+      if (!response.ok) throw new Error('Failed to add inventory item');
+
+      const { inventoryItem } = await response.json();
+      setLocalInventoryItems((items) => [...items, inventoryItem]);
+    } catch (error) {
+      console.error('Error adding inventory item:', error);
+    }
+  };
 
   return (
-    <> <ManagerNavBar />
-    <div style={{...pageStyle, paddingTop:'40px'}}>
-      <div style={overlayStyle}></div>
-      <div style={contentStyle}>
-        <BackButton />
-        <h2 style={headingStyle}>Manage Inventory Items</h2>
-        <table style={{ width: '100%', borderCollapse: 'collapse'}}>
-          <thead>
-            <tr>
-              <th style={tableHeaderStyle}>Inventory Item ID</th>
-              <th style={tableHeaderStyle}>Item Name</th>
-              <th style={tableHeaderStyle}>Quantity</th>
-              <th style={tableHeaderStyle}>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {sortedItems.map((item) => (
-              <tr key={item.inventory_item_id}>
-                <td style={tableCellStyle}>{item.inventory_item_id}</td>
-                <td style={tableCellStyle}>{item.item_name}</td>
-                <td style={tableCellStyle}>{item.quantity}</td>
-                <td style={tableCellStyle}>Edit / Reorder</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <>
+      <ManagerNavBar />
+      <div style={{ ...pageStyle, paddingTop: '40px' }}>
+        <div style={overlayStyle}></div>
+        <div style={contentStyle}>
+          <BackButton />
+          <h2 style={headingStyle}>Manage Inventory Items</h2>
+          <EditableTable<InventoryItem>
+            items={localInventoryItems}
+            columns={columns}
+            idField={"inventory_item_id" as keyof InventoryItem}
+            onUpdate={updateInventoryItem}
+            onAdd={addInventoryItem}
+          />
+        </div>
       </div>
-    </div>
     </>
   );
 };
 
-// Server-side data fetching with SQL query
 export const getServerSideProps: GetServerSideProps = async () => {
   const pool = new Pool({
     user: process.env.PSQL_USER,
