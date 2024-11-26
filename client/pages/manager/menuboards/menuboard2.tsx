@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { getUserLocation, getWeatherData } from "@/utils/apiHelpers";
 import { Cloud, Sun, CloudRain, CloudSnow, User } from "lucide-react";
 
+
 interface MenuItem {
   menu_item_id: number;
   price: number;
@@ -89,14 +90,13 @@ const Menuboard: React.FC = () => {
     return <Cloud className="h-6 w-6" />; // Default icon
   };
   
-  const comboItems = menuItems['Combos'] || [];
-  const sideItems = menuItems['Side'] || [];
-  const appItems = [...(menuItems['Appetizer'] || []), ...(menuItems['Drink'] || [])];
+  const entreeItems = menuItems['Entree'] || [];
 
 
 
   return (
     <>
+      
     <div
       style={{
         display: 'flex',
@@ -184,7 +184,7 @@ const Menuboard: React.FC = () => {
         }}
       >
 
-     {/* Combos Section */}
+     {/* Entrees Section */}
      <div
           style={{
             display: 'flex',
@@ -192,27 +192,28 @@ const Menuboard: React.FC = () => {
             alignItems: 'center',
             width: '100%',
             marginTop:'80px',
+            paddingLeft: '20px',
+            paddingRight: '20px'
           }}
         >
           <h2
             style={{
               color: 'White',
               marginBottom: '15px',
-              fontSize: '1.8rem',
-              marginTop:'15px'
+              fontSize: '1.8rem'
             }}
           >
-            Combos
+            Entrees
           </h2>
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(4, 1fr)',
+              gridTemplateColumns: 'repeat(5, 1fr)',
               gap: '20px',
               width: '100%'
             }}
           >
-            {comboItems.map((item) => (
+            {entreeItems.map((item) => (
             <div
               key={item.menu_item_id}
               style={{
@@ -265,173 +266,6 @@ const Menuboard: React.FC = () => {
                 </p>
               </div>
             </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Sides Section */}
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            width: '100%',
-            marginTop: '20px'
-          }}
-        >
-          <h2
-            style={{
-              color: 'White',
-              marginBottom: '15px',
-              fontSize: '1.8rem',
-            }}
-          >
-            Sides
-          </h2>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(3, 1fr)',
-              gap: '20px',
-              width: '100%'
-            }}
-          >
-            {sideItems.map((item) => (
-            <div
-              key={item.menu_item_id}
-              style={{
-                backgroundColor: '#FFFFFF',
-                borderRadius: '8px',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                padding: '15px',
-                display: 'flex',
-                alignItems: 'center'
-              }}
-            >
-              <img
-                src={item.image}
-                alt={item.name}
-                style={{
-                  width: '100px',
-                  height: '100px',
-                  objectFit: 'cover',
-                  borderRadius: '8px',
-                  marginRight: '15px'
-                }}
-              />
-              <div>
-                <h3
-                  style={{
-                    fontSize: '1rem',
-                    color: '#333',
-                    marginBottom: '5px'
-                  }}
-                >
-                  {item.name}
-                </h3>
-                <p
-                  style={{
-                    color: '#666',
-                    marginBottom: '10px',
-                    fontSize: '0.9rem'
-                  }}
-                >
-                  {item.description}
-                </p>
-                <p
-                  style={{
-                    fontSize: '1.1rem',
-                    fontWeight: 'bold',
-                    color: '#D32F2F'
-                  }}
-                >
-                  ${item.price.toFixed(2)}
-                </p>
-                </div>
-                </div>
-            ))}
-          </div>
-        </div>
-         {/* Apps & Drink Section */}
-         <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            width: '100%',
-            marginTop: '20px'
-          }}
-        >
-          <h2
-            style={{
-              color: 'White',
-              marginBottom: '15px',
-              fontSize: '1.8rem',
-            }}
-          >
-            Appetizers and Drinks
-          </h2>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(4, 1fr)',
-              gap: '20px',
-              width: '100%'
-            }}
-          >
-            {appItems.map((item) => (
-            <div
-              key={item.menu_item_id}
-              style={{
-                backgroundColor: '#FFFFFF',
-                borderRadius: '8px',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                padding: '15px',
-                display: 'flex',
-                alignItems: 'center'
-              }}
-            >
-              <img
-                src={item.image}
-                alt={item.name}
-                style={{
-                  width: '100px',
-                  height: '100px',
-                  objectFit: 'cover',
-                  borderRadius: '8px',
-                  marginRight: '15px'
-                }}
-              />
-              <div>
-                <h3
-                  style={{
-                    fontSize: '1rem',
-                    color: '#333',
-                    marginBottom: '5px'
-                  }}
-                >
-                  {item.name}
-                </h3>
-                <p
-                  style={{
-                    color: '#666',
-                    marginBottom: '10px',
-                    fontSize: '0.9rem'
-                  }}
-                >
-                  {item.description}
-                </p>
-                <p
-                  style={{
-                    fontSize: '1.1rem',
-                    fontWeight: 'bold',
-                    color: '#D32F2F'
-                  }}
-                >
-                  ${item.price.toFixed(2)}
-                </p>
-                </div>
-                </div>
             ))}
           </div>
         </div>

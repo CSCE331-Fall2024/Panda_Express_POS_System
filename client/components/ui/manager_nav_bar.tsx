@@ -67,7 +67,7 @@ const ManagerNavBar: React.FC = () => {
             <li style={menuItemStyle} onClick={() => handleNavigation('/manager/manager_reports')}>Reports</li>
             <li style={menuItemStyle} onClick={() => handleNavigation('/manager/manager_menuitems')}>Menu Items</li>
             <li style={menuItemStyle} onClick={() => handleNavigation('/manager/manager_inventoryitems')}>Inventory Items</li>
-            <li style={menuItemStyle} onClick={() => handleNavigation('/manager/menuboards/menuboard1')}>Menu Board</li>
+            <li style={menuItemStyle} onClick={() => handleNavigation('/manager/menuboards/displaypick')}>Menu Board</li>
             <li style={menuItemStyle} onClick={() => handleNavigation('/login')}>Logout</li>
           </ul>
           </div>
