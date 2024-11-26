@@ -3,22 +3,39 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
+  --background: #fdf6e3;
   --foreground: #171717;
-  
-}
-
-@media (prefers-color-scheme: base) {
-  :root {
-    --background: #ededed;
-    --foreground: #0a0a0a;
-  }
+  --card: #f8f9fa; /* Slightly lighter than background */
+  --card-foreground: #212529; /* Dark text for cards */
+  --highlight: #f5f5a1; /* Optional highlight for day */
+  --primary: #ff0000;
+  --secondary: #3a3a3a;
+  --background-image: url('https://www.pandaexpress.com.ph/sites/ph/files/styles/background_desktop/public/2022-06/img-our-food-desktop.jpg?itok=sa-5OOhz');
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
+  background-image: var(--background-image);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.dark {
+  /* Night Theme */
+  --background: #1a1a1a;
+  --foreground: #ffffff;
+  --primary: #ff3b3b;
+  --secondary: #b0b0b0;
+  --background-image: url('/dark-theme-main-background.png');
+}
+
+button {
+  background-color: var(--primary);
+  color: var(--foreground);
+  border: none;
 }
 
 @layer base {
@@ -85,10 +102,11 @@ body {
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
   body {
     @apply bg-background text-foreground;
+    transition: background var(--transition-duration), color var(--transition-duration);
+  }
+  * {
+    @apply border-border;
   }
 }

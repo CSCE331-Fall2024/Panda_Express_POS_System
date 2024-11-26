@@ -9,6 +9,8 @@ import {
 } from "@/components/ui/card";
 import { getUserLocation, getWeatherData } from "@/utils/apiHelpers";
 import { Cloud, Sun, CloudRain, CloudSnow, User } from "lucide-react";
+import { useTheme } from "@/components/context/theme_context";
+import ThemeToggle from "@/components/context/theme_toggle";
 
 interface MenuItem {
   menu_item_id: number;
@@ -37,8 +39,9 @@ const Menuboard: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = React.useState<MenuCategory>('Combos');
   const [weather, setWeather] = React.useState<{ temperature?: number; description?: string } | null>(null);
   const [loading, setLoading] = React.useState<boolean>(true);
-
   const categories: MenuCategory[] = ['Combos', 'Appetizer', 'Entree', 'Side', 'Drink'];
+
+  const { theme, toggleTheme } = useTheme();
 
   // Fetch menu items from the API
   useEffect(() => {
@@ -121,8 +124,7 @@ const Menuboard: React.FC = () => {
         justifyContent: 'center',
         alignItems: 'center',
         height: '100vh',
-        backgroundImage:
-          'url(https://www.pandaexpress.com.ph/sites/ph/files/styles/background_desktop/public/2022-06/img-our-food-desktop.jpg?itok=sa-5OOhz)',
+        backgroundImage: 'var(--background-image)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -130,7 +132,7 @@ const Menuboard: React.FC = () => {
         overflow: 'hidden',
       }}
     >
-      {/* Dim Overlay */}
+      {/* Dim Overlay
       <div
         style={{
           position: 'absolute',
@@ -140,13 +142,13 @@ const Menuboard: React.FC = () => {
           height: '100%',
           backgroundColor: 'rgba(255, 255, 255, 0.2)', // 20% black overlay to dim background
         }}
-      ></div>
+      ></div> */}
 
       {/* Full-Width Navbar */}
       <nav
         style={{
-          backgroundColor: '#FF0000',
-          color: '#FFFFFF',
+          backgroundColor: 'var(--primary)',
+          color: 'var(--foreground)',
           padding: '15px 20px',
           display: 'flex',
           alignItems: 'center',
@@ -176,8 +178,9 @@ const Menuboard: React.FC = () => {
           )}
         </div>
 
-        {/* Employee Sign In aligned to the right */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        {/* Theme Toggle */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+          <ThemeToggle /> {/* Add theme toggle button */}
           <a
             href="/login"
             style={{ color: '#FFFFFF', textDecoration: 'none', display: 'flex', alignItems: 'center' }}
@@ -211,7 +214,6 @@ const Menuboard: React.FC = () => {
             alignItems: 'center',
             fontSize: '50px',
             fontWeight: 'bold',
-            color: '#231f20',
             marginBottom: '10px',
           }}
         >
