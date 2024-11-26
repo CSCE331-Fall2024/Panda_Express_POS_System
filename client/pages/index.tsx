@@ -176,22 +176,6 @@ const Menuboard: React.FC = () => {
           )}
         </div>
 
-        {/* Order Now Icon aligned to the center*/}
-        <a
-          href="/customer"
-          style={{
-            color: '#FFFFFF',
-            textDecoration: 'none',
-            display: 'flex',
-            alignItems: 'center',
-            position: 'absolute',
-            left: '50%',
-            transform: 'translateX(-50%)',
-          }}
-        >
-          <span style={{ fontWeight: 'bold' }}>Order Now</span>
-        </a>
-
         {/* Employee Sign In aligned to the right */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <a
@@ -246,6 +230,7 @@ const Menuboard: React.FC = () => {
         }}>
           Chinese Flavors with American Tastes
         </h2>
+        {/* order now button */}
         <a
               href="/customer"
               style={{
@@ -262,82 +247,7 @@ const Menuboard: React.FC = () => {
             >
               Order Now
             {/* </button> */}
-            </a>
-        {/* <div
-          style={{
-            display: 'flex',
-            gap: '10px',
-            marginBottom: '20px',
-          }}
-        >
-          {categories.map((category) => (
-            <Button
-              key={category}
-              onClick={() => setSelectedCategory(category)}
-              variant={selectedCategory === category ? 'default' : 'outline'}
-              style={{
-                padding: '10px 15px',
-                backgroundColor: selectedCategory === category ? '#FF0000' : '#FFFFFF',
-                color: selectedCategory === category ? '#FFFFFF' : '#000000',
-                borderRadius: '5px',
-                cursor: 'pointer',
-              }}
-            >
-              {category}
-            </Button>
-          ))}
-        </div> */}
-        {/* <div
-          style={{
-            display: 'flex',
-            overflow: 'auto',
-            flexWrap: 'wrap',
-            gap: '20px',
-            justifyContent: 'center',
-          }}
-        >
-          {menuItems[selectedCategory]?.map((item) => (
-            <Card
-              key={item.menu_item_id}
-              style={{
-                width: '200px',
-                padding: '10px',
-                backgroundColor: '#FFFFFF',
-                borderRadius: '8px',
-                boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                textAlign: 'center',
-              }}
-            >
-              <div className="relative h-40 overflow-hidden">
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  style={{
-                    width: '100%',
-                    height: '150px',
-                    objectFit: 'cover',
-                    borderRadius: '5px',
-                  }}
-                />
-              </div>
-              <CardHeader>
-                <CardTitle style={{ fontSize: '16px', fontWeight: 'bold', margin: '10px 0' }}>
-                  {item.name}
-                </CardTitle>
-                <CardDescription style={{ fontSize: '14px', color: '#555' }}>
-                  {item.description}
-                </CardDescription>
-              </CardHeader>
-              <CardFooter style={{ fontWeight: 'bold', marginTop: '5px' }}>
-                ${item.price.toFixed(2)}
-              </CardFooter>
-            </Card>
-          ))}
-        </div> */}
-        
+            </a>        
       </div>
     </div>
   );
