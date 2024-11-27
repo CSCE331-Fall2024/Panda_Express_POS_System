@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useEffect } from 'react';
+import { useTheme } from "@/components/context/theme_context";
+import ThemeToggle from "@/components/context/theme_toggle";
 import Chatbot from "@/components/ui/chatbot";
 
 import {
@@ -49,6 +51,11 @@ const CustomerKiosk: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = React.useState<string>("Combos");
   const [mode, setMode] = React.useState<string>("Customer Self-Service");
   const [weather, setWeather] = React.useState<{ temperature?: number; description?: string } | null>(null);
+  const { theme } = useTheme();
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", theme === "night");
+  }, [theme]);
 
   const categoryOrder = ["Combos", "Side", "Entree", "Appetizer", "Drink"];
 
@@ -255,15 +262,21 @@ const CustomerKiosk: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className={`min-h-screen ${theme === 'night' ? 'bg-black text-white' : 'bg-white text-black'}`}>
       {/* Navbar */}
-      <nav className="bg-red-600 text-white p-4 flex items-center justify-between">
+      <nav
+        className={`p-4 flex items-center justify-between ${
+          theme === 'night' ? 'bg-red-800 text-white' : 'bg-red-600 text-white'
+        }`}
+      >
         <div className="flex items-center gap-4">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => router.push("/")}
-            className="text-white hover:text-white hover:bg-red-700"
+            className={`${
+              theme === 'night' ? 'text-white hover:bg-red-900' : 'text-white hover:bg-red-700'
+            }`}
           >
             <Home className="h-6 w-6" />
           </Button>
@@ -273,43 +286,29 @@ const CustomerKiosk: React.FC = () => {
             className="h-8"
           />
         </div>
-
+  
         <h1 className="text-xl font-bold">{mode}</h1>
-
+  
         <div className="flex items-center gap-4">
-          {/* Weather display */}
           {weather && (
             <div className="flex items-center gap-2">
               {getWeatherIcon()} {/* Weather icon */}
-              <span style={{ marginLeft: '1px' }}>
-                {weather.temperature !== undefined ? `${Math.round(weather.temperature)}°F` : 'N/A'}
+              <span>
+                {weather.temperature !== undefined ? `${Math.round(weather.temperature)}°F` : "N/A"}
               </span>
             </div>
           )}
-
           <div className="flex items-center gap-2">
             <ShoppingBag className="h-6 w-6" />
             <span className="font-bold">{order.length} items</span>
           </div>
         </div>
       </nav>
-
+  
+      {/* Main Content */}
       <div className="container mx-auto p-6 flex gap-6">
         {/* Menu Section */}
         <div className="flex-1">
-          {/* <div className="flex gap-4 mb-6">
-            {Object.keys(menuItems).map((category) => (
-              <Button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
-                variant={selectedCategory === category ? "default" : "outline"}
-                className="flex-1"
-              >
-                {category}
-              </Button>
-            ))}
-          </div> */}
-
           <div className="flex gap-4 mb-6">
             {categoryOrder.map((category) => (
               menuItems[category] && (
@@ -317,18 +316,24 @@ const CustomerKiosk: React.FC = () => {
                   key={category}
                   onClick={() => setSelectedCategory(category)}
                   variant={selectedCategory === category ? "default" : "outline"}
-                  className="flex-1"
+                  className={`${
+                    theme === 'night' ? 'bg-gray-900 text-white border-gray-700' : 'bg-white text-black border-gray-300'
+                  }`}
                 >
                   {category}
                 </Button>
               )
             ))}
           </div>
-
-
+  
           <div className="grid grid-cols-2 gap-4">
             {menuItems[selectedCategory]?.map((item) => (
-              <Card key={item.name} className="overflow-hidden">
+              <Card
+                key={item.name}
+                className={`overflow-hidden ${
+                  theme === 'night' ? 'bg-gray-900 text-white border-gray-700' : 'bg-white text-black border-gray-300'
+                }`}
+              >
                 <div className="relative h-40 overflow-hidden">
                   <img
                     src={item.image}
@@ -341,31 +346,29 @@ const CustomerKiosk: React.FC = () => {
                   <CardDescription>{item.description}</CardDescription>
                 </CardHeader>
                 <CardFooter className="flex justify-between items-center">
-                <span className="font-bold">${item.price.toFixed(2)}</span>
+                  <span className="font-bold">${item.price.toFixed(2)}</span>
                   <Button
-                  onClick={() => addToOrder(item, selectedCategory)}
-                  disabled={
-                    currentItemType === "Plate" &&
-                    ((selectedCategory === 'Side' && selectedSides >= 1) ||
-                    (selectedCategory === 'Entree' && selectedEntrees >= 2)) ||
-
-                    currentItemType === "Bigger Plate" &&
-                    ((selectedCategory === 'Side' && selectedSides >= 1) ||
-                    (selectedCategory === 'Entree' && selectedEntrees >= 3)) ||
-
-                    currentItemType === "Bowl" &&
-                    ((selectedCategory === 'Side' && selectedSides >= 1) ||
-                    (selectedCategory === 'Entree' && selectedEntrees >= 1))
-                  }
-                >Add to Order</Button>
+                    onClick={() => addToOrder(item, selectedCategory)}
+                    className={`${
+                      theme === 'night'
+                        ? 'bg-white text-black hover:bg-gray-200'
+                        : 'bg-black text-white hover:bg-gray-900'
+                    }`}
+                  >
+                    Add to Order
+                  </Button>
                 </CardFooter>
               </Card>
             ))}
           </div>
         </div>
-
+  
         {/* Order Summary */}
-        <Card className="w-96">
+        <Card
+          className={`w-96 ${
+            theme === 'night' ? 'bg-gray-900 text-white border-gray-700' : 'bg-white text-black border-gray-300'
+          }`}
+        >
           <CardHeader>
             <CardTitle>Your Order</CardTitle>
             <CardDescription>Review and customize your meal</CardDescription>
@@ -375,16 +378,23 @@ const CustomerKiosk: React.FC = () => {
               {order.map((item, index) => (
                 <div
                   key={index}
-                  className="flex justify-between items-center mb-2 p-2 bg-gray-50 rounded"
+                  className={`flex justify-between items-center mb-2 p-2 ${
+                    theme === 'night' ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'
+                  } rounded`}
                 >
                   <div>
                     <div className="font-medium">{item.name}</div>
-                    <div className="text-sm text-gray-500">${item.price.toFixed(2)}</div>
+                    <div className="text-sm">
+                      ${item.price.toFixed(2)}
+                    </div>
                   </div>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => removeFromOrder(index)}
+                    className={`${
+                      theme === 'night' ? 'text-white hover:text-red-500' : 'text-black hover:text-red-500'
+                    }`}
                   >
                     Remove
                   </Button>
@@ -407,21 +417,18 @@ const CustomerKiosk: React.FC = () => {
               <span>${(total * 1.0825).toFixed(2)}</span>
             </div>
             <Button
-              className="w-full mt-4"
+              className={`w-full mt-4 ${
+                theme === 'night' ? 'bg-white text-black hover:bg-gray-200' : 'bg-black text-white hover:bg-gray-900'
+              }`}
               disabled={order.length === 0}
-              onClick={handleCheckout}
             >
               Checkout ({order.length} items)
             </Button>
           </CardFooter>
         </Card>
       </div>
-              
-        {/* Chatbot */}
-        <Chatbot />
-     
     </div>
-  );
+  );  
 };
 
 export default CustomerKiosk;

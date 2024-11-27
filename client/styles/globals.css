@@ -27,7 +27,7 @@ body {
   /* Night Theme */
   --background: #1a1a1a;
   --foreground: #ffffff;
-  --primary: #ff3b3b;
+  --primary: #8B0000;
   --secondary: #b0b0b0;
   --background-image: url('/dark-theme-main-background.png');
 }
