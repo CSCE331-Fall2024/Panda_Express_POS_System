@@ -14,12 +14,15 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // Load the persisted theme from localStorage when the app starts
   useEffect(() => {
-    const storedTheme = localStorage.getItem('theme') as Theme | null;
-    if (storedTheme) {
-      setTheme(storedTheme);
-      document.documentElement.classList.toggle('dark', storedTheme === 'night');
-    }
-  }, []);
+  const savedTheme = localStorage.getItem('theme') as Theme | null;
+  if (savedTheme) {
+    setTheme(savedTheme);
+  } else {
+    // Optional: Match system preferences
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    setTheme(prefersDark ? 'night' : 'day'); // Default to 'day' if no preferences are stored
+  }
+}, []);
 
   // Update localStorage and apply the theme when it changes
   const toggleTheme = () => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTheme } from '@/components/context/theme_context';
+import { useTheme } from '@/components/context/theme_context'; 
 
 const ThemeToggle: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
@@ -9,8 +9,8 @@ const ThemeToggle: React.FC = () => {
       onClick={toggleTheme}
       style={{
         padding: '10px 20px',
-        backgroundColor: theme === 'day' ? '#121212' : '#f8f9fa', // Day: Gold, Night: Dark Gray
-        color: theme === 'day' ? '#FFF' : '#000', // Day: Black Text, Night: White Text
+        backgroundColor: theme === 'day' ? '#121212' : '#f8f9fa',
+        color: theme === 'day' ? '#FFF' : '#000',
         border: 'none',
         borderRadius: '5px',
         cursor: 'pointer',

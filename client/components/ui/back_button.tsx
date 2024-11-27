@@ -1,4 +1,3 @@
-// components/BackButton.tsx
 import React from 'react';
 import { buttonStyle } from '@/utils/tableStyles';
 import { useRouter } from 'next/router';
@@ -8,7 +7,7 @@ const BackButton: React.FC = () => {
   const router = useRouter();
 
   return (
-    <button onClick={() => router.back()} style={buttonStyle}>
+    <button onClick={() => router.push('/manager')} style={buttonStyle}>
       <ArrowBigLeft size={24}/>
     </button>
   );

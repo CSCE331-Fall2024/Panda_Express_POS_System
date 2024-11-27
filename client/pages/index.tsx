@@ -227,8 +227,9 @@ const Menuboard: React.FC = () => {
         <h2
         style={{
           fontSize:'20px',
-          paddingBottom: '20px',
-          fontStyle: 'italic'
+          fontWeight: 'bold',
+          fontStyle: 'italic',
+          paddingBottom: '20px'
         }}>
           Chinese Flavors with American Tastes
         </h2>
