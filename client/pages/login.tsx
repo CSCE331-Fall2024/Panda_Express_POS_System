@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useUser } from '@/components/ui/user_context';
+import { useTheme } from '@/components/context/theme_context';
 
 
 const LoginPage: React.FC = () => {
   const router = useRouter();
-  const { setUser } = useUser(); 
+  const { setUser } = useUser();
+  const { theme } = useTheme();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -67,13 +69,13 @@ const LoginPage: React.FC = () => {
         left: 0,
         width: '100%',
         height: '100%',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)' // 50% black overlay to dim background
+        backgroundColor: theme === 'day' ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)', // Adjust overlay based on theme
       }}></div>
 
       {/* Full-Width Navbar */}
       <nav
         style={{
-          backgroundColor: '#FF0000',
+          backgroundColor: 'var(--primary)',
           color: '#FFFFFF',
           padding: '15px 20px',
           display: 'flex',
@@ -93,7 +95,18 @@ const LoginPage: React.FC = () => {
         />
 
         {/* Menu Text */}          
-        <a href="/" style={{ color: '#FFFFFF', textDecoration: 'none', display: 'flex', alignItems: 'center', position: 'absolute', left: '50%', transform: 'translateX(-50%)'}}>
+        <a 
+          href="/" 
+          style={{ 
+            color: '#FFFFFF', 
+            textDecoration: 'none', 
+            display: 'flex', 
+            alignItems: 'center', 
+            position: 'absolute', 
+            left: '50%', 
+            transform: 'translateX(-50%)'
+          }}
+        >
           <span style={{ fontWeight: 'bold' }}>Menu</span>
         </a>
         
@@ -115,7 +128,7 @@ const LoginPage: React.FC = () => {
           marginTop: '60px',
           width: '100%',
           maxWidth: '400px',
-          backgroundColor: 'rgba(255, 255, 255, 0.9)', // Slight white background for readability
+          backgroundColor: 'rgba(255, 255, 255, 0.65)', // Slight white background for readability
           borderRadius: '8px',
           position: 'relative',
           zIndex: 2
@@ -128,7 +141,7 @@ const LoginPage: React.FC = () => {
             alt="Panda Rewards Logo"
             style={{ width: '200px', marginBottom: '40px', display: 'block', marginLeft: 'auto', marginRight: 'auto' }}
           />
-          <h2 style={{ fontSize: '22px', color: '#D32F2F', margin: 0 }}>GOOD FORTUNE AWAITS</h2>
+          <h2 style={{ fontSize: '22px', color: 'var(--primary)', margin: 0 }}>GOOD FORTUNE AWAITS</h2>
           <p style={{ color: '#888', fontSize: '14px' }}>Log in below to get started.</p>
 
           {/* Form */}
@@ -141,6 +154,7 @@ const LoginPage: React.FC = () => {
               style={{
                 width: '100%',
                 padding: '10px',
+                color: '#171717',
                 margin: '10px 0',
                 border: '1px solid #CCC',
                 borderRadius: '4px'
@@ -154,6 +168,7 @@ const LoginPage: React.FC = () => {
               style={{
                 width: '100%',
                 padding: '10px',
+                color: '#171717',
                 margin: '10px 0',
                 border: '1px solid #CCC',
                 borderRadius: '4px'
@@ -164,7 +179,7 @@ const LoginPage: React.FC = () => {
               style={{
                 width: '100%',
                 padding: '12px',
-                backgroundColor: '#D32F2F',
+                backgroundColor: 'var(--primary)',
                 color: '#FFFFFF',
                 border: 'none',
                 borderRadius: '4px',

@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { getUserLocation, getWeatherData } from "@/utils/apiHelpers";
-import { Cloud, Sun, CloudRain, CloudSnow, User } from "lucide-react";
+import { Sun, Moon, Cloud, CloudRain, CloudSnow, CloudMoon, User } from "lucide-react";
 import { useTheme } from "@/components/context/theme_context";
 
 
@@ -26,8 +26,10 @@ interface MenuItems {
 }
 
 const weatherIcons = {
-  clear: <Sun className="h-6 w-6" />,
-  clouds: <Cloud className="h-6 w-6" />,
+  clearDay: <Sun className="h-6 w-6" />,
+  clearNight: <Moon className="h-6 w-6" />,
+  cloudsDay: <Cloud className="h-6 w-6" />,
+  cloudsNight: <CloudMoon className="h-6 w-6" />,
   rain: <CloudRain className="h-6 w-6" />,
   snow: <CloudSnow className="h-6 w-6" />,
 };
@@ -37,7 +39,7 @@ type MenuCategory = string;
 const Menuboard: React.FC = () => {
   const [menuItems, setMenuItems] = React.useState<MenuItems>({});
   const [selectedCategory, setSelectedCategory] = React.useState<MenuCategory>('Combos');
-  const [weather, setWeather] = React.useState<{ temperature?: number; description?: string } | null>(null);
+  const [weather, setWeather] = React.useState<{ temperature?: number; description?: string; isDay?: boolean } | null>(null);
   const [loading, setLoading] = React.useState<boolean>(true);
   const categories: MenuCategory[] = ['Combos', 'Appetizer', 'Entree', 'Side', 'Drink'];
 
@@ -90,14 +92,23 @@ const Menuboard: React.FC = () => {
   }, []);
 
   const getWeatherIcon = () => {
-    if (!weather?.description) return null;
+    if (!weather?.description || weather.isDay === undefined) return null;
+  
     const description = weather.description.toLowerCase();
-
-    if (description.includes('clear')) return weatherIcons.clear;
-    if (description.includes('cloud')) return weatherIcons.clouds;
-    if (description.includes('rain')) return weatherIcons.rain;
-    if (description.includes('snow')) return weatherIcons.snow;
-
+  
+    if (description.includes("clear")) {
+      return weather.isDay ? weatherIcons.clearDay : weatherIcons.clearNight;
+    }
+    if (description.includes("cloud")) {
+      return weather.isDay ? weatherIcons.cloudsDay : weatherIcons.cloudsNight;
+    }
+    if (description.includes("rain")) {
+      return weatherIcons.rain;
+    }
+    if (description.includes("snow")) {
+      return weatherIcons.snow;
+    }
+  
     return <Cloud className="h-6 w-6" />; // Default icon
   };
 
