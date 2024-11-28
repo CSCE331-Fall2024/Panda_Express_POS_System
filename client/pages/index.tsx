@@ -10,7 +10,7 @@ import {
 import { getUserLocation, getWeatherData } from "@/utils/apiHelpers";
 import { Cloud, Sun, CloudRain, CloudSnow, User } from "lucide-react";
 import { useTheme } from "@/components/context/theme_context";
-import ThemeToggle from "@/components/context/theme_toggle";
+
 
 interface MenuItem {
   menu_item_id: number;
@@ -101,22 +101,6 @@ const Menuboard: React.FC = () => {
     return <Cloud className="h-6 w-6" />; // Default icon
   };
 
-  // if (loading) {
-  //   return (
-  //     <div
-  //       style={{
-  //         display: 'flex',
-  //         justifyContent: 'center',
-  //         alignItems: 'center',
-  //         height: '100vh',
-  //         backgroundColor: '#fff',
-  //       }}
-  //     >
-  //       Loading menu items...
-  //     </div>
-  //   );
-  // }
-
   return (
     <div
       style={{
@@ -178,9 +162,8 @@ const Menuboard: React.FC = () => {
           )}
         </div>
 
-        {/* Theme Toggle */}
+        {/* Employee Signin */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-          <ThemeToggle /> {/* Add theme toggle button */}
           <a
             href="/login"
             style={{ color: '#FFFFFF', textDecoration: 'none', display: 'flex', alignItems: 'center' }}

@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useEffect } from 'react';
 import { useTheme } from "@/components/context/theme_context";
-import ThemeToggle from "@/components/context/theme_toggle";
 import Chatbot from "@/components/ui/chatbot";
 
 import {
@@ -427,8 +426,10 @@ const CustomerKiosk: React.FC = () => {
           </CardFooter>
         </Card>
       </div>
+      <Chatbot/>
     </div>
-  );  
+  );
+
 };
 
 export default CustomerKiosk;

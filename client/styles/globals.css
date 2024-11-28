@@ -10,7 +10,8 @@
   --highlight: #f5f5a1; /* Optional highlight for day */
   --primary: #ff0000;
   --secondary: #3a3a3a;
-  --background-image: url('https://www.pandaexpress.com.ph/sites/ph/files/styles/background_desktop/public/2022-06/img-our-food-desktop.jpg?itok=sa-5OOhz');
+  --background-image: none;
+  /* url('https://www.pandaexpress.com.ph/sites/ph/files/styles/background_desktop/public/2022-06/img-our-food-desktop.jpg?itok=sa-5OOhz') */
 }
 
 body {
@@ -30,6 +31,11 @@ body {
   --primary: #8B0000;
   --secondary: #b0b0b0;
   --background-image: url('/dark-theme-main-background.png');
+}
+
+.loading-theme body {
+  background: #000000; /* A neutral background to prevent flicker */
+  color: #ffffff;
 }
 
 button {
