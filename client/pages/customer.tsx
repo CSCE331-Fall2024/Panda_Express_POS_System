@@ -327,11 +327,16 @@ const CustomerKiosk: React.FC = () => {
                   onClick={() => setSelectedCategory(category)}
                   variant={selectedCategory === category ? "default" : "outline"}
                   className={`${
-                    theme === 'night' ? 'bg-gray-900 text-white border-gray-700' : 'bg-white text-black border-gray-300'
+                    selectedCategory === category 
+                      ? theme === 'night' 
+                        ? 'bg-gray-700 text-white border-gray-600' 
+                        : 'bg-gray-200 text-black border-gray-300 hover:bg-gray-200'
+                      : theme === 'night'
+                        ? 'bg-gray-900 text-white border-gray-700 hover:bg-gray-700' // Unselected button for night theme
+                        : 'bg-white text-black border-gray-300 hover:bg-gray-200' // Unselected button for day theme
                   }`}
                 >
-                  {category}
-                </Button>
+                  <span className="font-bold" style={{fontSize: '1rem'}}>{category}</span>                </Button>
               )
             ))}
           </div>
