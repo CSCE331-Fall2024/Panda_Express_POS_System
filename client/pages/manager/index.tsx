@@ -14,14 +14,14 @@ interface BusiestDay {
 
 const Manager: React.FC = () => {
   const router = useRouter();
-  const { user } = useUser();
+  const { user, isManager, isCashier } = useUser();
   const [busiestDaysData, setBusiestDaysData] = useState<BusiestDay[]>([]);
 
   useEffect(() => {
-    if (user.role !== 'manager') {
+    if (!isManager()) {
       router.push('/login'); 
     }
-  }, [user, router]);
+  }, [user, router, isManager, isCashier]);
 
   useEffect(() => {
     fetchBusiestDays();
@@ -42,7 +42,7 @@ const Manager: React.FC = () => {
     }
   };
 
-  if (user.role !== 'manager') return null;
+  if (!isManager()) return null;
 
   return (
     <>

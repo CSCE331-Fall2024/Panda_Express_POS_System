@@ -16,7 +16,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { getUserLocation, getWeatherData } from "@/utils/apiHelpers"
-import { Home, ShoppingBag, Sun, Moon, Cloud, CloudMoon, CloudRain, CloudSnow, ChevronDown } from "lucide-react";
+import { Home, ShoppingBag, Sun, Cloud, CloudRain, CloudSnow, ChevronDown } from "lucide-react";
 import { useRouter } from "next/router";
 import * as React from "react";
 
@@ -35,9 +35,7 @@ interface MenuItems {
 
 const weatherIcons = {
   clearDay: <Sun className="h-6 w-6" />,
-  clearNight: <Moon className="h-6 w-6" />,
   cloudsDay: <Cloud className="h-6 w-6" />,
-  cloudsNight: <CloudMoon className="h-6 w-6" />,
   rain: <CloudRain className="h-6 w-6" />,
   snow: <CloudSnow className="h-6 w-6" />,
 };
@@ -301,10 +299,10 @@ const CustomerKiosk: React.FC = () => {
     const description = weather.description.toLowerCase();
 
     if (description.includes("clear")) {
-      return weather.isDay ? weatherIcons.clearDay : weatherIcons.clearNight;
+      return weatherIcons.clearDay;
     }
     if (description.includes("cloud")) {
-      return weather.isDay ? weatherIcons.cloudsDay : weatherIcons.cloudsNight;
+      return weatherIcons.cloudsDay;
     }
     if (description.includes("rain")) {
       return weatherIcons.rain;

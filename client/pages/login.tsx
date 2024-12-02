@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useUser } from '@/components/ui/user_context';
 import { useTheme } from '@/components/context/theme_context';
@@ -11,6 +11,10 @@ const LoginPage: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", theme === "night");
+  }, [theme]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

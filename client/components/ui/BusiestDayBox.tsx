@@ -47,7 +47,7 @@ const BusiestDaysBox: React.FC<BusiestDaysBoxProps> = ({ busiestDaysData }) => {
           {busiestDaysData.map((item, index) => (
             <tr key={index}>
               <td style={tableCellStyle}>{capitalizeFirstLetter(item.period)}</td>
-              <td style={tableCellStyle}>{item.date}</td>
+              <td style={tableCellStyle}>{item.date.substring(0,10)}</td>
               <td style={tableCellStyle}>{item.day}</td>
               <td style={tableCellStyle}>{item.total_sales.toFixed(2)}</td>
             </tr>
