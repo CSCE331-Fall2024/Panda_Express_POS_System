@@ -43,7 +43,14 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ order, total, onRemoveFromO
         <span>Total:</span>
         <span>${(total * 1.0825).toFixed(2)}</span>
       </div>
-      <Button className="w-full mt-4" disabled={order.length === 0} onClick={onCheckout}>
+      <Button 
+        className="w-full mt-4" 
+        disabled={order.length === 0} 
+        onClick={onCheckout}
+        style={{
+          border: "1px solid var(--border-style)"
+        }}
+      >
         Checkout
       </Button>
     </CardFooter>
