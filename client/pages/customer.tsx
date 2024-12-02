@@ -25,6 +25,7 @@ interface MenuItem {
   name: string;
   image: string;
   description: string;
+  special: boolean;
 }
 
 interface MenuItems {
@@ -332,8 +333,8 @@ const CustomerKiosk: React.FC = () => {
                         ? 'bg-gray-700 text-white border-gray-600' 
                         : 'bg-gray-200 text-black border-gray-300 hover:bg-gray-200'
                       : theme === 'night'
-                        ? 'bg-gray-900 text-white border-gray-700 hover:bg-gray-700' // Unselected button for night theme
-                        : 'bg-white text-black border-gray-300 hover:bg-gray-200' // Unselected button for day theme
+                        ? 'bg-gray-900 text-white border-gray-700 hover:bg-gray-700'
+                        : 'bg-white text-black border-gray-300 hover:bg-gray-200' 
                   }`}
                 >
                   <span className="font-bold" style={{fontSize: '1rem'}}>{category}</span>                </Button>
@@ -357,7 +358,10 @@ const CustomerKiosk: React.FC = () => {
                   />
                 </div>
                 <CardHeader>
-                  <CardTitle className="text-lg">{item.name}</CardTitle>
+                <CardTitle className="text-lg">
+                  {item.name}
+                  {item.special && <span className="text-sm font-semibold text-red-500"> (+$1.50)</span>}
+                </CardTitle>
                   <CardDescription>{item.description}</CardDescription>
                 </CardHeader>
                 <CardFooter className="flex justify-between items-center">
