@@ -209,6 +209,7 @@ const CustomerKiosk: React.FC = () => {
         setSelectedSides(0);
         setSelectedEntrees(0);
       }
+      setSelectedCategory("Side")
     }
     if (currentItemType === "Plate") {
       if (category === 'Side' && selectedSides >= 1) return;
@@ -224,8 +225,27 @@ const CustomerKiosk: React.FC = () => {
     setOrder([...order, item]);
     setTotal(total + item.price);
 
-    if (category === 'Side') setSelectedSides(selectedSides + 1);
-    if (category === 'Entree') setSelectedEntrees(selectedEntrees + 1);
+    if (category === 'Side') {
+      setSelectedSides(selectedSides + 1);
+      if (currentItemType === "Plate" && selectedSides + 1 === 1) {
+        setSelectedCategory("Entree");
+      } else if (currentItemType === "Bigger Plate" && selectedSides + 1 === 1) {
+        setSelectedCategory("Entree");
+      } else if (currentItemType === "Bowl" && selectedSides + 1 === 1) {
+        setSelectedCategory("Entree");
+      }
+    }
+  
+    if (category === 'Entree') {
+      setSelectedEntrees(selectedEntrees + 1);
+      if (
+        (currentItemType === "Plate" && selectedEntrees + 1 === 2) ||
+        (currentItemType === "Bigger Plate" && selectedEntrees + 1 === 3) ||
+        (currentItemType === "Bowl" && selectedEntrees + 1 === 1)
+      ) {
+        setSelectedCategory("Appetizer");
+      }
+    }
   };
 
   const removeFromOrder = (index: number): void => {
