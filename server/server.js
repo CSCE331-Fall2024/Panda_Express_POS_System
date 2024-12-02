@@ -38,44 +38,45 @@ app.set('views', path.join(__dirname, 'views'));
 
 // Google Translate API endpoint
 app.post('/api/translate', async (req, res) => {
-    const { texts, targetLanguage } = req.body;
+  const { texts, targetLanguage } = req.body;
 
-    // Check if the necessary data is provided
-    if (!texts || !targetLanguage || !Array.isArray(texts)) {
-        return res.status(400).json({ error: 'Invalid request. Missing texts or target language.' });
-    }
+  // Check if the necessary data is provided
+  if (!texts || !targetLanguage || !Array.isArray(texts)) {
+      return res.status(400).json({ error: 'Invalid request. Missing texts or target language.' });
+  }
 
-    const apiKey = process.env.GOOGLE_TRANSLATE_API_KEY;
-    console.log("API Key:", apiKey);
+  const apiKey = process.env.GOOGLE_TRANSLATE_API_KEY;
+  console.log("API Key:", apiKey);
 
-    // Check if the Google Translate API key is present in the environment variables
-    if (!apiKey) {
-        console.error('Google Translate API key is missing.');
-        return res.status(500).json({ error: 'Translation service not configured' });
-    }
+  // Check if the Google Translate API key is present in the environment variables
+  if (!apiKey) {
+      console.error('Google Translate API key is missing.');
+      return res.status(500).json({ error: 'Translation service not configured' });
+  }
 
-    try {
-        // Call Google Translate API
-        const response = await axios.post(
-            'https://translation.googleapis.com/language/translate/v2',
-            {},
-            {
-                params: {
-                    q: texts,
-                    target: targetLanguage,
-                    key: apiKey
-                }
-            }
-        );
+  try {
+      // Call Google Translate API
+      const response = await axios.post(
+          'https://translation.googleapis.com/language/translate/v2',
+          {},
+          {
+              params: {
+                  q: texts,
+                  target: targetLanguage,
+                  key: apiKey
+              }
+          }
+      );
 
-        // Extract translated texts from the API response
-        const translations = response.data.data.translations.map(t => t.translatedText);
-        res.json({ translatedTexts: translations });
-    } catch (error) {
-        console.error('Error with Google Translate API:', error.response ? error.response.data : error.message);
-        res.status(500).json({ error: 'Translation failed' });
-    }
+      // Extract translated texts from the API response
+      const translations = response.data.data.translations.map(t => t.translatedText);
+      res.json({ translatedTexts: translations });
+  } catch (error) {
+      console.error('Error with Google Translate API:', error.response ? error.response.data : error.message);
+      res.status(500).json({ error: 'Translation failed' });
+  }
 });
+
 
 // Home page endpoint
 app.get('/', (req, res) => {

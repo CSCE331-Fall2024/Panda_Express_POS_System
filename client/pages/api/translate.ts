@@ -35,43 +35,28 @@ export default async function handler(
     return res.status(400).json({ error: 'Invalid texts or target language' });
   }
 
-  // Check API key
-  const apiKey = process.env.GOOGLE_TRANSLATE_API_KEY;
-  if (!apiKey) {
-    console.error('Google Translate API key is missing');
-    return res.status(500).json({ error: 'Translation service not configured' });
-  }
-
-  // API URL
-  const url = 'https://translation.googleapis.com/language/translate/v2';
-
   try {
-    // API request
-    const response = await fetch(url, {
+    // Send the request to Express API
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/translate`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify({
-        q: texts,
-        target: targetLanguage,
-        key: apiKey,
+        texts,
+        targetLanguage,
       }),
     });
 
     // Handle response
     if (!response.ok) {
       const error = await response.json();
-      console.error('Translation API Error:', error);
-      return res.status(response.status).json({ error: error.error.message || 'Unknown error' });
+      return res.status(response.status).json({ error: error.error || 'Unknown error' });
     }
 
     const data = await response.json();
-    const translatedTexts = data.data.translations.map((t: any) => t.translatedText);
-
-    // Respond with translated texts
-    return res.status(200).json({ translatedTexts });
-  } catch (error: any) {
-    // Handle server or network errors
-    console.error('Error translating text:', error.message || error);
+    return res.status(200).json(data);
+  } catch (error) {
     return res.status(500).json({ error: 'Translation service unavailable' });
   }
 }
