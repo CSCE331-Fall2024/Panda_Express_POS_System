@@ -9,7 +9,7 @@ const SidebarMenu: React.FC = () => {
   return (
     <aside className="w-16 bg-muted flex flex-col items-center py-4 space-y-4">
       <Button variant="ghost" size="icon" onClick={() => router.push('/login')}>
-        <LogOut className="h-6 w-6" />
+        <LogOut className="h-6 w-6" style={{ transform: "scaleX(-1)" }} />
       </Button>
     </aside>
   );

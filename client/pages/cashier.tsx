@@ -14,7 +14,7 @@ const menuItems = {
 
 export default function PandaExpressPOS() {
   const router = useRouter();
-  const { user } = useUser();
+  const { user, isManager, isCashier } = useUser();
   const [order, setOrder] = useState<string[]>([]);
   const [total, setTotal] = useState(0);
 
@@ -35,23 +35,61 @@ export default function PandaExpressPOS() {
   };
 
   useEffect(() => {
-    if (user.role !== 'cashier') {
-      router.push('/login'); // Redirect unauthorized users to login
+    if (!(isManager() || isCashier())) {
+      router.push('/login');
     }
-  }, [user, router]);
+  }, [user, router, isManager, isCashier]);
 
-  if (user.role !== 'cashier') return null;
+  if (!(isManager() || isCashier()) ) return null;
 
   return (
-    <div className="flex h-screen bg-background">
-      <SidebarMenu />
+    <div
+      className="flex h-screen"
+      style={{
+        backgroundColor: "var(--background-color)",
+        color: "#FFFFFF",
+      }}
+    >
+      <SidebarMenu/>
+
       <main className="flex-1 p-6 space-y-6">
-        <Header mode="Cashier" />
-        <div className="flex gap-6">
-          <div className="flex-1">
+        <Header mode=""/>
+
+        <div className="flex gap-4">
+          {/* Menu Section */}
+          <div
+            className="flex-1"
+            style={{
+              backgroundColor: "#1D1F2B", // Darker box for menu
+              padding: "16px", // Adjust padding to reduce size
+              borderRadius: "8px",
+              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+              maxHeight: "70vh", // Limit box height
+              overflowY: "auto", // Add scroll if content overflows
+            }}
+          >
             <MenuDisplay menuItems={menuItems} onAddToOrder={addToOrder} />
           </div>
-          <OrderSummary order={order} total={total} onRemoveFromOrder={removeFromOrder} onCheckout={handleCheckout} />
+
+          {/* Order Summary Section */}
+          <div
+            style={{
+              width: "25%", // Reduce width to make boxes fit better
+              backgroundColor: "#1D1F2B", // Darker box for order summary
+              padding: "16px", // Adjust padding to reduce size
+              borderRadius: "8px",
+              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+              maxHeight: "70vh", // Limit box height
+              overflowY: "auto", // Add scroll if content overflows
+            }}
+          >
+            <OrderSummary
+              order={order}
+              total={total}
+              onRemoveFromOrder={removeFromOrder}
+              onCheckout={handleCheckout}
+            />
+          </div>
         </div>
       </main>
     </div>
