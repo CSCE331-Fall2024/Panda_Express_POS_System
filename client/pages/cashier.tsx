@@ -14,7 +14,7 @@ const menuItems = {
 
 export default function PandaExpressPOS() {
   const router = useRouter();
-  const { user } = useUser();
+  const { user, isManager, isCashier } = useUser();
   const [order, setOrder] = useState<string[]>([]);
   const [total, setTotal] = useState(0);
 
@@ -35,12 +35,12 @@ export default function PandaExpressPOS() {
   };
 
   useEffect(() => {
-    if (user.role !== 'cashier') {
-      router.push('/login'); // Redirect unauthorized users to login
+    if (!(isManager() || isCashier())) {
+      router.push('/login');
     }
-  }, [user, router]);
+  }, [user, router, isManager, isCashier]);
 
-  if (user.role !== 'cashier') return null;
+  if (! (isManager() || isCashier()) ) return null;
 
   return (
     <div className="flex h-screen bg-background">
