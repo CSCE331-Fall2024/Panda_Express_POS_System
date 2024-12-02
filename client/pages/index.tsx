@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { getUserLocation, getWeatherData } from "@/utils/apiHelpers";
-import { Sun, Moon, Cloud, CloudRain, CloudSnow, CloudMoon, User } from "lucide-react";
+import { Sun, Moon, Cloud, CloudRain, CloudSnow, User } from "lucide-react";
 import { useTheme } from "@/components/context/theme_context";
 
 
@@ -27,9 +27,7 @@ interface MenuItems {
 
 const weatherIcons = {
   clearDay: <Sun className="h-6 w-6" />,
-  clearNight: <Moon className="h-6 w-6" />,
   cloudsDay: <Cloud className="h-6 w-6" />,
-  cloudsNight: <CloudMoon className="h-6 w-6" />,
   rain: <CloudRain className="h-6 w-6" />,
   snow: <CloudSnow className="h-6 w-6" />,
 };
@@ -42,7 +40,6 @@ const Menuboard: React.FC = () => {
   const [weather, setWeather] = React.useState<{ temperature?: number; description?: string; isDay?: boolean } | null>(null);
   const [loading, setLoading] = React.useState<boolean>(true);
   const categories: MenuCategory[] = ['Combos', 'Appetizer', 'Entree', 'Side', 'Drink'];
-
   const { theme, toggleTheme } = useTheme();
 
   // Fetch menu items from the API
@@ -97,10 +94,10 @@ const Menuboard: React.FC = () => {
     const description = weather.description.toLowerCase();
   
     if (description.includes("clear")) {
-      return weather.isDay ? weatherIcons.clearDay : weatherIcons.clearNight;
+      return weatherIcons.clearDay;
     }
     if (description.includes("cloud")) {
-      return weather.isDay ? weatherIcons.cloudsDay : weatherIcons.cloudsNight;
+      return weatherIcons.cloudsDay;
     }
     if (description.includes("rain")) {
       return weatherIcons.rain;
@@ -172,9 +169,18 @@ const Menuboard: React.FC = () => {
             </div>
           )}
         </div>
-
         {/* Employee Signin */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+          <button
+            onClick={toggleTheme}
+            className="flex items-center gap-2 p-2 rounded bg-gray-800 text-white"
+          >
+            {theme === "night" ? (
+              <Sun className="h-5 w-5 text-yellow-500" />
+            ) : (
+              <Moon className="h-5 w-5 text-blue-500" />
+            )}
+          </button>
           <a
             href="/login"
             style={{ color: '#FFFFFF', textDecoration: 'none', display: 'flex', alignItems: 'center' }}
