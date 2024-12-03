@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { getUserLocation, getWeatherData } from "@/utils/apiHelpers"
+import { getUserLocation, getWeatherData } from "@/utils/apiHelpers";
 import { Home, ShoppingBag, Sun, Cloud, CloudRain, CloudSnow, ChevronDown } from "lucide-react";
 import { useRouter } from "next/router";
 import * as React from "react";
@@ -40,6 +40,27 @@ const weatherIcons = {
   snow: <CloudSnow className="h-6 w-6" />,
 };
 
+// Define category translations
+const categoryTranslations: Record<string, Record<string, string>> = {
+  en: {
+    "Combos": "Combos",
+    "Combo": "Combo", // Singular form if used
+    "Side": "Side",
+    "Entree": "Entree",
+    "Appetizer": "Appetizer",
+    "Drink": "Drink",
+  },
+  es: {
+    "Combos": "Combinaciones", // Updated translation
+    "Combo": "Combo", // Singular form if used
+    "Side": "Acompañamiento",
+    "Entree": "Entrada",
+    "Appetizer": "Aperitivo",
+    "Drink": "Bebida",
+  },
+  // Add more languages as needed
+};
+
 const CustomerKiosk: React.FC = () => {
   const router = useRouter();
   const [menuItems, setMenuItems] = useState<MenuItems>({});
@@ -57,11 +78,12 @@ const CustomerKiosk: React.FC = () => {
   // Language and Translation States
   const [language, setLanguage] = useState<string>('en'); // default to English
   const [translations, setTranslations] = useState<Record<string, string>>({});
-  const [dropdownOpen, setDropdownOpen] = useState<boolean>(false); // New state for dropdown
+  const [dropdownOpen, setDropdownOpen] = useState<boolean>(false); // Language dropdown state
 
   const availableLanguages = [
     { code: 'en', label: 'English' },
     { code: 'es', label: 'Spanish' },
+    // Add more languages as needed
   ];
 
   const translationKeys = [
@@ -85,11 +107,106 @@ const CustomerKiosk: React.FC = () => {
     { key: 'category_Drink', text: 'Drink' },
   ];
 
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", theme === "night");
-  }, [theme]);
-
   const categoryOrder = ["Combos", "Side", "Entree", "Appetizer", "Drink"];
+
+  // Helper function to fetch translations
+  const fetchTranslations = async (languageCode: string) => {
+    try {
+      const staticTexts = translationKeys.map(k => k.text);
+
+      const dynamicTexts = Object.values(menuItems)
+        .flat()
+        .map(item => item.name)
+        .concat(Object.values(menuItems).flat().map(item => item.description));
+
+      const allTexts = [...staticTexts, ...dynamicTexts];
+
+      console.log(`Sending texts for translation: ${allTexts.length} texts`);
+      console.log('Texts to translate:', allTexts);
+
+      const response = await fetch('/api/translate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          texts: allTexts,
+          targetLanguage: languageCode,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const { translatedTexts } = data;
+
+        console.log(`Received translations: ${translatedTexts.length} translations`);
+        console.log('Translated texts:', translatedTexts);
+
+        if (translatedTexts.length !== allTexts.length) {
+          console.error('Mismatch between texts sent and translations received.');
+          return;
+        }
+
+        const newTranslations: Record<string, string> = {};
+
+        // Assign static translations
+        translationKeys.forEach((k, index) => {
+          newTranslations[k.key] = translatedTexts[index];
+        });
+
+        // Assign dynamic translations
+        let dynamicIndex = staticTexts.length;
+        Object.values(menuItems)
+          .flat()
+          .forEach(item => {
+            const nameTranslation = translatedTexts[dynamicIndex++];
+            const descriptionTranslation = translatedTexts[dynamicIndex++];
+            newTranslations[`name_${item.menu_item_id}`] = nameTranslation;
+            newTranslations[`description_${item.menu_item_id}`] = descriptionTranslation;
+          });
+
+        setTranslations(newTranslations);
+        localStorage.setItem(`translations_${languageCode}`, JSON.stringify(newTranslations));
+
+        console.log('Translations fetched and applied successfully.');
+      } else {
+        const error = await response.json();
+        console.error('Translation API failed:', error.error);
+      }
+    } catch (error) {
+      console.error('Error fetching translations:', error);
+    }
+  };
+
+  // Fetch menu items on component mount
+  useEffect(() => {
+    const fetchMenuItems = async () => {
+      try {
+        const response = await fetch('/api/menu_items');
+        const data = await response.json();
+        if (data.success) {
+          const itemsByCategory = data.menuItems.reduce((acc: MenuItems, item: MenuItem) => {
+            const category = item.item_type;
+            if (!acc[category]) {
+              acc[category] = [];
+            }
+            acc[category].push(item);
+            return acc;
+          }, {});
+          setMenuItems(itemsByCategory);
+          console.log('Menu items fetched successfully:', itemsByCategory);
+        } else {
+          console.error('Failed to fetch menu items');
+        }
+      } catch (error) {
+        console.error('Error fetching menu items:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMenuItems();
+  }, []);
 
   // Load sessionStorage on component mount
   useEffect(() => {
@@ -106,31 +223,43 @@ const CustomerKiosk: React.FC = () => {
 
     if (storedOrder) {
       setOrder(JSON.parse(storedOrder));
+      console.log('Loaded order from sessionStorage:', JSON.parse(storedOrder));
     }
 
     if (storedTotal) {
       setTotal(parseFloat(storedTotal));
+      console.log('Loaded total from sessionStorage:', parseFloat(storedTotal));
     }
 
     if (storedSelectedSides) {
       setSelectedSides(parseInt(storedSelectedSides));
+      console.log('Loaded selectedSides from sessionStorage:', parseInt(storedSelectedSides));
     }
 
     if (storedSelectedEntrees) {
       setSelectedEntrees(parseInt(storedSelectedEntrees));
+      console.log('Loaded selectedEntrees from sessionStorage:', parseInt(storedSelectedEntrees));
     }
 
     if (storedCurrentItemType) {
       setCurrentItemType(storedCurrentItemType || null);
+      console.log('Loaded currentItemType from sessionStorage:', storedCurrentItemType || null);
     }
 
     if (storedLanguage) {
       setLanguage(storedLanguage);
       if (storedLanguage !== 'en') {
         // Translations will be fetched in the subsequent useEffect
+        const cachedTranslations = localStorage.getItem(`translations_${storedLanguage}`);
+        if (cachedTranslations) {
+          setTranslations(JSON.parse(cachedTranslations));
+          console.log(`Loaded translations from cache for language: ${storedLanguage}`);
+        } else {
+          fetchTranslations(storedLanguage);
+        }
       }
     }
-  }, []);
+  }, [menuItems]); // Added menuItems as a dependency to ensure menuItems are loaded before translations
 
   // Save sessionStorage whenever relevant states change
   useEffect(() => {
@@ -155,33 +284,25 @@ const CustomerKiosk: React.FC = () => {
     sessionStorage.setItem('menuItemIds', JSON.stringify(menuItemIds));
   }, [order, total, selectedSides, selectedEntrees, currentItemType, language]);
 
-  // Fetch menu items on component mount
+  // Listen for languageChange events to update language state
   useEffect(() => {
-    fetch('/api/menu_items')
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          const itemsByCategory = data.menuItems.reduce((acc: MenuItems, item: MenuItem) => {
-            const category = item.item_type;
-            if (!acc[category]) {
-              acc[category] = [];
-            }
-            acc[category].push(item);
-            return acc;
-          }, {});
-          setMenuItems(itemsByCategory);
-          setLoading(false);
-        } else {
-          console.error('Failed to fetch menu items');
-          setLoading(false);
-        }
-      })
-      .catch(error => {
-        console.error('Error fetching menu items:', error);
-        setLoading(false);
-      });
-  }, []);
+    const handleLanguageEvent = (event: Event) => {
+      const customEvent = event as CustomEvent<string>;
+      const newLanguage = customEvent.detail;
+      if (newLanguage !== language) {
+        setLanguage(newLanguage);
+        console.log(`Language changed via event: ${newLanguage}`);
+      }
+    };
 
+    window.addEventListener('languageChange', handleLanguageEvent);
+
+    return () => {
+      window.removeEventListener('languageChange', handleLanguageEvent);
+    };
+  }, [language]);
+
+  // Fetch translations whenever language or menuItems change
   useEffect(() => {
     if (language !== 'en' && Object.keys(menuItems).length > 0) {
       const cachedTranslations = localStorage.getItem(`translations_${language}`);
@@ -191,10 +312,41 @@ const CustomerKiosk: React.FC = () => {
       } else {
         fetchTranslations(language);
       }
+    } else if (language === 'en') {
+      setTranslations({});
+      console.log('Language set to English. Clearing translations.');
     }
   }, [language, menuItems]);
 
+  // Handle language change with caching and event dispatch
+  const handleLanguageChange = async (newLanguage: string) => {
+    setLanguage(newLanguage);
+    setDropdownOpen(false); // Close the dropdown after selection
+    console.log(`Language changed to: ${newLanguage}`);
+
+    // Dispatch a custom event to notify other components
+    window.dispatchEvent(new CustomEvent('languageChange', { detail: newLanguage }));
+
+    if (newLanguage === 'en') {
+      setTranslations({});
+      console.log('Language set to English. Clearing translations.');
+      return;
+    }
+
+    // Check if translations for the selected language are cached
+    const cachedTranslations = localStorage.getItem(`translations_${newLanguage}`);
+    if (cachedTranslations) {
+      setTranslations(JSON.parse(cachedTranslations));
+      console.log(`Loaded translations from cache for language: ${newLanguage}`);
+      return;
+    }
+
+    // Fetch translations from the API
+    await fetchTranslations(newLanguage);
+  };
+
   const addToOrder = (item: MenuItem, category: string): void => {
+    // Logic for handling combo selections
     if (category === 'Combos') {
       if (item.name === "Plate") {
         setCurrentItemType("Plate");
@@ -210,6 +362,8 @@ const CustomerKiosk: React.FC = () => {
         setSelectedEntrees(0);
       }
     }
+
+    // Enforce selection limits based on current combo type
     if (currentItemType === "Plate") {
       if (category === 'Side' && selectedSides >= 1) return;
       if (category === 'Entree' && selectedEntrees >= 2) return;
@@ -221,9 +375,11 @@ const CustomerKiosk: React.FC = () => {
       if (category === 'Entree' && selectedEntrees >= 1) return;
     }
 
+    // Add item to order
     setOrder([...order, item]);
     setTotal(total + item.price);
 
+    // Update counters based on category
     if (category === 'Side') setSelectedSides(selectedSides + 1);
     if (category === 'Entree') setSelectedEntrees(selectedEntrees + 1);
   };
@@ -234,12 +390,15 @@ const CustomerKiosk: React.FC = () => {
     const newOrder = order.filter((_, i) => i !== index);
 
     // Adjust counters based on the item category
-    if (selectedCategory === 'Side') {
+    const category = item.item_type;
+
+    if (category === 'Side') {
       setSelectedSides(Math.max(0, selectedSides - 1));
-    } else if (selectedCategory === 'Entree') {
+    } else if (category === 'Entree') {
       setSelectedEntrees(Math.max(0, selectedEntrees - 1));
     }
 
+    // Reset combo selections if a combo item is removed
     if (["Plate", "Bowl", "Bigger Plate"].includes(item.name)) {
       setCurrentItemType(null);
       setSelectedSides(0);
@@ -255,6 +414,7 @@ const CustomerKiosk: React.FC = () => {
     setTotal(0);
     setSelectedSides(0);
     setSelectedEntrees(0);
+    setCurrentItemType(null);
   };
 
   const handleCheckout = () => {
@@ -282,6 +442,7 @@ const CustomerKiosk: React.FC = () => {
         if (location) {
           const weatherData = await getWeatherData(location.latitude, location.longitude);
           setWeather(weatherData);
+          console.log('Weather data fetched:', weatherData);
         } else {
           console.log("Location access denied or unavailable.");
         }
@@ -312,93 +473,6 @@ const CustomerKiosk: React.FC = () => {
     }
 
     return <Cloud className="h-6 w-6" />; // Default icon
-  };
-
-  const fetchTranslations = async (languageCode: string) => {
-    try {
-      const staticTexts = translationKeys.map(k => k.text);
-
-      const dynamicTexts = Object.values(menuItems)
-        .flat()
-        .map(item => item.description);
-
-      const allTexts = [...staticTexts, ...dynamicTexts];
-
-      console.log(`Fetching translations for language: ${languageCode}`);
-      console.log(`Total texts to translate: ${allTexts.length}`);
-
-      const response = await fetch('/api/translate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          texts: allTexts, 
-          targetLanguage: languageCode,
-        }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        const { translatedTexts } = data;
-
-        console.log(`Received ${translatedTexts.length} translations`);
-
-        if (translatedTexts.length !== allTexts.length) {
-          console.error('Mismatch between texts sent and translations received.');
-          return;
-        }
-
-        const newTranslations: Record<string, string> = {};
-
-        translationKeys.forEach((k, index) => {
-          newTranslations[k.key] = translatedTexts[index];
-        });
-
-        let descriptionIndex = staticTexts.length;
-        Object.values(menuItems)
-          .flat()
-          .forEach(item => {
-            newTranslations[`description_${item.menu_item_id}`] = translatedTexts[descriptionIndex++];
-          });
-
-        setTranslations(newTranslations);
-
-        console.log('Translations fetched and applied successfully.');
-
-        localStorage.setItem(
-          `translations_${languageCode}`,
-          JSON.stringify(newTranslations)
-        );
-        console.log(`Translations for ${languageCode} cached successfully.`);
-      } else {
-        const error = await response.json();
-        console.error('Translation API failed:', error.error);
-      }
-    } catch (error) {
-      console.error('Error fetching translations:', error);
-    }
-  };
-
-  const handleLanguageChange = async (newLanguage: string) => {
-    setLanguage(newLanguage);
-    setDropdownOpen(false); 
-    console.log(`Language changed to: ${newLanguage}`);
-
-    if (newLanguage === 'en') {
-      setTranslations({});
-      console.log('Language set to English. Clearing translations.');
-      return;
-    }
-
-    const cachedTranslations = localStorage.getItem(`translations_${newLanguage}`);
-    if (cachedTranslations) {
-      setTranslations(JSON.parse(cachedTranslations));
-      console.log(`Loaded translations from cache for language: ${newLanguage}`);
-      return;
-    }
-
-    await fetchTranslations(newLanguage);
   };
 
   if (loading) {
@@ -482,7 +556,9 @@ const CustomerKiosk: React.FC = () => {
           )}
           <div className="flex items-center gap-2">
             <ShoppingBag className="h-6 w-6" />
-            <span className="font-bold">{translations['items'] || `${order.length} items`}</span>
+            <span className="font-bold">
+              {translations['items'] || `${order.length} items`}
+            </span>
           </div>
         </div>
       </nav>
@@ -510,7 +586,7 @@ const CustomerKiosk: React.FC = () => {
                   }`}
                 >
                   <span className="font-bold" style={{fontSize: '1rem'}}>
-                    {translations[`category_${category}`] || category}
+                    {categoryTranslations[language][category] || category}
                   </span>
                 </Button>
               )
@@ -529,12 +605,14 @@ const CustomerKiosk: React.FC = () => {
                 <div className="relative h-40 overflow-hidden">
                   <img
                     src={item.image}
-                    alt={item.name}
+                    alt={translations[`name_${item.menu_item_id}`] || item.name} 
                     className="w-full h-full object-contain"
                   />
                 </div>
                 <CardHeader>
-                  <CardTitle className="text-lg">{item.name}</CardTitle>
+                  <CardTitle className="text-lg">
+                    {translations[`name_${item.menu_item_id}`] || item.name}
+                  </CardTitle>
                   <CardDescription>
                     {translations[`description_${item.menu_item_id}`] || item.description}
                   </CardDescription>
@@ -577,7 +655,7 @@ const CustomerKiosk: React.FC = () => {
                   } rounded`}
                 >
                   <div>
-                    <div className="font-medium">{item.name}</div>
+                    <div className="font-medium">{translations[`name_${item.menu_item_id}`] || item.name}</div>
                     <div className="text-sm">
                       ${item.price.toFixed(2)}
                     </div>
