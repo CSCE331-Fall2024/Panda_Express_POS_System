@@ -11,7 +11,11 @@ const MenuDisplay: React.FC<MenuDisplayProps> = ({ menuItems, onAddToOrder }) =>
   <Tabs defaultValue="combos">
     <TabsList>
       {Object.keys(menuItems).map((category) => (
-        <TabsTrigger key={category} value={category}>
+        <TabsTrigger 
+          key={category} 
+          value={category}
+          
+        >
           {category.charAt(0).toUpperCase() + category.slice(1)}
         </TabsTrigger>
       ))}
@@ -20,7 +24,14 @@ const MenuDisplay: React.FC<MenuDisplayProps> = ({ menuItems, onAddToOrder }) =>
       <TabsContent key={category} value={category}>
         <div className="grid grid-cols-2 gap-4">
           {items.map((item) => (
-            <Button key={item} onClick={() => onAddToOrder(item)} variant="outline">
+            <Button 
+              key={item} 
+              onClick={() => onAddToOrder(item)} 
+              variant="outline"
+              style={{
+                border: "1px solid var(--border-style)"
+              }}
+            >
               {item}
             </Button>
           ))}

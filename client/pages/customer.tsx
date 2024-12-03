@@ -27,6 +27,7 @@ interface MenuItem {
   name: string;
   image: string;
   description: string;
+  special: boolean;
 }
 
 interface MenuItems {
@@ -68,6 +69,7 @@ const CustomerKiosk: React.FC = () => {
   const [selectedSides, setSelectedSides] = useState<number>(0);
   const [currentItemType, setCurrentItemType] = useState<string | null>(null);
   const [selectedEntrees, setSelectedEntrees] = useState<number>(0);
+  const [carteSelected, setCarteSelected] = useState<string | null>(null);
   const [order, setOrder] = useState<MenuItem[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [selectedCategory, setSelectedCategory] = useState<string>("Combos");
@@ -219,6 +221,7 @@ const CustomerKiosk: React.FC = () => {
     const storedSelectedSides = sessionStorage.getItem('selectedSides');
     const storedSelectedEntrees = sessionStorage.getItem('selectedEntrees');
     const storedCurrentItemType = sessionStorage.getItem('currentItemType');
+    const storedCarteSelected = sessionStorage.getItem('carteSelected');
     const storedLanguage = sessionStorage.getItem('language');
 
     if (storedOrder) {
@@ -246,6 +249,9 @@ const CustomerKiosk: React.FC = () => {
       console.log('Loaded currentItemType from sessionStorage:', storedCurrentItemType || null);
     }
 
+    if (storedCarteSelected) {
+      setCarteSelected(storedCarteSelected || null);
+    }
     if (storedLanguage) {
       setLanguage(storedLanguage);
       if (storedLanguage !== 'en') {
@@ -269,6 +275,7 @@ const CustomerKiosk: React.FC = () => {
       selectedSides,
       selectedEntrees,
       currentItemType,
+      carteSelected,
       language,
     });
 
@@ -277,12 +284,13 @@ const CustomerKiosk: React.FC = () => {
     sessionStorage.setItem('selectedSides', selectedSides.toString());
     sessionStorage.setItem('selectedEntrees', selectedEntrees.toString());
     sessionStorage.setItem('currentItemType', currentItemType || '');
+    sessionStorage.setItem('carteSelected', carteSelected || '');
     sessionStorage.setItem('language', language);
 
     // Store menu item IDs
     const menuItemIds = order.map(item => item.menu_item_id);
     sessionStorage.setItem('menuItemIds', JSON.stringify(menuItemIds));
-  }, [order, total, selectedSides, selectedEntrees, currentItemType, language]);
+  }, [order, total, selectedSides, selectedEntrees, currentItemType, carteSelected, language]);
 
   // Listen for languageChange events to update language state
   useEffect(() => {
@@ -360,7 +368,13 @@ const CustomerKiosk: React.FC = () => {
         setCurrentItemType("Bowl");
         setSelectedSides(0);
         setSelectedEntrees(0);
+      } else if (item.name === "A La Carte") {
+        setCurrentItemType("A La Carte");
+        setCarteSelected(null);
+        setSelectedSides(0);
+        setSelectedEntrees(0);
       }
+      setSelectedCategory("Side")
     }
 
     // Enforce selection limits based on current combo type
@@ -373,41 +387,201 @@ const CustomerKiosk: React.FC = () => {
     } else if (currentItemType === "Bowl") {
       if (category === 'Side' && selectedSides >= 1) return;
       if (category === 'Entree' && selectedEntrees >= 1) return;
+    } else if (currentItemType === "A La Carte") {
+      if ((category === 'Side' || category === 'Entree') && (selectedSides >= 1 || selectedEntrees >= 1)) return;
+      if (carteSelected === 'Side' || carteSelected === 'Entree') return;
     }
 
     // Add item to order
     setOrder([...order, item]);
-    setTotal(total + item.price);
+    if(category === 'Combos' && item.name !== "A La Carte") {
+      setTotal(total + item.price);
+    } else if (category === 'Appetizer' || category === 'Drink') {
+      setTotal(total + item.price);
+    }
 
-    // Update counters based on category
-    if (category === 'Side') setSelectedSides(selectedSides + 1);
-    if (category === 'Entree') setSelectedEntrees(selectedEntrees + 1);
+    if (currentItemType === "A La Carte") {
+      if(item.name !== "A La Carte") {
+        setTotal(total + item.price);
+      }
+
+      if (category === 'Side') {
+        setCarteSelected("Side");
+      } else if (category === 'Entree') {
+        setCarteSelected("Entree");
+      }
+    }
+
+    if (currentItemType !== "A La Carte") {
+      if(item.special) {
+        setTotal(total + 1.5);
+      }
+    }
+
+    if (category === 'Side') {
+      setSelectedSides(selectedSides + 1);
+      if (currentItemType === "Plate" && selectedSides + 1 === 1) {
+        setSelectedCategory("Entree");
+      } else if (currentItemType === "Bigger Plate" && selectedSides + 1 === 1) {
+        setSelectedCategory("Entree");
+      } else if (currentItemType === "Bowl" && selectedSides + 1 === 1) {
+        setSelectedCategory("Entree");
+      }
+    }
+  
+    if (category === 'Entree') {
+      setSelectedEntrees(selectedEntrees + 1);
+      if (
+        (currentItemType === "Plate" && selectedEntrees + 1 === 2) ||
+        (currentItemType === "Bigger Plate" && selectedEntrees + 1 === 3) ||
+        (currentItemType === "Bowl" && selectedEntrees + 1 === 1)
+      ) {
+        setSelectedCategory("Appetizer");
+      }
+    }
   };
 
   const removeFromOrder = (index: number): void => {
     const item = order[index];
-    const itemPrice = item.price;
-    const newOrder = order.filter((_, i) => i !== index);
+    const newOrder = [...order];
+    newOrder.splice(index, 1);
 
-    // Adjust counters based on the item category
-    const category = item.item_type;
-
-    if (category === 'Side') {
+    if (selectedCategory === 'Side') {
       setSelectedSides(Math.max(0, selectedSides - 1));
-    } else if (category === 'Entree') {
+      if(carteSelected === "Side") {
+        setCarteSelected(null);
+      }
+    } else if (selectedCategory === 'Entree') {
       setSelectedEntrees(Math.max(0, selectedEntrees - 1));
+      if(carteSelected === "Entree") {
+        setCarteSelected(null);
+      }
     }
-
-    // Reset combo selections if a combo item is removed
+  
     if (["Plate", "Bowl", "Bigger Plate"].includes(item.name)) {
+      setTotal((prevTotal) => Math.max(0, prevTotal - item.price));
+      let sidesToRemove = 0;
+      let entreesToRemove = 0;
+  
+      // Determine how many sides and entrees to treat as a la carte based on combo type
+      if(selectedSides > 0 || selectedEntrees > 0) {
+        if (item.name === "Plate" || item.name === "Bowl" || item.name === "Bigger Plate") {
+          sidesToRemove = selectedSides;
+          entreesToRemove = selectedEntrees;
+        } 
+      } else {
+        if (item.name === "Plate"){
+          sidesToRemove = 1;
+          entreesToRemove = 2;
+        } else if (item.name === "Bigger Plate"){
+          sidesToRemove = 1;
+          entreesToRemove = 3;
+        } else if (item.name === "Bowl"){
+          sidesToRemove = 1;
+          entreesToRemove = 1;
+        }
+      }
+  
+      const itemsToRemove = [];
+  
+      // Traverse the order backward to find the last items matching sides/entrees
+      for (let i = newOrder.length - 1; i >= 0; i--) {
+        const currentItem = newOrder[i];
+  
+        if (sidesToRemove > 0 && currentItem.item_type === "Side") {
+          sidesToRemove--;
+          itemsToRemove.push(i);
+        } else if (entreesToRemove > 0 && currentItem.item_type === "Entree") {
+          entreesToRemove--;
+          itemsToRemove.push(i);
+        }
+  
+        // Break early if all sides and entrees are accounted for
+        if (sidesToRemove === 0 && entreesToRemove === 0) {
+          break;
+        }
+      }
+
+      const specialItemsCount = itemsToRemove.reduce(
+        (count, i) => (newOrder[i].special ? count + 1 : count),
+        0
+      );
+  
+      setTotal((prevTotal) => Math.max(0, prevTotal - specialItemsCount * 1.5));
+  
+      // Remove the identified items from the order
+      itemsToRemove.sort((a, b) => b - a).forEach((i) => newOrder.splice(i, 1));
+  
+      // Update the total and state
       setCurrentItemType(null);
       setSelectedSides(0);
       setSelectedEntrees(0);
+    } else if (currentItemType === "A La Carte") {
+      let sidesToRemove = 0;
+      let entreesToRemove = 0;
+
+      // Determine how many sides or entrees to remove
+      if (carteSelected === "Side") {
+        sidesToRemove = 1;
+      } else if (carteSelected === "Entree") {
+        entreesToRemove = 1;
+      }
+
+      const itemsToRemove = [];
+
+      // Traverse the order backward to find the last items matching sides/entrees
+      for (let i = newOrder.length - 1; i >= 0; i--) {
+        const currentItem = newOrder[i];
+
+        if (sidesToRemove > 0 && currentItem.item_type === "Side") {
+          sidesToRemove--;
+          itemsToRemove.push(i);
+        } else if (entreesToRemove > 0 && currentItem.item_type === "Entree") {
+          entreesToRemove--;
+          itemsToRemove.push(i);
+        }
+
+        // Break early if all sides and entrees are accounted for
+        if (sidesToRemove === 0 && entreesToRemove === 0) {
+          break;
+        }
+      }
+
+      // Remove the identified items from the order
+      itemsToRemove.sort((a, b) => b - a).forEach((i) => {
+        const removedItem = newOrder.splice(i, 1)[0];
+        if (removedItem.name !== "A La Carte" ) {
+          setTotal((prevTotal) => Math.max(0, prevTotal - removedItem.price));
+        } 
+      });
+
+      // Update counts and reset carteSelected
+      if (carteSelected === "Side") {
+        setSelectedSides(Math.max(0, selectedSides - 1));
+      } else if (carteSelected === "Entree") {
+        setSelectedEntrees(Math.max(0, selectedEntrees - 1));
+      }
+
+      setCarteSelected(null);
+    } else {
+      // If it's a regular item, no change to the total
+      if (item.special) {
+        setTotal((prevTotal) => Math.max(0, prevTotal - 1.5));
+      }
     }
 
+    if (item.item_type === "Appetizer" || item.item_type === "Drink") {
+      setTotal((prevTotal) => Math.max(0, prevTotal - item.price));
+    }
+  
     setOrder(newOrder);
-    setTotal(total - itemPrice);
+
+    console.log(selectedCategory);
+    console.log(selectedSides);
+    console.log(selectedEntrees);
   };
+
+
 
   const clearOrder = () => {
     setOrder([]);
@@ -415,6 +589,7 @@ const CustomerKiosk: React.FC = () => {
     setSelectedSides(0);
     setSelectedEntrees(0);
     setCurrentItemType(null);
+    setCarteSelected(null);
   };
 
   const handleCheckout = () => {
@@ -581,8 +756,8 @@ const CustomerKiosk: React.FC = () => {
                         ? 'bg-gray-700 text-white border-gray-600' 
                         : 'bg-gray-200 text-black border-gray-300 hover:bg-gray-200'
                       : theme === 'night'
-                        ? 'bg-gray-900 text-white border-gray-700 hover:bg-gray-700' // Unselected button for night theme
-                        : 'bg-white text-black border-gray-300 hover:bg-gray-200' // Unselected button for day theme
+                        ? 'bg-gray-900 text-white border-gray-700 hover:bg-gray-700'
+                        : 'bg-white text-black border-gray-300 hover:bg-gray-200' 
                   }`}
                 >
                   <span className="font-bold" style={{fontSize: '1rem'}}>
@@ -610,17 +785,38 @@ const CustomerKiosk: React.FC = () => {
                   />
                 </div>
                 <CardHeader>
-                  <CardTitle className="text-lg">
-                    {translations[`name_${item.menu_item_id}`] || item.name}
-                  </CardTitle>
+
+                  <CardTitle className="text-lg">{item.name}</CardTitle>
                   <CardDescription>
                     {translations[`description_${item.menu_item_id}`] || item.description}
                   </CardDescription>
+
                 </CardHeader>
                 <CardFooter className="flex justify-between items-center">
                   <span className="font-bold">${item.price.toFixed(2)}</span>
                   <Button
                     onClick={() => addToOrder(item, selectedCategory)}
+                    disabled={
+                      currentItemType === "Plate" &&
+                      ((selectedCategory === 'Side' && selectedSides >= 1) ||
+                      (selectedCategory === 'Entree' && selectedEntrees >= 2)) ||
+  
+                      currentItemType === "Bigger Plate" &&
+                      ((selectedCategory === 'Side' && selectedSides >= 1) ||
+                      (selectedCategory === 'Entree' && selectedEntrees >= 3)) ||
+  
+                      currentItemType === "Bowl" &&
+                      ((selectedCategory === 'Side' && selectedSides >= 1) ||
+                      (selectedCategory === 'Entree' && selectedEntrees >= 1)) ||
+
+                      currentItemType === "A La Carte" &&
+                      ((selectedCategory === 'Side' && (selectedSides >= 1 || selectedEntrees >= 1)) ||
+                      (selectedCategory === 'Entree' && (selectedSides >= 1 || selectedEntrees >= 1))) ||
+
+                      currentItemType === null && 
+                      (selectedCategory === 'Side' || selectedCategory === 'Entree')
+                      
+                    }
                     className={`${
                       theme === 'night'
                         ? 'bg-white text-black hover:bg-gray-200'
@@ -696,6 +892,15 @@ const CustomerKiosk: React.FC = () => {
               onClick={handleCheckout}
             >
               {translations['checkout'] || `Checkout (${order.length} items)`}
+            </Button>
+            <Button
+              className={`w-full mt-4 ${
+                theme === 'night' ? 'bg-white text-black hover:bg-gray-200' : 'bg-black text-white hover:bg-gray-900'
+              }`}
+              disabled={order.length === 0}
+              onClick={clearOrder}
+            >
+              {translations['clear order'] || `Clear Order`}
             </Button>
           </CardFooter>
         </Card>

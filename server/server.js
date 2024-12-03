@@ -181,7 +181,7 @@ app.get('/api/weather', async (req, res) => {
       }
     });
 
-    console.log('Weather API response:', response.data);
+    // console.log('Weather API response:', response.data);
     res.json(response.data);
   } catch (error) {
     console.error('Weather API error:', error.response ? error.response.data : error.message);

@@ -47,7 +47,7 @@ export default function PandaExpressPOS() {
       className="flex h-screen"
       style={{
         backgroundColor: "var(--background-color)",
-        color: "#FFFFFF",
+        color: "var(--cashier-text-color)",
       }}
     >
       <SidebarMenu/>
@@ -60,8 +60,9 @@ export default function PandaExpressPOS() {
           <div
             className="flex-1"
             style={{
-              backgroundColor: "#1D1F2B", // Darker box for menu
+              backgroundColor: "var(--menu-section-box)", // Darker box for menu
               padding: "16px", // Adjust padding to reduce size
+              border: "1px solid var(--border-style)", // Light gray border
               borderRadius: "8px",
               boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
               maxHeight: "70vh", // Limit box height
@@ -75,8 +76,9 @@ export default function PandaExpressPOS() {
           <div
             style={{
               width: "25%", // Reduce width to make boxes fit better
-              backgroundColor: "#1D1F2B", // Darker box for order summary
+              backgroundColor: "var(--menu-section-box)", // Darker box for order summary
               padding: "16px", // Adjust padding to reduce size
+              border: "1px solid var(--border-style)", // Light gray border
               borderRadius: "8px",
               boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
               maxHeight: "70vh", // Limit box height
