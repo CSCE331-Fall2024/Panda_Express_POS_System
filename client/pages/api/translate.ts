@@ -1,3 +1,4 @@
+// pages/api/translate.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 type TranslateRequest = {

@@ -6,7 +6,12 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ }) => (
   <header>
-    <h1 className="text-3xl font-bold text-primary">Welcome to Panda Express</h1>
+    <h1 className="text-3xl font-bold text-primary" 
+        style={{
+          color: "var(--foreground)",
+    }}>
+      Welcome to Panda Express
+    </h1>
     <p className="text-muted-foreground">Cashier Mode</p>
   </header>
 );

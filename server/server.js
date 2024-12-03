@@ -1,3 +1,4 @@
+// server.js
 require('dotenv').config();
 const express = require('express');
 const passport = require('passport');
@@ -10,6 +11,7 @@ const cors = require('cors');
 const app = express();
 const PORT = 8080;
 
+// PostgreSQL pool setup
 const pool = new Pool({
     user: process.env.PSQL_USER,
     host: process.env.PSQL_HOST,
@@ -19,6 +21,7 @@ const pool = new Pool({
     ssl: { rejectUnauthorized: false }
 });
 
+// Passport Google OAuth Strategy
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -28,6 +31,7 @@ passport.use(new GoogleStrategy({
     return done(null, profile);
 }));
 
+// Middleware
 app.use(express.json());
 app.use(cors({ origin: 'http://localhost:3000' }));
 app.use(passport.initialize());
@@ -40,43 +44,56 @@ app.set('views', path.join(__dirname, 'views'));
 app.post('/api/translate', async (req, res) => {
   const { texts, targetLanguage } = req.body;
 
-  // Check if the necessary data is provided
-  if (!texts || !targetLanguage || !Array.isArray(texts)) {
+  // Validate request body
+  if (!texts || !Array.isArray(texts) || texts.length === 0 || typeof targetLanguage !== 'string' || targetLanguage.trim() === '') {
       return res.status(400).json({ error: 'Invalid request. Missing texts or target language.' });
   }
 
   const apiKey = process.env.GOOGLE_TRANSLATE_API_KEY;
-  console.log("API Key:", apiKey);
-
-  // Check if the Google Translate API key is present in the environment variables
+  
+  // Check for API key
   if (!apiKey) {
       console.error('Google Translate API key is missing.');
       return res.status(500).json({ error: 'Translation service not configured' });
   }
 
   try {
+      // Construct the request body for Google Translate API
+      const requestBody = {
+          q: texts,
+          target: targetLanguage,
+          format: 'text' // Optional: Specify the format of the source text
+      };
+
       // Call Google Translate API
       const response = await axios.post(
           'https://translation.googleapis.com/language/translate/v2',
-          {},
+          requestBody,
           {
               params: {
-                  q: texts,
-                  target: targetLanguage,
                   key: apiKey
+              },
+              headers: {
+                  'Content-Type': 'application/json'
               }
           }
       );
 
-      // Extract translated texts from the API response
+      // Extract translated texts
       const translations = response.data.data.translations.map(t => t.translatedText);
       res.json({ translatedTexts: translations });
   } catch (error) {
       console.error('Error with Google Translate API:', error.response ? error.response.data : error.message);
+      
+      // Handle specific Google Translate API errors
+      if (error.response && error.response.data && error.response.data.error) {
+          const apiError = error.response.data.error;
+          return res.status(apiError.code || 500).json({ error: apiError.message || 'Translation failed' });
+      }
+
       res.status(500).json({ error: 'Translation failed' });
   }
 });
-
 
 // Home page endpoint
 app.get('/', (req, res) => {
@@ -107,17 +124,18 @@ app.get('/api/orders', async (req, res) => {
     try {
         let query = 'SELECT order_id, CAST(total AS FLOAT) AS total, time, staff_id, payment_id FROM orders WHERE 1=1';
         const params = [];
+        let paramIndex = 1;
 
         if (year) {
-            query += ' AND EXTRACT(YEAR FROM time) = $1';
+            query += ` AND EXTRACT(YEAR FROM time) = $${paramIndex++}`;
             params.push(year);
         }
         if (month) {
-            query += ' AND EXTRACT(MONTH FROM time) = $2';
+            query += ` AND EXTRACT(MONTH FROM time) = $${paramIndex++}`;
             params.push(month);
         }
         if (day) {
-            query += ' AND EXTRACT(DAY FROM time) = $3';
+            query += ` AND EXTRACT(DAY FROM time) = $${paramIndex++}`;
             params.push(day);
         }
 
