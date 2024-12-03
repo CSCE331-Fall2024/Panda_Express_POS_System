@@ -45,7 +45,7 @@ const weatherIcons = {
 const categoryTranslations: Record<string, Record<string, string>> = {
   en: {
     "Combos": "Combos",
-    "Combo": "Combo", // Singular form if used
+    "Combo": "Combo",
     "Side": "Side",
     "Entree": "Entree",
     "Appetizer": "Appetizer",
@@ -53,13 +53,12 @@ const categoryTranslations: Record<string, Record<string, string>> = {
   },
   es: {
     "Combos": "Combinaciones", // Updated translation
-    "Combo": "Combo", // Singular form if used
+    "Combo": "Combo", 
     "Side": "Acompañamiento",
     "Entree": "Entrada",
     "Appetizer": "Aperitivo",
     "Drink": "Bebida",
   },
-  // Add more languages as needed
 };
 
 const CustomerKiosk: React.FC = () => {
@@ -111,7 +110,8 @@ const CustomerKiosk: React.FC = () => {
 
   const categoryOrder = ["Combos", "Side", "Entree", "Appetizer", "Drink"];
 
-  // Helper function to fetch translations
+  
+  //Helper for translations
   const fetchTranslations = async (languageCode: string) => {
     try {
       const staticTexts = translationKeys.map(k => k.text);
@@ -694,31 +694,34 @@ const CustomerKiosk: React.FC = () => {
         <div className="flex items-center gap-4">
           {/* Language Selector */}
           <div className="relative inline-block text-left">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="flex items-center" 
-              onClick={() => setDropdownOpen(!dropdownOpen)} // Toggle dropdown
+  <button
+    className={`flex items-center px-4 py-2 bg-gray-100 text-gray-800 rounded-md shadow-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400 ${
+      dropdownOpen ? "ring-2 ring-gray-400" : ""
+    }`}
+    onClick={() => setDropdownOpen(!dropdownOpen)} // Toggle dropdown
+  >
+    <span className="font-semibold">
+      {availableLanguages.find((lang) => lang.code === language)?.label}
+    </span>
+    <ChevronDown className="ml-2 h-4 w-4 text-gray-600" />
+  </button>
+  {dropdownOpen && (
+    <div className="absolute right-0 mt-2 w-48 rounded-lg shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+      <ul className="py-2">
+        {availableLanguages.map((lang) => (
+          <li key={lang.code}>
+            <button
+              onClick={() => handleLanguageChange(lang.code)}
+              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none"
             >
-              <span>{availableLanguages.find(lang => lang.code === language)?.label}</span>
-              <ChevronDown className="ml-1 h-4 w-4" />
-            </Button>
-            {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
-                <div className="py-1">
-                  {availableLanguages.map((lang) => (
-                    <button
-                      key={lang.code}
-                      onClick={() => handleLanguageChange(lang.code)}
-                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    >
-                      {lang.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
+              {lang.label}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )}
+</div>
 
           {/* Weather and Order Info */}
           {weather && (
