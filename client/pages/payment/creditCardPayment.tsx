@@ -80,7 +80,12 @@ export default function CreditCardPayment() {
             console.log("Menu items added to menu_item_order_jt successfully.")
             sessionStorage.removeItem("paymentAmount")
             sessionStorage.removeItem("menuItemIds")
-            router.push("/payment/orderSuccess")
+            if (sessionStorage.getItem("userRole") === "customer") {
+              router.push("/payment/orderSuccess")
+            }
+            else if (sessionStorage.getItem("userRole") === "employee") {
+              router.push("/cashier")
+            }
           } else {
             console.error("Failed to add menu items to menu_item_order_jt:", jointData.message)
           }

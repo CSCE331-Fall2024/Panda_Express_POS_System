@@ -1,8 +1,14 @@
 import React, { createContext, useContext, useState } from "react";
 
 interface UserContextType {
-  user: { role?: string } | null;
-  setUser: (user: { role?: string } | null) => void;
+  user: { 
+    id?: number; 
+    role?: string 
+  } | null;
+  setUser: (user: { 
+    id?: number; 
+    role?: string 
+  } | null) => void;
   isManager: () => boolean;
   isCashier: () => boolean;
 }
@@ -10,7 +16,10 @@ interface UserContextType {
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<{ role?: string } | null>(null);
+  const [user, setUser] = useState<{ 
+    id?: number; 
+    role?: string 
+  } | null>(null);
 
   const isManager = () => user?.role === "manager";
   const isCashier = () => user?.role === "cashier";

@@ -7,11 +7,13 @@
   --foreground: #171717;
   --card: #f8f9fa; /* Slightly lighter than background */
   --card-foreground: #212529; /* Dark text for cards */
-  --highlight: #f5f5a1; /* Optional highlight for day */
   --primary: #ff0000;
   --secondary: #3a3a3a;
   --background-image: none;
-  --background-color: #0b0d17;
+  --background-color: #F8F9FA;
+  --cashier-text-color: #212529;
+  --menu-section-box: #ffffff;
+  --border-style: #475058;
   /* url('https://www.pandaexpress.com.ph/sites/ph/files/styles/background_desktop/public/2022-06/img-our-food-desktop.jpg?itok=sa-5OOhz') */
 }
 
@@ -33,6 +35,9 @@ body {
   --secondary: #b0b0b0;
   --background-image: url('/dark-theme-main-background.png');
   --background-color: #0b0d17;
+  --cashier-text-color: #FFFFFF;
+  --menu-section-box: #1d1f2b;
+  --border-style: #DEE2E6;
 }
 
 .loading-theme body {
