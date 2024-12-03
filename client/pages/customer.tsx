@@ -433,6 +433,8 @@ const CustomerKiosk: React.FC = () => {
     setTotal(0);
     setSelectedSides(0);
     setSelectedEntrees(0);
+    setCurrentItemType(null);
+    setCarteSelected(null);
   };
 
   const handleCheckout = () => {
@@ -819,6 +821,15 @@ const CustomerKiosk: React.FC = () => {
               onClick={handleCheckout}
             >
               {translations['checkout'] || `Checkout (${order.length} items)`}
+            </Button>
+            <Button
+              className={`w-full mt-4 ${
+                theme === 'night' ? 'bg-white text-black hover:bg-gray-200' : 'bg-black text-white hover:bg-gray-900'
+              }`}
+              disabled={order.length === 0}
+              onClick={clearOrder}
+            >
+              {translations['clear order'] || `Clear Order`}
             </Button>
           </CardFooter>
         </Card>
