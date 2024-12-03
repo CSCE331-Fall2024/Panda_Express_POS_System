@@ -21,7 +21,12 @@ export default function PaymentScreen() {
 
   const handlePayAtCounter = () => {
     console.log("Proceeding to pay at counter...")
-    router.push("/payment/orderSuccess")
+    if (sessionStorage.getItem("userRole") === "customer") {
+      router.push("/payment/orderSuccess")
+    }
+    else if (sessionStorage.getItem("userRole") === "employee") {
+      router.push("/cashier")
+    }
   }
 
   const handleCancelOrder = () => {

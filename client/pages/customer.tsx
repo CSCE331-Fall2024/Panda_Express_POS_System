@@ -286,6 +286,7 @@ const CustomerKiosk: React.FC = () => {
     sessionStorage.setItem('currentItemType', currentItemType || '');
     sessionStorage.setItem('carteSelected', carteSelected || '');
     sessionStorage.setItem('language', language);
+    sessionStorage.setItem('userRole', 'customer');
 
     // Store menu item IDs
     const menuItemIds = order.map(item => item.menu_item_id);
