@@ -7,6 +7,9 @@ const ManagerNavBar: React.FC = () => {
 
   const handleNavigation = (path: string) => {
     setMenuOpen(false);
+    if(path === "/login") {
+      sessionStorage.setItem("staff_id", "0");
+    }
     router.push(path);
   };
 
