@@ -16,6 +16,7 @@ export default function PaymentScreen() {
 
   const handlePayHere = () => {
     console.log("Processing payment via Pay Here method...")
+    console.log(sessionStorage.getItem("staff_id"));
     router.push("/payment/payHereOptions")
   }
 

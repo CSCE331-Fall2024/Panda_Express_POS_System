@@ -287,6 +287,7 @@ const CustomerKiosk: React.FC = () => {
     sessionStorage.setItem('carteSelected', carteSelected || '');
     sessionStorage.setItem('language', language);
     sessionStorage.setItem('userRole', 'customer');
+    sessionStorage.setItem('staff_id', '0');
 
     // Store menu item IDs
     const menuItemIds = order.map(item => item.menu_item_id);
@@ -789,10 +790,18 @@ const CustomerKiosk: React.FC = () => {
                   />
                 </div>
                 <CardHeader>
-
-                  <CardTitle className="text-lg">{item.name}</CardTitle>
+                  <CardTitle 
+                    className="text-lg">{item.name}
+                    
+                  </CardTitle>
+                  
                   <CardDescription>
                     {translations[`description_${item.menu_item_id}`] || item.description}
+                    {item.special && (
+                      <span className="text-red-500 font-bold ml-2">
+                          {translations['Premium'] || '(Premium)'}
+                      </span>
+                    )}
                   </CardDescription>
 
                 </CardHeader>

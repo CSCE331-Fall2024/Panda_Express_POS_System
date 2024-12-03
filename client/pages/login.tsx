@@ -38,6 +38,7 @@ const LoginPage: React.FC = () => {
       setUser({role: data.role});
       if (data.role) {
         sessionStorage.setItem('staff_id', data.staff_id);
+        console.log(sessionStorage.getItem('staff_id'));
 
         if (data.role === 'cashier') router.push('/cashier');
         else if (data.role === 'manager') router.push('/manager');
