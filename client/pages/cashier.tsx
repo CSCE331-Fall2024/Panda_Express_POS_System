@@ -359,8 +359,8 @@ const CashierPOS: React.FC = () => {
   const handleCheckout = () => {
     sessionStorage.setItem('paymentAmount', parseFloat((total * 1.0825).toFixed(2)).toString());
     sessionStorage.setItem('order', JSON.stringify(order));
-    sessionStorage.setItem('staff_id', user?.id?.toString() || '0');
-    console.log('User ID:', user?.id);
+    // sessionStorage.setItem('staff_id', user?.id?.toString() || '0');
+    // console.log('User ID:', user?.id);
     router.push('/orderType');
   };
 
