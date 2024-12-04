@@ -2,7 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useUser } from '@/components/ui/user_context';
 import { useTheme } from '@/components/context/theme_context';
+import { getUserLocation, getWeatherData } from "@/utils/apiHelpers";
+import { Cloud, Sun, CloudRain, CloudSnow, User } from "lucide-react";
 
+
+const weatherIcons = {
+  clear: <Sun className="h-6 w-6" />,
+  clouds: <Cloud className="h-6 w-6" />,
+  rain: <CloudRain className="h-6 w-6" />,
+  snow: <CloudSnow className="h-6 w-6" />,
+};
 
 const LoginPage: React.FC = () => {
   const router = useRouter();
@@ -11,6 +20,39 @@ const LoginPage: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [weather, setWeather] = React.useState<{ temperature?: number; description?: string } | null>(null);
+
+  
+  // Get weather data based on the location
+  useEffect(() => {
+    const fetchWeatherForLocation = async () => {
+      try {
+        const location = await getUserLocation();
+        if (location) {
+          const weatherData = await getWeatherData(location.latitude, location.longitude);
+          setWeather(weatherData);
+        } else {
+          console.log('Location access denied or unavailable.');
+        }
+      } catch (error) {
+        console.error('Error fetching weather or location:', error);
+      }
+    };
+
+    fetchWeatherForLocation();
+  }, []);
+
+  const getWeatherIcon = () => {
+    if (!weather?.description) return null;
+    const description = weather.description.toLowerCase();
+
+    if (description.includes('clear')) return weatherIcons.clear;
+    if (description.includes('cloud')) return weatherIcons.clouds;
+    if (description.includes('rain')) return weatherIcons.rain;
+    if (description.includes('snow')) return weatherIcons.snow;
+
+    return <Cloud className="h-6 w-6" />; // Default icon
+  };
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "night");
@@ -68,6 +110,7 @@ useEffect(() => {
         else if (role === 'manager') router.push('/manager');
     }
 }, []);
+
 
 
 
@@ -131,15 +174,17 @@ useEffect(() => {
             transform: 'translateX(-50%)'
           }}
         >
-          <span style={{ fontWeight: 'bold' }}>Menu</span>
+          <span style={{ fontWeight: 'bold' }}>Home</span>
         </a>
-        
-        {/* Panda Express Logo aligned to the left */}
-        <img
-          src="https://s3.amazonaws.com/PandaExpressWebsite/Responsive/img/home/logo.png"
-          alt="Panda Express Logo"
-          style={{ width: '80px' }}
-        />
+        {/* Weather Data */}
+        {weather && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+              {getWeatherIcon()} {/* Weather icon */}
+              <span>
+                {weather.temperature !== undefined ? `${Math.round(weather.temperature)}°F` : 'N/A'}
+              </span>
+            </div>
+          )}
       </nav>
 
       {/* Login Box - Spans Full Screen Width */}
