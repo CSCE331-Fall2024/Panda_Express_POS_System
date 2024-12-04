@@ -1,4 +1,3 @@
-//need to implement logic for z report only being generated once a day
 import React, { useState, useEffect } from 'react';
 import { pageStyle, overlayStyle, contentStyle, headingStyle, tableHeaderStyle, tableCellStyle } from '@/utils/tableStyles';
 import BackButton from '@/components/ui/back_button';
@@ -14,6 +13,9 @@ interface ZReportItem {
 const ZReport: React.FC = () => {
   const [zReportData, setZReportData] = useState<ZReportItem[]>([]);
   const [totals, setTotals] = useState({ totalTransactions: 0, totalSales: 0 });
+  const [reportGenerated, setReportGenerated] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const today = new Date().toLocaleDateString('en-CA');
 
   useEffect(() => {
     const fetchZReport = async () => {
@@ -27,9 +29,14 @@ const ZReport: React.FC = () => {
             totalTransactions: data.totals.totalTransactions,
             totalSales: data.totals.totalSales,
           });
+          setReportGenerated(true);
+        } else if (data.message === 'Z-Report already generated for today') {
+          setErrorMessage(data.message);
+          setReportGenerated(true);
         }
       } catch (error) {
         console.error('Failed to fetch Z Report data:', error);
+        setErrorMessage('Failed to fetch report. Please try again later.');
       }
     };
 
@@ -43,7 +50,14 @@ const ZReport: React.FC = () => {
       <div style={contentStyle}>
         <BackButton />
         {/* change current date  */}
-        <h2 style={headingStyle}>Z-Report for 2024-10-20 </h2>
+        <h2 style={headingStyle}>Z-Report for {today} </h2>
+        {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+          {!reportGenerated ? (
+            <div>
+              <p>Z-Report has already been generated for today.</p>
+              </div>
+          ) : (
+            <>
         <div>
           <table style={{ width: '100%', textAlign: 'center', marginBottom: '20px' }}>
             <thead>
@@ -74,12 +88,14 @@ const ZReport: React.FC = () => {
                 <td style={tableCellStyle}>{item.employee_name}</td>
                 <td style={tableCellStyle}>{item.total_transactions}</td>
                 <td style={tableCellStyle}>${item.total_sales}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          )}
+        </div>
       </div>
-    </div>
     </>
   );
 };
