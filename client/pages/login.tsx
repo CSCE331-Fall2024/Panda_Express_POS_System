@@ -50,6 +50,25 @@ const LoginPage: React.FC = () => {
       setError('Network error or server not reachable');
     }
   };
+  const handleGoogleLogin = () => {
+    window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/auth/google`;
+};
+useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const staff_id = urlParams.get('staff_id');
+    const role = urlParams.get('role');
+    const error = urlParams.get('error');
+
+    if (staff_id && role) {
+        setUser({ role });
+        sessionStorage.setItem('staff_id', staff_id);
+
+        if (role === 'cashier') router.push('/cashier');
+        else if (role === 'manager') router.push('/manager');
+    }
+}, []);
+
+
 
   return (
     <div
@@ -165,7 +184,7 @@ const LoginPage: React.FC = () => {
               }}
             />
             <input
-              type="password"
+              type=" word"
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -195,6 +214,24 @@ const LoginPage: React.FC = () => {
               SIGN IN
             </button>
           </form>
+          <button
+            onClick={handleGoogleLogin}
+            style={{
+                width: '100%',
+                padding: '12px',
+                backgroundColor: '#4285F4',
+                color: '#FFFFFF',
+                border: 'none',
+                borderRadius: '4px',
+                fontSize: '16px',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                marginTop: '10px'
+            }}
+        >
+            Sign in with Google
+        </button>
+
 
           {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
         </div>

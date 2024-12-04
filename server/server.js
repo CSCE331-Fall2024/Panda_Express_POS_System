@@ -27,9 +27,69 @@ passport.use(new GoogleStrategy({
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/auth/google/callback`
 },
-(accessToken, refreshToken, profile, done) => {
-    return done(null, profile);
+async (accessToken, refreshToken, profile, done) => {
+  try {
+    const email = profile.emails[0].value;
+    console.log('email:', email)
+    // Check if the user's email exists in the database
+    const query = 'SELECT staff_id, position FROM staff WHERE google_id = $1';
+    const result = await pool.query(query, [email]);
+
+    if (result.rows.length === 0) {
+      console.log("user not found", email);
+        return done(null, false, { message: 'User not found in the database.' });
+    }
+    console.log("user found", email);
+    const user = result.rows[0];
+    return done(null, user);
+} catch (error) {
+    console.error('Error during Google OAuth callback:', error);
+    return done(error);
+}
 }));
+
+const session = require('express-session');
+
+// Set up express-session middleware
+app.use(session({
+    secret: 'key',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false } 
+}));
+
+// Passport session initialization
+app.use(passport.session());
+
+// Serialize and deserialize user
+passport.serializeUser((user, done) => {
+    done(null, user);
+});
+
+passport.deserializeUser((user, done) => {
+    done(null, user);
+});
+
+// Endpoint to start Google OAuth2 authentication
+app.get('/api/auth/google',
+  passport.authenticate('google', { scope: ['profile', 'email'] })
+);
+
+// Callback endpoint for Google OAuth2
+app.get('/api/auth/google/callback',
+  passport.authenticate('google', { 
+    failureRedirect: '/?error=authentication_failed',
+    session: true
+  }),
+  (req, res) => {
+    if (!req.user) {
+      return res.redirect('/?error=User not found');
+  }
+  const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_BASE_URL || 'http://localhost:3000';
+  const redirectUrl = `${baseUrl}/login?staff_id=${req.user.staff_id}&role=${req.user.position.toLowerCase()}`;
+    res.redirect(redirectUrl.toString());
+  }
+);
 
 // Middleware
 app.use(express.json());
@@ -97,7 +157,10 @@ app.post('/api/translate', async (req, res) => {
 
 // Home page endpoint
 app.get('/', (req, res) => {
-    res.send('Welcome to the home page!');
+    // res.send('You are not an authorized user.');
+    const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_BASE_URL || 'http://localhost:3000';
+    const redirectUrl = `${baseUrl}/login`;
+    res.redirect(redirectUrl.toString());
 });
 app.get("/api/home", (req, res) => {
   res.json({ message: "Welcome to the home page!" });
@@ -148,19 +211,6 @@ app.get('/api/orders', async (req, res) => {
         res.status(500).json({ error: 'Failed to retrieve orders' });
     }
 });
-
-// Endpoint to start Google OAuth2 authentication
-app.get('/api/auth/google',
-  passport.authenticate('google', { scope: ['profile', 'email'] })
-);
-
-// Callback endpoint for Google OAuth2
-app.get('/api/auth/google/callback',
-  passport.authenticate('google', { failureRedirect: '/' }),
-  (req, res) => {
-    res.send('Logged in with Google');
-  }
-);
 
 // OpenWeather endpoint (example)
 app.get('/api/weather', async (req, res) => {
