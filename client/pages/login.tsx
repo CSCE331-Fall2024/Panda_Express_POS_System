@@ -2,7 +2,45 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useUser } from '@/components/ui/user_context';
 import { useTheme } from '@/components/context/theme_context';
+import { getUserLocation, getWeatherData } from "@/utils/apiHelpers";
+import { Cloud, Sun, CloudRain, CloudSnow, X } from "lucide-react";
 
+const weatherIcons = {
+  clear: <Sun className="h-6 w-6" />,
+  clouds: <Cloud className="h-6 w-6" />,
+  rain: <CloudRain className="h-6 w-6" />,
+  snow: <CloudSnow className="h-6 w-6" />,
+};
+
+// Reusable Error Popup Component
+const ErrorPopup: React.FC<{ message: string; onClose: () => void }> = ({ message, onClose }) => {
+  return (
+    <div className="fixed inset-0 flex items-center justify-center z-50">
+      {/* Overlay */}
+      <div
+        className="absolute inset-0 bg-black opacity-50"
+        onClick={onClose}
+      ></div>
+      
+      {/* Popup Content */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg z-10 max-w-sm w-full p-6 relative">
+        {/* Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute top-2 right-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+        >
+          <X className="h-5 w-5" />
+        </button>
+        {/* Icon */}
+        <div className="flex justify-center mb-4">
+          <CloudRain className="h-8 w-8 text-red-500" />
+        </div>
+        {/* Message */}
+        <p className="text-center text-red-500 dark:text-red-400">{message}</p>
+      </div>
+    </div>
+  );
+};
 
 const LoginPage: React.FC = () => {
   const router = useRouter();
@@ -10,15 +48,53 @@ const LoginPage: React.FC = () => {
   const { theme } = useTheme();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [weather, setWeather] = useState<{ temperature?: number; description?: string } | null>(null);
 
+  // State for error popup
+  const [showErrorPopup, setShowErrorPopup] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  // Fetch weather data based on the user's location
+  useEffect(() => {
+    const fetchWeatherForLocation = async () => {
+      try {
+        const location = await getUserLocation();
+        if (location) {
+          const weatherData = await getWeatherData(location.latitude, location.longitude);
+          setWeather(weatherData);
+        } else {
+          console.log('Location access denied or unavailable.');
+        }
+      } catch (error) {
+        console.error('Error fetching weather or location:', error);
+      }
+    };
+
+    fetchWeatherForLocation();
+  }, []);
+
+  // Determine the appropriate weather icon based on description
+  const getWeatherIcon = () => {
+    if (!weather?.description) return null;
+    const description = weather.description.toLowerCase();
+
+    if (description.includes('clear')) return weatherIcons.clear;
+    if (description.includes('cloud')) return weatherIcons.clouds;
+    if (description.includes('rain')) return weatherIcons.rain;
+    if (description.includes('snow')) return weatherIcons.snow;
+
+    return <Cloud className="h-6 w-6" />; // Default icon
+  };
+
+  // Toggle dark mode based on the theme
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "night");
   }, [theme]);
 
+  // Handle user login
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/login`, {
         method: 'POST',
@@ -27,15 +103,21 @@ const LoginPage: React.FC = () => {
         },
         body: JSON.stringify({ username, password }),
       });
-  
-      if (!response.ok) {
-        throw new Error('Login failed');
-      }
-  
+
+      // Parse the response once
       const data = await response.json();
+
+      if (!response.ok) {
+        // If response is not ok, set the error message and show popup
+        const message = data.message || 'Login failed. Please try again.';
+        setErrorMessage(message);
+        setShowErrorPopup(true);
+        return; // Exit the function early
+      }
+
       console.log('Login response data:', data);
       
-      setUser({role: data.role});
+      setUser({ role: data.role });
       if (data.role) {
         sessionStorage.setItem('staff_id', data.staff_id);
         console.log(sessionStorage.getItem('staff_id'));
@@ -43,14 +125,41 @@ const LoginPage: React.FC = () => {
         if (data.role === 'cashier') router.push('/cashier');
         else if (data.role === 'manager') router.push('/manager');
       } else { 
-        router.push('/login');
-        setError('Unauthorized role');
+        setErrorMessage('Unauthorized role');
+        setShowErrorPopup(true);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Login error:', err);
-      setError('Network error or server not reachable');
+      setErrorMessage(err.message || 'Network error or server not reachable');
+      setShowErrorPopup(true);
     }
   };
+
+  // Handle Google login
+  const handleGoogleLogin = () => {
+    window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/auth/google`;
+  };
+
+  // Handle URL parameters for staff_id, role, and error
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const staff_id = urlParams.get('staff_id');
+    const role = urlParams.get('role');
+    const error = urlParams.get('error');
+
+    if (staff_id && role) {
+      setUser({ role });
+      sessionStorage.setItem('staff_id', staff_id);
+
+      if (role === 'cashier') router.push('/cashier');
+      else if (role === 'manager') router.push('/manager');
+    }
+
+    if (error) {
+      setErrorMessage(error);
+      setShowErrorPopup(true);
+    }
+  }, []);
 
   return (
     <div
@@ -112,15 +221,17 @@ const LoginPage: React.FC = () => {
             transform: 'translateX(-50%)'
           }}
         >
-          <span style={{ fontWeight: 'bold' }}>Menu</span>
+          <span style={{ fontWeight: 'bold' }}>Home</span>
         </a>
-        
-        {/* Panda Express Logo aligned to the left */}
-        <img
-          src="https://s3.amazonaws.com/PandaExpressWebsite/Responsive/img/home/logo.png"
-          alt="Panda Express Logo"
-          style={{ width: '80px' }}
-        />
+        {/* Weather Data */}
+        {weather && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+              {getWeatherIcon()} {/* Weather icon */}
+              <span>
+                {weather.temperature !== undefined ? `${Math.round(weather.temperature)}°F` : 'N/A'}
+              </span>
+            </div>
+          )}
       </nav>
 
       {/* Login Box - Spans Full Screen Width */}
@@ -166,7 +277,7 @@ const LoginPage: React.FC = () => {
               }}
             />
             <input
-              type="password"
+              type="password" // Corrected input type from " word" to "password"
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -196,10 +307,37 @@ const LoginPage: React.FC = () => {
               SIGN IN
             </button>
           </form>
+          <button
+            onClick={handleGoogleLogin}
+            style={{
+                width: '100%',
+                padding: '12px',
+                backgroundColor: '#4285F4',
+                color: '#FFFFFF',
+                border: 'none',
+                borderRadius: '4px',
+                fontSize: '16px',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                marginTop: '10px'
+            }}
+        >
+            Sign in with Google
+        </button>
 
-          {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
+
+          {/* Remove the old error message display */}
+          {/* {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>} */}
         </div>
       </div>
+
+      {/* Render Error Popup */}
+      {showErrorPopup && (
+        <ErrorPopup 
+          message={errorMessage} 
+          onClose={() => setShowErrorPopup(false)} 
+        />
+      )}
     </div>
   );
 };

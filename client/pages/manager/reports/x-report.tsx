@@ -6,6 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { pageStyle, overlayStyle, contentStyle, headingStyle, tableHeaderStyle, tableCellStyle } from '@/utils/tableStyles';
 import BackButton from '@/components/ui/back_button'
+import ManagerNavBar from '@/components/ui/manager_nav_bar';
+
 
 interface XReportItem {
   hour: string
@@ -81,6 +83,7 @@ export default function XReport() {
   };
 
   return (
+    <> <ManagerNavBar />
     <div style={pageStyle}>
       <div style={overlayStyle}></div>
       <div style={contentStyle}>
@@ -205,6 +208,7 @@ export default function XReport() {
         </div>
       </div>
     </div>
+    </>
   )
 }
 
