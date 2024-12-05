@@ -36,21 +36,23 @@ export default function PaymentScreen() {
   }
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-screen bg-background justify-center items-center">
       {/* <aside className="w-16 bg-muted flex flex-col items-center py-4 space-y-4">
         <Button variant="ghost" size="icon" onClick={() => router.push("/cashier")}>
           <Home className="h-6 w-6" />
         </Button>
       </aside> */}
       <main className="flex-1 p-6 space-y-6">
+
         <header>
-          <h1 className="text-3xl font-bold text-primary">Payment</h1>
-          <p className="text-muted-foreground">
-            Order Type: {orderType === "here" ? "Here" : "To Go"} {/* Display order type */}
-          </p>
+          {/* <h1 className="text-3xl font-bold text-primary">Payment</h1> */}
+          {/* <p className="text-muted-foreground"> */}
+            {/* Order Type: {orderType === "here" ? "Here" : "To Go"} Display order type */}
+          {/* </p> */}
         </header>
+
         <div className="flex justify-center">
-          <Card className="mt-[20vh] w-full max-w-md">
+          <Card className="w-full max-w-md text-center bg-white/75">
             <CardHeader>
               <CardTitle>Payment Options</CardTitle>
               <CardDescription>
@@ -61,14 +63,14 @@ export default function PaymentScreen() {
               <Button
                 onClick={handlePayHere}
                 variant="default"
-                className="w-full py-4 text-lg font-semibold"
+                className="w-full py-4 text-lg font-semibold bg-black text-white hover:bg-gray-900"
               >
                 Pay Here (Credit, Dining Dollars)
               </Button>
               <Button
                 onClick={handlePayAtCounter}
                 variant="default"
-                className="w-full py-4 text-lg font-semibold"
+                className="w-full py-4 text-lg font-semibold bg-black text-white hover:bg-gray-900"
               >
                 Pay at Counter
               </Button>
