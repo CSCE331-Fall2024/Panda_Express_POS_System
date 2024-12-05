@@ -87,7 +87,7 @@ app.get('/api/auth/google/callback',
     if (!req.user) {
       return res.redirect('/?error=User not found');
   }
-  const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_BASE_URL || 'http://localhost:3000';
+  const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_BASE_URL || 'https://project-3-team-0b.onrender.com/';
   const redirectUrl = `${baseUrl}/login?staff_id=${req.user.staff_id}&role=${req.user.position.toLowerCase()}`;
     res.redirect(redirectUrl.toString());
   }
@@ -160,7 +160,7 @@ app.post('/api/translate', async (req, res) => {
 // Home page endpoint
 app.get('/', (req, res) => {
     // res.send('You are not an authorized user.');
-    const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_BASE_URL || 'http://localhost:3000';
+    const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_BASE_URL || 'https://project-3-team-0b.onrender.com/';
     const redirectUrl = `${baseUrl}/login`;
     res.redirect(redirectUrl.toString());
 });

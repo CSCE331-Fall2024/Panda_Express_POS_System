@@ -42,6 +42,13 @@ const Menuboard: React.FC = () => {
   const categories: MenuCategory[] = ['Combos', 'Appetizer', 'Entree', 'Side', 'Drink'];
   const { theme, toggleTheme } = useTheme();
 
+  useEffect(() => {
+    document.title = "Panda Express Landing Page"; // Set the title dynamically
+    return () => {
+      document.title = ""; // Clear title on unmount if needed
+    };
+  }, []);
+
   // Fetch menu items from the API
   useEffect(() => {
     fetch('/api/menu')
@@ -164,6 +171,7 @@ const Menuboard: React.FC = () => {
         {/* Employee Signin */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
           <button
+            id='themetogglebutton'
             onClick={toggleTheme}
             className="flex items-center gap-2 p-2 rounded bg-gray-800"
           >
