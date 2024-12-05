@@ -91,6 +91,8 @@ const Menuboard: React.FC = () => {
   };
   
   const entreeItems = menuItems['Entree'] || [];
+  const appItems = [...(menuItems['Appetizer'] || []), ...(menuItems['Drink'] || [])];
+
 
 
 
@@ -120,23 +122,24 @@ const Menuboard: React.FC = () => {
           left: 0,
           width: '100%',
           height: '100%',
-          backgroundColor: 'rgba(0, 0, 0, 0.5)', // 50% black overlay to dim background
+          backgroundColor: 'rgba(0, 0, 0, 0.75)', // 50% black overlay to dim background
         }}
       ></div>
 
       {/* Full-Width Navbar */}
       <nav
         style={{
-          backgroundColor: '#FF0000',
+          backgroundColor: 'transparent',
           color: '#FFFFFF',
           padding: '15px 20px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           width: '100%',
-          position: 'absolute',
+          position: 'fixed',
           top: 0,
           zIndex: 1,
+          height: '8vh'
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -144,27 +147,9 @@ const Menuboard: React.FC = () => {
           <img
             src="https://s3.amazonaws.com/PandaExpressWebsite/Responsive/img/home/logo.png"
             alt="Panda Express Logo"
-            style={{ width: '80px' }}
+            style={{ width: '80px', paddingTop:'10px'}}
           />
-
-          
         </div>
-
-        {/* Order Now Icon aligned to the center*/}
-        <a
-          href="/manager"
-          style={{
-            color: '#FFFFFF',
-            textDecoration: 'none',
-            display: 'flex',
-            alignItems: 'center',
-            position: 'absolute',
-            left: '50%',
-            transform: 'translateX(-50%)',
-          }}
-        >
-          <span style={{ fontWeight: 'bold', fontSize:"1.8rem"}}>Welcome to Panda Express</span>
-        </a>
 
         {/* Weather Data */}
         {weather && (
@@ -181,95 +166,50 @@ const Menuboard: React.FC = () => {
       <div
         style={{
           zIndex: 2,
+        //   paddingTop: '10vh',
+          width: '100%',
+          transform: 'scale(0.95)',
         }}
       >
-
-     {/* Entrees Section */}
-     <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            width: '100%',
-            marginTop:'80px',
-            paddingLeft: '20px',
-            paddingRight: '20px'
-          }}
-        >
-          <h2
-            style={{
-              color: 'White',
-              marginBottom: '15px',
-              fontSize: '1.8rem'
-            }}
-          >
-            Entrees
-          </h2>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(5, 1fr)',
-              gap: '20px',
-              width: '100%'
-            }}
-          >
+    
+        <div className="mt-2 w-full flex flex-col items-center">
+        <h2 className="text-white text-2xl font-semibold mb-2 pt-10">Step 3: Choose Your Entrees</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-5 md:grid-cols-3 lg:grid-cols-4 xl: grid-cols-7 gap-2">
             {entreeItems.map((item) => (
-            <div
-              key={item.menu_item_id}
-              style={{
-                backgroundColor: '#FFFFFF',
-                borderRadius: '8px',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                padding: '15px',
-                display: 'flex',
-                alignItems: 'center'
-              }}
-            >
-              <img
-                src={item.image}
-                alt={item.name}
-                style={{
-                  width: '100px',
-                  height: '100px',
-                  objectFit: 'cover',
-                  borderRadius: '8px',
-                  marginRight: '15px'
-                }}
-              />
-              <div>
-                <h3
-                  style={{
-                    fontSize: '1rem',
-                    color: '#333',
-                    marginBottom: '5px'
-                  }}
-                >
-                  {item.name}
-                </h3>
-                <p
-                  style={{
-                    color: '#666',
-                    marginBottom: '10px',
-                    fontSize: '0.9rem'
-                  }}
-                >
-                  {item.description}
-                </p>
-                <p
-                  style={{
-                    fontSize: '1.1rem',
-                    fontWeight: 'bold',
-                    color: '#D32F2F'
-                  }}
-                >
-                  ${item.price.toFixed(2)}
-                </p>
-              </div>
+            <div key={item.menu_item_id} className="bg-white rounded-md shadow-sm p-2 flex items-center">
+                <div className="flex items-center w-full">
+                <img src={item.image} alt={item.name} className="sm:w-10 sm:h-10 md:w-16 md:h-16 lg:w-20 lg:h-20 object-cover rounded-md mr-4" />
+                
+                <div className="flex flex-col w-full">
+                    <h3 className="sm: text-xs md:text-sm lg:text-lg font-medium text-gray-800 text-left">{item.name}</h3>
+                    <p className="hidden lg:block md:text-xs lg:text-base text-gray-600 text-xs mb-1">{item.description}</p>
+                    <p className="sm:text-xs md:text-sm lg:text-base text-red-600 font-bold text-sm">{`$${item.price.toFixed(2)}`}</p>
+                </div>
+                </div>
             </div>
             ))}
-          </div>
         </div>
-      </div>
+        </div>
+        <div className="mt-.5 w-full flex flex-col items-center">
+        <h2 className="text-white text-2xl font-semibold mb-2 pt-10">Step 4: Add a Drink or Appetizer</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-5 md:grid-cols-3 lg:grid-cols-4 gap-2">
+            {appItems.map((item) => (
+            <div key={item.menu_item_id} className="bg-white rounded-md shadow-sm p-2 flex items-center">
+                <div className="flex items-center w-full">
+                <img src={item.image} alt={item.name} className="sm:w-10 sm:h-10 md:w-16 md:h-16 lg:w-20 lg:h-20 object-cover rounded-md mr-4" />
+                
+                <div className="flex flex-col w-full">
+                    <h3 className="sm: text-xs md:text-sm lg:text-lg font-medium text-gray-800 text-left">{item.name}</h3>
+                    <p className="hidden lg:block md:text-xs lg:text-base text-gray-600 text-xs mb-1">{item.description}</p>
+                    <p className="sm:text-xs md:text-sm lg:text-base text-red-600 font-bold text-sm">{`$${item.price.toFixed(2)}`}</p>
+                </div>
+                </div>
+            </div>
+            ))}
+        </div>
+        </div>
+
+    </div>
     </div>
     </>
     );

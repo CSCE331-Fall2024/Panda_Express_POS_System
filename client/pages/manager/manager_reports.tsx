@@ -4,9 +4,19 @@ import { pageStyle, overlayStyle, contentStyle, headingStyle } from '@/utils/tab
 import BackButton from '@/components/ui/back_button';
 import Link from 'next/link';
 import ManagerNavBar from '@/components/ui/manager_nav_bar';
+import { useRouter } from 'next/router';
+
 
 
 const ManagerReports: React.FC = () => {
+  const router = useRouter();
+
+  const zreportconfirm = () => {
+    const confirm = window.confirm('Z-Report can only be generated and viewed once a day, unless manually saved. Confirm that you have understood and would like to proceed to generate Z-Report.');
+    if (confirm) {
+      router.push('/manager/reports/z-report');
+    }
+  };
   return (
     <> <ManagerNavBar />
     <div style={pageStyle}>
@@ -17,7 +27,7 @@ const ManagerReports: React.FC = () => {
         <div style={{ padding: '3px', marginBottom:'20px' }}>
           <p style={{marginBottom:'20px' }}>Select a report type to view or generate a detailed report:</p>
             <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', flexWrap: 'wrap' }}>
-              <Link href="/manager/reports/z-report" style={buttonStyle}>Z Report</Link>
+              <button onClick = {zreportconfirm} style = {buttonStyle}> Z Report</button>
               <Link href="/manager/reports/x-report" style={buttonStyle}>X Report</Link>
               <Link href="/manager/reports/inventory" style={buttonStyle}>Inventory</Link>
               <Link href="/manager/reports/sales" style={buttonStyle}>Sales</Link>

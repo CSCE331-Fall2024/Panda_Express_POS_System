@@ -91,7 +91,6 @@ const Menuboard: React.FC = () => {
   
   const comboItems = menuItems['Combos'] || [];
   const sideItems = menuItems['Side'] || [];
-  const appItems = [...(menuItems['Appetizer'] || []), ...(menuItems['Drink'] || [])];
 
 
 
@@ -120,7 +119,7 @@ const Menuboard: React.FC = () => {
           left: 0,
           width: '100%',
           height: '100%',
-          backgroundColor: 'rgba(0, 0, 0, 0.5)', // 50% black overlay to dim background
+          backgroundColor: 'rgba(0, 0, 0, 0.75)', // 50% black overlay to dim background
         }}
       ></div>
 
@@ -183,259 +182,44 @@ const Menuboard: React.FC = () => {
           zIndex: 2,
         }}
       >
-
-     {/* Combos Section */}
-     <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            width: '100%',
-            marginTop:'80px',
-          }}
-        >
-          <h2
-            style={{
-              color: 'White',
-              marginBottom: '15px',
-              fontSize: '1.8rem',
-              marginTop:'15px'
-            }}
-          >
-            Combos
-          </h2>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(4, 1fr)',
-              gap: '20px',
-              width: '100%'
-            }}
-          >
+        <div className="mt-2 w-full flex flex-col items-center">
+        <h2 className="text-white text-2xl font-semibold mb-2 pt-10">Step 1: Choose Your Plate</h2>
+        <div className="grid grid-cols-4 gap-2">
             {comboItems.map((item) => (
-            <div
-              key={item.menu_item_id}
-              style={{
-                backgroundColor: '#FFFFFF',
-                borderRadius: '8px',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                padding: '15px',
-                display: 'flex',
-                alignItems: 'center'
-              }}
-            >
-              <img
-                src={item.image}
-                alt={item.name}
-                style={{
-                  width: '100px',
-                  height: '100px',
-                  objectFit: 'cover',
-                  borderRadius: '8px',
-                  marginRight: '15px'
-                }}
-              />
-              <div>
-                <h3
-                  style={{
-                    fontSize: '1rem',
-                    color: '#333',
-                    marginBottom: '5px'
-                  }}
-                >
-                  {item.name}
-                </h3>
-                <p
-                  style={{
-                    color: '#666',
-                    marginBottom: '10px',
-                    fontSize: '0.9rem'
-                  }}
-                >
-                  {item.description}
-                </p>
-                <p
-                  style={{
-                    fontSize: '1.1rem',
-                    fontWeight: 'bold',
-                    color: '#D32F2F'
-                  }}
-                >
-                  ${item.price.toFixed(2)}
-                </p>
-              </div>
+            <div key={item.menu_item_id} className="bg-white rounded-md shadow-sm p-2 flex items-center">
+                <div className="flex items-center w-full">
+                <img src={item.image} alt={item.name} className="sm:w-10 sm:h-10 md:w-16 md:h-16 lg:w-20 lg:h-20 object-cover rounded-md mr-4" />
+                
+                <div className="flex flex-col w-full">
+                    <h3 className="sm: text-xs md:text-sm lg:text-lg font-medium text-gray-800 text-left">{item.name}</h3>
+                    <p className="hidden lg:block md:text-xs lg:text-base text-gray-600 text-xs mb-1">{item.description}</p>
+                    <p className="sm:text-xs md:text-sm lg:text-base text-red-600 font-bold text-sm">{`$${item.price.toFixed(2)}`}</p>
+                </div>
+                </div>
             </div>
             ))}
-          </div>
+        </div>
+        </div>
+        <div className="mt-.5 w-full flex flex-col items-center">
+        <h2 className="text-white text-2xl font-semibold mb-2 pt-10">Step 2: Choose Your Side</h2>
+        <div className="grid grid-cols-3 gap-2">
+            {sideItems.map((item) => (
+            <div key={item.menu_item_id} className="bg-white rounded-md shadow-sm p-2 flex items-center">
+                <div className="flex items-center w-full">
+                <img src={item.image} alt={item.name} className="sm:w-10 sm:h-10 md:w-16 md:h-16 lg:w-20 lg:h-20 object-cover rounded-md mr-4" />
+                
+                <div className="flex flex-col w-full">
+                    <h3 className="sm: text-xs md:text-sm lg:text-lg font-medium text-gray-800 text-left">{item.name}</h3>
+                    <p className="hidden lg:block md:text-xs lg:text-base text-gray-600 text-xs mb-1">{item.description}</p>
+                    <p className="sm:text-xs md:text-sm lg:text-base text-red-600 font-bold text-sm">{`$${item.price.toFixed(2)}`}</p>
+                    </div>
+                </div>
+            </div>
+            ))}
+        </div>
         </div>
 
-        {/* Sides Section */}
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            width: '100%',
-            marginTop: '20px'
-          }}
-        >
-          <h2
-            style={{
-              color: 'White',
-              marginBottom: '15px',
-              fontSize: '1.8rem',
-            }}
-          >
-            Sides
-          </h2>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(3, 1fr)',
-              gap: '20px',
-              width: '100%'
-            }}
-          >
-            {sideItems.map((item) => (
-            <div
-              key={item.menu_item_id}
-              style={{
-                backgroundColor: '#FFFFFF',
-                borderRadius: '8px',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                padding: '15px',
-                display: 'flex',
-                alignItems: 'center'
-              }}
-            >
-              <img
-                src={item.image}
-                alt={item.name}
-                style={{
-                  width: '100px',
-                  height: '100px',
-                  objectFit: 'cover',
-                  borderRadius: '8px',
-                  marginRight: '15px'
-                }}
-              />
-              <div>
-                <h3
-                  style={{
-                    fontSize: '1rem',
-                    color: '#333',
-                    marginBottom: '5px'
-                  }}
-                >
-                  {item.name}
-                </h3>
-                <p
-                  style={{
-                    color: '#666',
-                    marginBottom: '10px',
-                    fontSize: '0.9rem'
-                  }}
-                >
-                  {item.description}
-                </p>
-                <p
-                  style={{
-                    fontSize: '1.1rem',
-                    fontWeight: 'bold',
-                    color: '#D32F2F'
-                  }}
-                >
-                  ${item.price.toFixed(2)}
-                </p>
-                </div>
-                </div>
-            ))}
-          </div>
-        </div>
-         {/* Apps & Drink Section */}
-         <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            width: '100%',
-            marginTop: '20px'
-          }}
-        >
-          <h2
-            style={{
-              color: 'White',
-              marginBottom: '15px',
-              fontSize: '1.8rem',
-            }}
-          >
-            Appetizers and Drinks
-          </h2>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(4, 1fr)',
-              gap: '20px',
-              width: '100%'
-            }}
-          >
-            {appItems.map((item) => (
-            <div
-              key={item.menu_item_id}
-              style={{
-                backgroundColor: '#FFFFFF',
-                borderRadius: '8px',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                padding: '15px',
-                display: 'flex',
-                alignItems: 'center'
-              }}
-            >
-              <img
-                src={item.image}
-                alt={item.name}
-                style={{
-                  width: '100px',
-                  height: '100px',
-                  objectFit: 'cover',
-                  borderRadius: '8px',
-                  marginRight: '15px'
-                }}
-              />
-              <div>
-                <h3
-                  style={{
-                    fontSize: '1rem',
-                    color: '#333',
-                    marginBottom: '5px'
-                  }}
-                >
-                  {item.name}
-                </h3>
-                <p
-                  style={{
-                    color: '#666',
-                    marginBottom: '10px',
-                    fontSize: '0.9rem'
-                  }}
-                >
-                  {item.description}
-                </p>
-                <p
-                  style={{
-                    fontSize: '1.1rem',
-                    fontWeight: 'bold',
-                    color: '#D32F2F'
-                  }}
-                >
-                  ${item.price.toFixed(2)}
-                </p>
-                </div>
-                </div>
-            ))}
-          </div>
-        </div>
-      </div>
+    </div>
     </div>
     </>
     );

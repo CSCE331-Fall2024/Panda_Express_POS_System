@@ -33,6 +33,7 @@ export const pageStyle: React.CSSProperties = {
     zIndex: 2,
     overflowY: 'auto',
     maxHeight: '80vh',
+    marginTop: '15vh'
   };
   
   export const headingStyle: React.CSSProperties = {
