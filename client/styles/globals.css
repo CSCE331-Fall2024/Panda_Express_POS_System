@@ -40,6 +40,10 @@ body {
   --border-style: #DEE2E6;
 }
 
+.custom-card-background {
+  background-color: rgb(153, 27, 27) !important; /* Use !important to override inline styles */
+}
+
 .loading-theme body {
   background: #000000; /* A neutral background to prevent flicker */
   color: #ffffff;

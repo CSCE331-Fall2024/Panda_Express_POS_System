@@ -110,7 +110,7 @@ export default function PayAtCounter() {
 
   return (
     <div className="flex h-screen justify-center items-center bg-background">
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md text-center bg-white/75">
         <CardHeader>
           <CardTitle>Choose Payment Method At Counter</CardTitle>
         </CardHeader>
@@ -118,14 +118,14 @@ export default function PayAtCounter() {
           <Button
             onClick={() =>handlePaymentSuccess("Credit Card")}
             variant="default"
-            className="w-full py-4 text-lg font-semibold"
+            className="w-full py-4 text-lg font-semibold bg-black text-white hover:bg-gray-900"
           >
             Credit Card
           </Button>
           <Button
             onClick={() =>handlePaymentSuccess("TAMU_ID")}
             variant="default"
-            className="w-full py-4 text-lg font-semibold"
+            className="w-full py-4 text-lg font-semibold bg-black text-white hover:bg-gray-900"
           >
             Dining Dollars
           </Button>

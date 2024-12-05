@@ -109,7 +109,7 @@ export default function DiningDollarsPayment() {
 
   return (
     <div className="flex h-screen justify-center items-center bg-background">
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md text-center bg-white/75">
         <CardHeader>
           <CardTitle>Dining Dollars Payment</CardTitle>
         </CardHeader>
@@ -119,7 +119,7 @@ export default function DiningDollarsPayment() {
           <Button
             onClick={handlePaymentSuccess}
             variant="default"
-            className="w-full py-4 text-lg font-semibold"
+            className="w-full py-4 text-lg font-semibold bg-black text-white hover:bg-gray-900"
           >
             Confirm Payment
           </Button>

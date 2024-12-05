@@ -8,7 +8,7 @@ export default function OrderSuccess() {
 
   return (
     <div className="flex h-screen justify-center items-center bg-background">
-      <Card className="w-full max-w-md text-center">
+      <Card className="w-full max-w-md text-center bg-white/75">
         <CardHeader>
           <CardTitle>Order Successful!</CardTitle>
         </CardHeader>
@@ -17,7 +17,7 @@ export default function OrderSuccess() {
           <Button
             onClick={() => router.push("/")}
             variant="default"
-            className="w-full mt-4"
+            className="w-full mt-4 bg-black text-white hover:bg-gray-900"
           >
             Return Home
           </Button>

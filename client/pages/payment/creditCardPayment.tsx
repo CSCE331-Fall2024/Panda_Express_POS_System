@@ -106,7 +106,7 @@ export default function CreditCardPayment() {
 
   return (
     <div className="flex h-screen justify-center items-center bg-background">
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md text-center bg-white/75">
         <CardHeader>
           <CardTitle>Credit Card Payment</CardTitle>
         </CardHeader>
@@ -116,7 +116,7 @@ export default function CreditCardPayment() {
           <Button
             onClick={handlePaymentSuccess}
             variant="default"
-            className="w-full py-4 text-lg font-semibold"
+            className="w-full py-4 text-lg font-semibold bg-black text-white hover:bg-gray-900"
           >
             Confirm Payment
           </Button>
