@@ -15,6 +15,14 @@ interface XReportItem {
   credit_card_sales: number
 }
 
+interface Totals {
+  totalTransactions: number;
+  totalTamuIdSales: number;
+  totalCreditCardSales: number;
+  totalSales: number;
+}
+
+
 export default function XReport() {
   const [xReportData, setXReportData] = useState<XReportItem[]>([])
   const [reportGenerationTime, setReportGenerationTime] = useState<string>('')
@@ -26,8 +34,8 @@ export default function XReport() {
   useEffect(() => {
     const fetchXReport = async () => {
       try {
-        const date = new Date().toISOString().split('T')[0];
-        // const date = "2023-09-21";
+        // const date = new Date().toISOString().split('T')[0];
+        const date = "2023-09-21";
         // const date = "2024-12-3";
 
         const response = await fetch('/api/reports/xreport', {
@@ -43,8 +51,8 @@ export default function XReport() {
           setXReportData(data.report);
   
           // Calculate totals
-          const totals = data.report.reduce(
-            (acc, item) => ({
+          const totals: Totals = data.report.reduce(
+            (acc: Totals, item: XReportItem) => ({
               totalTransactions: acc.totalTransactions + item.total_transactions,
               totalTamuIdSales: acc.totalTamuIdSales + Number(item.tamu_id_sales),
               totalCreditCardSales: acc.totalCreditCardSales + Number(item.credit_card_sales),

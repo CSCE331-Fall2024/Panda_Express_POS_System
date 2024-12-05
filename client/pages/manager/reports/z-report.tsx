@@ -84,25 +84,6 @@ const ZReport: React.FC = () => {
         {/* change current date  */}
         <h2 style={headingStyle}>Z-Report for {new Date().toLocaleDateString()}</h2>
 
-        {/* <Button
-          onClick={fetchZReport}
-          variant={"outline"}
-          disabled={isLoading}
-          // className={`${
-          //   selectedCategory === category 
-          //     ? theme === 'night' 
-          //       ? 'bg-gray-700 text-white border-gray-600' 
-          //       : 'bg-gray-200 text-black border-gray-300 hover:bg-gray-200'
-          //     : theme === 'night'
-          //       ? 'bg-gray-900 text-white border-gray-700 hover:bg-gray-700'
-          //       : 'bg-white text-black border-gray-300 hover:bg-gray-200' 
-          // }`}
-
-          className={`${'bg-gray-200 text-black border-gray-300 hover:bg-gray-200'}`}
-        >
-          {isLoading ? 'Generating...' : 'Generate Report'}
-        </Button> */}
-
         <div className="mb-4"> {/* Adds margin-bottom for spacing */}
             <Button
               onClick={fetchZReport}
