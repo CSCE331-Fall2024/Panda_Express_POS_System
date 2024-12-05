@@ -100,6 +100,7 @@ const CustomerKiosk: React.FC = () => {
     { key: 'remove', text: 'Remove' },
     { key: 'loading', text: 'Loading menu items...' },
     { key: 'welcome', text: 'Welcome to the home page!' },
+    { key: 'clear', text: 'Clear Order' },
 
     { key: 'category_Combos', text: 'Combos' },
     { key: 'category_Side', text: 'Side' },
@@ -108,6 +109,9 @@ const CustomerKiosk: React.FC = () => {
     { key: 'category_Drink', text: 'Drink' },
   ];
 
+  // useEffect(() => {
+  //   console.log('Translations:', translations);
+  // }, [translations]);
   const categoryOrder = ["Combos", "Side", "Entree", "Appetizer", "Drink"];
 
   
@@ -184,8 +188,10 @@ const CustomerKiosk: React.FC = () => {
   useEffect(() => {
     const fetchMenuItems = async () => {
       try {
+        // Fetch menu items from the API
         const response = await fetch('/api/menu_items');
         const data = await response.json();
+  
         if (data.success) {
           const itemsByCategory = data.menuItems.reduce((acc: MenuItems, item: MenuItem) => {
             const category = item.item_type;
@@ -195,7 +201,64 @@ const CustomerKiosk: React.FC = () => {
             acc[category].push(item);
             return acc;
           }, {});
-          setMenuItems(itemsByCategory);
+  
+          // If Spanish is selected, translate the menu items
+          if (language === 'es') {
+            const textsToTranslate = data.menuItems.flatMap((item: MenuItem) => [
+              { type: 'name', text: item.name, id: item.menu_item_id },
+              { type: 'description', text: item.description, id: item.menu_item_id },
+            ]);
+  
+            const translationResponse = await fetch('/api/translate', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                texts: textsToTranslate.map((t: { type: string; text: string; id: number }) => t.text),
+                targetLanguage: 'es',
+              }),
+            });
+  
+            if (translationResponse.ok) {
+              const translationData = await translationResponse.json();
+              const translatedTexts = translationData.translatedTexts;
+  
+              // Map translations back to the original items by their IDs
+              const idToTranslations: { [key: string]: { name?: string; description?: string } } = {};
+              textsToTranslate.forEach((original: { type: string; text: string; id: number }, index: number) => {
+                if (!idToTranslations[original.id]) {
+                  idToTranslations[original.id] = {};
+                }
+                idToTranslations[original.id][original.type as 'name' | 'description'] = translatedTexts[index];
+              });
+  
+              // Update the items with translations
+              data.menuItems.forEach((item: MenuItem) => {
+                if (idToTranslations[item.menu_item_id]) {
+                  item.name = idToTranslations[item.menu_item_id].name || item.name;
+                  item.description = idToTranslations[item.menu_item_id].description || item.description;
+                }
+              });
+  
+              // Reorganize the menu items by category with translated names and descriptions
+              const translatedItemsByCategory = data.menuItems.reduce((acc: MenuItems, item: MenuItem) => {
+                const category = item.item_type;
+                if (!acc[category]) {
+                  acc[category] = [];
+                }
+                acc[category].push(item);
+                return acc;
+              }, {});
+  
+              setMenuItems(translatedItemsByCategory);
+            } else {
+              console.error('Failed to translate menu items');
+            }
+          } else {
+            setMenuItems(itemsByCategory);
+          }
+  
           console.log('Menu items fetched successfully:', itemsByCategory);
         } else {
           console.error('Failed to fetch menu items');
@@ -206,9 +269,11 @@ const CustomerKiosk: React.FC = () => {
         setLoading(false);
       }
     };
-
+  
     fetchMenuItems();
-  }, []);
+  }, [language]);
+  
+  
 
   // Load sessionStorage on component mount
   useEffect(() => {
@@ -906,7 +971,7 @@ const CustomerKiosk: React.FC = () => {
               disabled={order.length === 0}
               onClick={clearOrder}
             >
-              {translations['clear order'] || `Clear Order`}
+                {translations['clear'] || 'Clear Order'}
             </Button>
           </CardFooter>
         </Card>
