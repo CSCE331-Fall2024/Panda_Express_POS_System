@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { GetServerSideProps } from 'next';
 import { Pool } from 'pg';
 import { pageStyle, overlayStyle, contentStyle, headingStyle } from '@/utils/tableStyles';
@@ -19,10 +19,60 @@ interface ManagerInventoryItemsProps {
 const ManagerInventoryItems: React.FC<ManagerInventoryItemsProps> = ({ inventoryItems }) => {
   const [localInventoryItems, setLocalInventoryItems] = useState<InventoryItem[]>(inventoryItems);
 
+  // Translation
+  const [language, setLanguage] = useState<'en'|'es'>('en');
+  const [translations, setTranslations] = useState<{[key:string]:string}>({});
+
+  const staticTexts = [
+    "Manage Inventory Items",
+    "Item ID",
+    "Item Name",
+    "Quantity"
+  ];
+
+  useEffect(()=>{
+    const saved=localStorage.getItem('language');
+    if(saved==='es') setLanguage('es');
+  },[]);
+
+  useEffect(()=>{
+    if(language==='en'){
+      const map:{[k:string]:string}={};
+      staticTexts.forEach(t=>map[t]=t);
+      setTranslations(map);
+    } else {
+      fetch('/api/translate',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({texts:staticTexts,targetLanguage:'es'})
+      })
+      .then(r=>r.json())
+      .then(data=>{
+        if(data.translatedTexts){
+          const map:{[k:string]:string}={};
+          staticTexts.forEach((t,i)=>map[t]=data.translatedTexts[i]);
+          setTranslations(map);
+        } else {
+          const map:{[k:string]:string}={};
+          staticTexts.forEach(t=>map[t]=t);
+          setTranslations(map);
+        }
+      })
+      .catch(()=>{
+        const map:{[k:string]:string}={};
+        staticTexts.forEach(t=>map[t]=t);
+        setTranslations(map);
+      })
+    }
+    localStorage.setItem('language', language);
+  },[language]);
+
+  const t=(text:string)=>translations[text]||text;
+
   const columns: Column[] = [
-    { key: 'inventory_item_id', header: 'Item ID' },
-    { key: 'item_name', header: 'Item Name', editable: true, type: 'text' },
-    { key: 'quantity', header: 'Quantity', editable: true, type: 'number' },
+    { key: 'inventory_item_id', header: t("Item ID") },
+    { key: 'item_name', header: t("Item Name"), editable: true, type: 'text' },
+    { key: 'quantity', header: t("Quantity"), editable: true, type: 'number' },
   ];
 
   const updateInventoryItem = async (id: number, field: string, value: any) => {
@@ -64,12 +114,12 @@ const ManagerInventoryItems: React.FC<ManagerInventoryItemsProps> = ({ inventory
 
   return (
     <>
-      <ManagerNavBar />
+      <ManagerNavBar language={language} setLanguage={setLanguage} />
       <div style={{ ...pageStyle, paddingTop: '40px' }}>
         <div style={overlayStyle}></div>
         <div style={contentStyle}>
           <BackButton />
-          <h2 style={headingStyle}>Manage Inventory Items</h2>
+          <h2 style={headingStyle}>{t("Manage Inventory Items")}</h2>
           <EditableTable<InventoryItem>
             items={localInventoryItems}
             columns={columns}

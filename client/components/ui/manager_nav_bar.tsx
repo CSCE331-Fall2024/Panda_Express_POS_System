@@ -1,13 +1,74 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 
-const ManagerNavBar: React.FC = () => {
+interface ManagerNavBarProps {
+  language: 'en' | 'es';
+  setLanguage: (lang: 'en' | 'es') => void;
+}
+
+const ManagerNavBar: React.FC<ManagerNavBarProps> = ({ language, setLanguage }) => {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
 
+  // Nav texts to translate
+  const staticTexts = [
+    "English",
+    "Español",
+    "Customer Ordering",
+    "Orders",
+    "Employees",
+    "Reports",
+    "Menu Items",
+    "Inventory Items",
+    "Menu Board",
+    "Logout"
+  ];
+
+  const [translations, setTranslations] = useState<{[key:string]:string}>({});
+
+  // Fetch translations when language changes
+  useEffect(() => {
+    if (language === 'en') {
+      // English default - no need to translate
+      const map: {[k:string]:string} = {};
+      staticTexts.forEach(t => (map[t] = t));
+      setTranslations(map);
+    } else {
+      // Translate to Spanish
+      fetch('/api/translate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ texts: staticTexts, targetLanguage: 'es' })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.translatedTexts) {
+          const map: {[k:string]:string} = {};
+          staticTexts.forEach((t, i) => {
+            map[t] = data.translatedTexts[i];
+          });
+          setTranslations(map);
+        } else {
+          // If something goes wrong, fallback to original
+          const map: {[k:string]:string} = {};
+          staticTexts.forEach(t => (map[t] = t));
+          setTranslations(map);
+        }
+      })
+      .catch(() => {
+        // On error, fallback to original text
+        const map: {[k:string]:string} = {};
+        staticTexts.forEach(t => (map[t] = t));
+        setTranslations(map);
+      });
+    }
+  }, [language]);
+
+  const t = (text: string) => translations[text] || text;
+
   const handleNavigation = (path: string) => {
     setMenuOpen(false);
-    if(path === "/login") {
+    if (path === "/login") {
       sessionStorage.setItem("staff_id", "0");
     }
     router.push(path);
@@ -25,9 +86,9 @@ const ManagerNavBar: React.FC = () => {
           alignItems: 'center',
           justifyContent: 'space-between',
           width: '100%',
-          position: 'absolute',
+          position: 'fixed',
           top: 0,
-          zIndex: 1,
+          zIndex: 9999, 
         }}
       >
         {/* Logo */}
@@ -37,15 +98,35 @@ const ManagerNavBar: React.FC = () => {
           style={{ width: '80px' }}
         />
 
-        {/* Hamburger Menu Icon */}
-        <div
-          style={{
-            fontSize: '24px',
-            cursor: 'pointer',
-          }}
-          onClick={() => setMenuOpen(!menuOpen)}
-        >
-          ☰
+        {/* Right side container: Language Selector and Hamburger Menu */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          {/* Language Selector */}
+          <select
+            value={language}
+            onChange={(e) => setLanguage(e.target.value as 'en'|'es')}
+            style={{ 
+              padding: '5px', 
+              border: '1px solid #FFFFFF', 
+              backgroundColor: '#FF0000', 
+              color: '#FFFFFF', 
+              borderRadius: '4px',
+              cursor: 'pointer'
+            }}
+          >
+            <option value="en">{t("English")}</option>
+            <option value="es">{t("Español")}</option>
+          </select>
+
+          {/* Hamburger Menu Icon */}
+          <div
+            style={{
+              fontSize: '24px',
+              cursor: 'pointer',
+            }}
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            ☰
+          </div>
         </div>
       </nav>
 
@@ -64,16 +145,16 @@ const ManagerNavBar: React.FC = () => {
           }}
         >
           <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
-            <li style={menuItemStyle} onClick={() => handleNavigation('/cashier')}>Customer Ordering</li>
-            <li style={menuItemStyle} onClick={() => handleNavigation('/manager/manager_orders')}>Orders</li>
-            <li style={menuItemStyle} onClick={() => handleNavigation('/manager/manager_employees')}>Employees</li>
-            <li style={menuItemStyle} onClick={() => handleNavigation('/manager/manager_reports')}>Reports</li>
-            <li style={menuItemStyle} onClick={() => handleNavigation('/manager/manager_menuitems')}>Menu Items</li>
-            <li style={menuItemStyle} onClick={() => handleNavigation('/manager/manager_inventoryitems')}>Inventory Items</li>
-            <li style={menuItemStyle} onClick={() => handleNavigation('/manager/menuboards/displaypick')}>Menu Board</li>
-            <li style={menuItemStyle} onClick={() => handleNavigation('/login')}>Logout</li>
+            <li style={menuItemStyle} onClick={() => handleNavigation('/cashier')}>{t("Customer Ordering")}</li>
+            <li style={menuItemStyle} onClick={() => handleNavigation('/manager/manager_orders')}>{t("Orders")}</li>
+            <li style={menuItemStyle} onClick={() => handleNavigation('/manager/manager_employees')}>{t("Employees")}</li>
+            <li style={menuItemStyle} onClick={() => handleNavigation('/manager/manager_reports')}>{t("Reports")}</li>
+            <li style={menuItemStyle} onClick={() => handleNavigation('/manager/manager_menuitems')}>{t("Menu Items")}</li>
+            <li style={menuItemStyle} onClick={() => handleNavigation('/manager/manager_inventoryitems')}>{t("Inventory Items")}</li>
+            <li style={menuItemStyle} onClick={() => handleNavigation('/manager/menuboards/displaypick')}>{t("Menu Board")}</li>
+            <li style={menuItemStyle} onClick={() => handleNavigation('/login')}>{t("Logout")}</li>
           </ul>
-          </div>
+        </div>
       )}
     </div>
   );

@@ -9,7 +9,7 @@ import {
 } from "@/utils/tableStyles";
 import { GetServerSideProps } from "next";
 import { Pool } from "pg";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 interface Employee {
   id: number;
@@ -24,30 +24,80 @@ interface ManagerEmployeesProps {
 }
 
 const ManagerEmployees: React.FC<ManagerEmployeesProps> = ({ employees }) => {
-  const [localEmployees, setLocalEmployees] = useState<Employee[]>(
-    employees || []
-  );
-  // const [editingEmployeeId, setEditingEmployeeId] = useState<number | null>(null);
-  // const [newRole, setNewRole] = useState('');
+  const [localEmployees, setLocalEmployees] = useState<Employee[]>(employees || []);
+
+  // Language and translation
+  const [language, setLanguage] = useState<'en'|'es'>('en');
+  const [translations, setTranslations] = useState<{[key:string]:string}>({});
+
+  const staticTexts = [
+    "Manage Employees",
+    "Staff ID",
+    "Name",
+    "Position",
+    "Username",
+    "Currently Employed",
+    "Employed",
+    "Fired/Resigned"
+  ];
+
+  useEffect(() => {
+    const saved = localStorage.getItem('language');
+    if (saved==='es') setLanguage('es');
+  }, []);
+
+  useEffect(()=>{
+    if(language==='en'){
+      const map:{[k:string]:string}={};
+      staticTexts.forEach(t=>map[t]=t);
+      setTranslations(map);
+    } else {
+      fetch('/api/translate',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({texts:staticTexts,targetLanguage:'es'})
+      })
+      .then(r=>r.json())
+      .then(data=>{
+        if(data.translatedTexts){
+          const map:{[k:string]:string}={};
+          staticTexts.forEach((t,i)=>map[t]=data.translatedTexts[i]);
+          setTranslations(map);
+        } else {
+          const map:{[k:string]:string}={};
+          staticTexts.forEach(t=>map[t]=t);
+          setTranslations(map);
+        }
+      })
+      .catch(()=>{
+        const map:{[k:string]:string}={};
+        staticTexts.forEach(t=>map[t]=t);
+        setTranslations(map);
+      })
+    }
+    localStorage.setItem('language', language);
+  },[language]);
+
+  const t=(text:string)=>translations[text]||text;
 
   const columns: Column[] = [
-    { key: "staff_id", header: "Staff ID" },
-    { key: "name", header: "Name", editable: true, type: "text" },
+    { key: "staff_id", header: t("Staff ID") },
+    { key: "name", header: t("Name"), editable: true, type: "text" },
     {
       key: "position",
-      header: "Position",
+      header: t("Position"),
       editable: true,
       type: "select",
       options: ["Manager", "Cashier"],
     },
-    { key: "username", header: "Username" },
+    { key: "username", header: t("Username") },
     {
       key: "is_deleted",
-      header: "Currently Employed",
+      header: t("Currently Employed"),
       editable: true,
       type: "select",
-      options: ["Employed", "Fired/Resigned"],
-      formatValue: (value: boolean) => (value ? "Fired/Resigned" : "Employed"),
+      options: [t("Employed"), t("Fired/Resigned")],
+      formatValue: (value: boolean) => (value ? t("Fired/Resigned") : t("Employed")),
     },
   ];
 
@@ -99,13 +149,13 @@ const ManagerEmployees: React.FC<ManagerEmployeesProps> = ({ employees }) => {
 
   return (
     <>
-      <ManagerNavBar />
+      <ManagerNavBar language={language} setLanguage={setLanguage} />
 
       <div style={pageStyle}>
         <div style={overlayStyle}></div>
         <div style={contentStyle}>
           <BackButton />
-          <h2 style={headingStyle}>Manage Employees</h2>
+          <h2 style={headingStyle}>{t("Manage Employees")}</h2>
           <EditableTable<Employee>
             items={localEmployees}
             columns={columns}

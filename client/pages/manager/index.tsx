@@ -17,9 +17,68 @@ const Manager: React.FC = () => {
   const { user, isManager, isCashier } = useUser();
   const [busiestDaysData, setBusiestDaysData] = useState<BusiestDay[]>([]);
 
+  // Language and translation states
+  const [language, setLanguage] = useState<'en'|'es'>('en');
+  const [translations, setTranslations] = useState<{[key:string]:string}>({});
+
+  // Texts to translate
+  const staticTexts = [
+    "Welcome to the Manager View.",
+    "Navigate to the ☰ to begin."
+  ];
+
+  // Load language from localStorage on mount
+  useEffect(() => {
+    const savedLang = localStorage.getItem('language');
+    if (savedLang === 'es') {
+      setLanguage('es');
+    }
+  }, []);
+
+  // When language changes, translate texts if needed
+  useEffect(() => {
+    if (language === 'en') {
+      // English is default
+      const map: {[k:string]:string} = {};
+      staticTexts.forEach(t => map[t] = t);
+      setTranslations(map);
+    } else {
+      // Translate to Spanish
+      fetch('/api/translate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ texts: staticTexts, targetLanguage: 'es' })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.translatedTexts) {
+          const map: {[k:string]:string} = {};
+          staticTexts.forEach((t,i) => {
+            map[t] = data.translatedTexts[i];
+          });
+          setTranslations(map);
+        } else {
+          // If something went wrong, fallback to original
+          const map: {[k:string]:string} = {};
+          staticTexts.forEach(t => map[t]=t);
+          setTranslations(map);
+        }
+      })
+      .catch(() => {
+        // On error, fallback to original text
+        const map: {[k:string]:string} = {};
+        staticTexts.forEach(t => map[t] = t);
+        setTranslations(map);
+      });
+    }
+    localStorage.setItem('language', language);
+  }, [language]);
+
+  const t = (text: string) => translations[text] || text;
+
   useEffect(() => {
     if (!isManager()) {
-      router.push('/login'); 
+      router.push('/login');
     }
   }, [user, router, isManager, isCashier]);
 
@@ -46,7 +105,9 @@ const Manager: React.FC = () => {
 
   return (
     <>
-      <ManagerNavBar />
+      {/* Pass language and setLanguage to ManagerNavBar so it controls language */}
+      <ManagerNavBar language={language} setLanguage={setLanguage} />
+
       <div style={pageStyle}>
         <div style={overlayStyle}></div>
         <div
@@ -61,7 +122,7 @@ const Manager: React.FC = () => {
             zIndex: 20,
           }}
         >
-          {/* Welcome Message */}
+          {/* Translated Welcome Message */}
           <h1
             style={{
               display: 'flex',
@@ -73,7 +134,7 @@ const Manager: React.FC = () => {
               marginBottom: '10px',
             }}
           >
-            Welcome to the Manager View.
+            {t("Welcome to the Manager View.")}
           </h1>
           <h2
             style={{
@@ -83,7 +144,7 @@ const Manager: React.FC = () => {
               color: 'white',
             }}
           >
-            Navigate to the ☰ to begin.
+            {t("Navigate to the ☰ to begin.")}
           </h2>
           {busiestDaysData.length > 0 && (
             <BusiestDaysBox busiestDaysData={busiestDaysData} />

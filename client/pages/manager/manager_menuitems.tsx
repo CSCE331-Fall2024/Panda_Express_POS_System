@@ -1,163 +1,280 @@
-import React, { useState } from 'react';
-import { GetServerSideProps } from 'next';
-import { Pool } from 'pg';
-import { pageStyle, overlayStyle, contentStyle, headingStyle } from '@/utils/tableStyles';
-import BackButton from '@/components/ui/back_button';
-import EditableTable, { Column } from '@/components/ui/editable_table';
-import ManagerNavBar from '@/components/ui/manager_nav_bar';
-import { add } from 'date-fns';
-
-// Default seasonal item pic link for when you can add a menu item
-// https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_hqWlVhWklVyH_HBjiavsZvZJ-Xx1rm_xqQ&s
+import React, { useEffect } from 'react';
+import { getUserLocation, getWeatherData } from "@/utils/apiHelpers";
+import { Sun, Moon, Cloud, CloudRain, CloudSnow, User } from "lucide-react";
+import { useTheme } from "@/components/context/theme_context";
 
 interface MenuItem {
-  id: number;
-  name: string;
-  item_type: string;
+  menu_item_id: number;
   price: number;
-  is_deleted: boolean;
+  item_type: string;
+  name: string;
+  image: string;
+  description: string;
 }
 
-interface ManagerMenuItemsProps {
-  menuItems: MenuItem[];
+interface MenuItems {
+  [key: string]: MenuItem[];
 }
 
-const ManagerMenuItems: React.FC<ManagerMenuItemsProps> = ({ menuItems }) => {
-  const [localMenuItems, setLocalMenuItems] = useState<MenuItem[]>(menuItems);
-  
-  const formatPrice = (value: number | string | null | undefined): string => {
-    const numValue = typeof value === 'string' ? parseFloat(value) : value;
-    
-    // Check if we have a valid number
-    if (typeof numValue === 'number' && !isNaN(numValue)) {
-      return `$${numValue.toFixed(2)}`;
-    }
-    
-    // Invalid Price
-    return '$0.00';
-  };
+const weatherIcons = {
+  clear: <Sun className="h-6 w-6" />,
+  clouds: <Cloud className="h-6 w-6" />,
+  rain: <CloudRain className="h-6 w-6" />,
+  snow: <CloudSnow className="h-6 w-6" />,
+};
 
-  const columns: Column[] = [
-    { key: 'menu_item_id', header: 'Item ID' },
-    { key: 'name', header: 'Name', editable: true, type: 'text' },
-    { 
-      key: 'item_type', 
-      header: 'Item Type', 
-      editable: true, 
-      type: 'select',
-      options: ['Appetizer', 'Entree', 'Side', 'Beverage']
-    },
-    { 
-      key: 'price', 
-      header: 'Price', 
-      editable: true, 
-      type: 'number',
-      formatValue: formatPrice
-    },
-    {
-      key: 'is_deleted',
-      header: 'Availability',
-      editable: true,
-      type: 'select',
-      options: ['Available', 'Unavailable'],
-      formatValue: (value: boolean) => (value ? 'Unavailable' : 'Available')
-    }
+type MenuCategory = string;
+
+const Menuboard: React.FC = () => {
+  const [menuItems, setMenuItems] = React.useState<MenuItems>({});
+  const [selectedCategory, setSelectedCategory] = React.useState<MenuCategory>('Combos');
+  const [weather, setWeather] = React.useState<{ temperature?: number; description?: string; isDay?: boolean } | null>(null);
+  const [loading, setLoading] = React.useState<boolean>(true);
+  const categories: MenuCategory[] = ['Combos', 'Appetizer', 'Entree', 'Side', 'Drink'];
+  const { theme, toggleTheme } = useTheme();
+
+  // Language State
+  const [language, setLanguage] = React.useState<'en' | 'es'>('en');
+  const [translations, setTranslations] = React.useState<{[key:string]:string}>({});
+
+  const staticTexts = [
+    "Welcome to Panda Express!",
+    "Chinese Flavors with American Tastes",
+    "Order Now",
+    "Employee Sign In"
   ];
 
-  const updateMenuItem = async (id: number, field: string, value: any) => {
-    try {
-      // If updating price, ensure it's a valid number
-      if (field === 'price') {
-        const numValue = typeof value === 'string' ? parseFloat(value) : value;
-        if (isNaN(numValue)) {
-          throw new Error('Invalid price value');
-        }
-        value = numValue;
-      }
-
-      const response = await fetch(`/api/menu_items/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ id, [field]: value }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update menu item');
-      }
-
-      setLocalMenuItems(
-        localMenuItems.map((item) =>
-          item.id === id ? { ...item, [field]: value } : item
-        )
-      );
-    } catch (error) {
-      console.error('Error updating menu item:', error);
+  useEffect(() => {
+    // Load saved language from localStorage
+    const saved = localStorage.getItem('language');
+    if (saved === 'es') {
+      setLanguage('es');
     }
-  };
+  }, []);
 
-  const addMenuItem = async (item: Omit<MenuItem, 'id'>) => {
-    try {
-      const response = await fetch('/api/menu_items', {
+  useEffect(() => {
+    // Translate texts when language changes
+    if (language === 'en') {
+      const map: {[key:string]:string} = {};
+      staticTexts.forEach(t => map[t] = t);
+      setTranslations(map);
+    } else {
+      fetch('/api/translate', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(item),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ texts: staticTexts, targetLanguage: 'es' }),
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.translatedTexts) {
+          const map: {[key:string]:string} = {};
+          staticTexts.forEach((t, i) => {
+            map[t] = data.translatedTexts[i];
+          });
+          setTranslations(map);
+        }
+      })
+      .catch(() => {
+        const map: {[key:string]:string} = {};
+        staticTexts.forEach(t => map[t] = t);
+        setTranslations(map);
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to add menu item');
-      }
-
-      const { menuItem } = await response.json();
-      setLocalMenuItems([...localMenuItems, menuItem]);
-    } catch (error) {
-      console.error('Error adding menu item:', error);
     }
+    localStorage.setItem('language', language);
+  }, [language]);
+
+  // Helper to translate text
+  const t = (text:string) => translations[text] || text;
+
+  useEffect(() => {
+    fetch('/api/menu')
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          const itemsByCategory = data.menuItems.reduce((acc: MenuItems, item: MenuItem) => {
+            const category = item.item_type;
+            if (!acc[category]) {
+              acc[category] = [];
+            }
+            acc[category].push(item);
+            return acc;
+          }, {});
+          setMenuItems(itemsByCategory);
+          setLoading(false);
+        } else {
+          console.error('Failed to fetch menu items');
+          setLoading(false);
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching menu items:', error);
+        setLoading(false);
+      });
+  }, []);
+
+  useEffect(() => {
+    const fetchWeatherForLocation = async () => {
+      try {
+        const location = await getUserLocation();
+        if (location) {
+          const weatherData = await getWeatherData(location.latitude, location.longitude);
+          setWeather(weatherData);
+        } else {
+          console.log('Location access denied or unavailable.');
+        }
+      } catch (error) {
+        console.error('Error fetching weather or location:', error);
+      }
+    };
+
+    fetchWeatherForLocation();
+  }, []);
+
+  const getWeatherIcon = () => {
+    if (!weather?.description) return null;
+  
+    const description = weather.description.toLowerCase();
+  
+    if (description.includes("clear")) return weatherIcons.clear;
+    if (description.includes("cloud")) return weatherIcons.clouds;
+    if (description.includes("rain")) return weatherIcons.rain;
+    if (description.includes("snow")) return weatherIcons.snow;
+  
+    return <Cloud className="h-6 w-6" />;
   };
 
   return (
-    <> <ManagerNavBar />
-    <div style={{...pageStyle, paddingTop:'40px'}}>
-      <div style={overlayStyle}></div>
-      <div style={contentStyle}>
-        <BackButton />
-        <BackButton />
-        <h2 style={headingStyle}>Manage Menu Items</h2>
-        <EditableTable<MenuItem>
-          items={localMenuItems}
-          columns={columns}
-          idField={"menu_item_id" as keyof MenuItem}
-          onUpdate={updateMenuItem}
-          onAdd={addMenuItem}
-        />
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        backgroundImage: 'var(--background-image)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      <nav
+        style={{
+          backgroundColor: 'var(--primary)',
+          color: 'var(--foreground)',
+          padding: '15px 20px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          width: '100%',
+          position: 'absolute',
+          top: 0,
+          zIndex: 1,
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <img
+            src="https://s3.amazonaws.com/PandaExpressWebsite/Responsive/img/home/logo.png"
+            alt="Panda Express Logo"
+            style={{ width: '80px' }}
+          />
+          {weather && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '5px', color: 'var(--foreground)' }}>
+              {getWeatherIcon()}
+              <span>
+                {weather.temperature !== undefined ? `${Math.round(weather.temperature)}°F` : 'N/A'}
+              </span>
+            </div>
+          )}
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+          <select
+            value={language}
+            onChange={(e) => setLanguage(e.target.value as 'en' | 'es')}
+            style={{ padding: '5px' }}
+          >
+            <option value="en">English</option>
+            <option value="es">Español</option>
+          </select>
+          <button
+            onClick={toggleTheme}
+            className="flex items-center gap-2 p-2 rounded bg-gray-800"
+          >
+            {theme === "night" ? (
+              <Sun className="h-5 w-5 text-yellow-500" />
+            ) : (
+              <Moon className="h-5 w-5 text-blue-500" />
+            )}
+          </button>
+          <a
+            href="/login"
+            style={{ color: '#FFFFFF', textDecoration: 'none', display: 'flex', alignItems: 'center' }}
+          >
+            <User size={20} style={{ marginRight: '5px', color: 'var(--foreground)' }} />
+            <span style={{ fontWeight: 'bold', color:'var(--foreground)' }}>{t("Employee Sign In")}</span>
+          </a>
+        </div>
+      </nav>
+
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          padding: '20px',
+          marginTop: '100px',
+          width: '100%',
+          maxWidth: '100%',
+          height: '30%',
+          maxHeight: '75%',
+          zIndex: 20,
+        }}
+      >
+        <h1
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            fontSize: '50px',
+            fontWeight: 'bold',
+            marginBottom: '10px',
+          }}
+        >
+          <img
+            src="https://s3.amazonaws.com/PandaExpressWebsite/www/hyp23/pr-logo.png"
+            alt="Panda Express Logo"
+            style={{ width: '90px' }}
+          />
+          {t("Welcome to Panda Express!")}
+        </h1>
+        <h2
+          style={{
+            fontSize:'20px',
+            fontWeight: 'bold',
+            fontStyle: 'italic',
+            paddingBottom: '20px'
+          }}>
+          {t("Chinese Flavors with American Tastes")}
+        </h2>
+        <a
+          href="/customer"
+          style={{
+            width: '20%%',
+            padding: '12px',
+            backgroundColor: '#D32F2F',
+            color: '#FFFFFF',
+            border: 'none',
+            borderRadius: '4px',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            cursor: 'pointer'
+          }}
+        >
+          {t("Order Now")}
+        </a>        
       </div>
     </div>
-    </>
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  const pool = new Pool({
-    user: process.env.PSQL_USER,
-    host: process.env.PSQL_HOST,
-    database: process.env.PSQL_DATABASE,
-    password: process.env.PSQL_PASSWORD,
-    port: Number(process.env.PSQL_PORT),
-    ssl: { rejectUnauthorized: false },
-  });
-
-  try {
-    const result = await pool.query('SELECT * FROM menu_item');
-    return { props: { menuItems: result.rows } };
-  } catch (error) {
-    console.error('Error fetching menu items:', error);
-    return { props: { menuItems: [] } };
-  } finally {
-    await pool.end();
-  }
-};
-
-export default ManagerMenuItems;
+export default Menuboard;
