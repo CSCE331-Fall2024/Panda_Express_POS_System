@@ -11,8 +11,16 @@ const pool = new Pool({
 });
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method === 'GET') {
+  if (req.method === 'POST') {
     try {
+      const { date } = req.body;
+      if(!date) {
+        res.status(400).json({ success: false, message: 'need date' });
+        return;
+      }
+
+      const formattedDate = new Date(date as string).toISOString().split('T')[0];
+
       const query = `
         SELECT 
           EXTRACT(HOUR FROM payment_time) AS hour,
@@ -21,12 +29,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           SUM(CASE WHEN payment_type = 'TAMU_ID' THEN payment_amount ELSE 0 END) AS tamu_id_sales,
           SUM(CASE WHEN payment_type = 'Credit Card' THEN payment_amount ELSE 0 END) AS credit_card_sales
         FROM payments
-        WHERE DATE(payment_time) = '2023-09-21' -- Replace with current date
+        WHERE DATE(payment_time) = $1
         GROUP BY hour
         ORDER BY hour;
       `;
 
-      const result = await pool.query(query);
+      const result = await pool.query(query, [formattedDate]);
 
       // Dynamically get the range of hours
       const allHours = Array.from(
@@ -60,7 +68,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       res.status(500).json({ success: false, message: 'Failed to fetch X Report data' });
     }
   } else {
-    res.setHeader('Allow', ['GET']);
+    res.setHeader('Allow', ['POST']);
     res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }

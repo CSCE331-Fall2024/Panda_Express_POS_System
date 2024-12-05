@@ -62,7 +62,7 @@ const Sales: React.FC = () => {
                   </thead>
                   <tbody>
                     {salesData.map((item, index) => (
-                      <tr key={index}>
+                      <tr key={index} className="hover:bg-gray-100">
                         <td style={{ ...tableCellStyle, textAlign: 'center' }}>{item.name}</td>
                         <td style={{ ...tableCellStyle, textAlign: 'center' }}>{item.quantity_sold}</td>
                         <td style={{ ...tableCellStyle, textAlign: 'center' }}>

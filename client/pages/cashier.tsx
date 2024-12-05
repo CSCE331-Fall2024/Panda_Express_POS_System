@@ -443,7 +443,7 @@ const CashierPOS: React.FC = () => {
               >
                 <CardHeader>
                   <CardTitle className="text-lg">{item.name}</CardTitle>
-                  <CardDescription>{item.description}</CardDescription>
+                  {/* <CardDescription>{item.description}</CardDescription> */}
                 </CardHeader>
                 <CardContent>
                   <div className="flex justify-between items-center">

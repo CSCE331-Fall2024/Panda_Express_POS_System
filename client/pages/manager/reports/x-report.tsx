@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { Bar, BarChart, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { pageStyle, overlayStyle, contentStyle, headingStyle } from '@/utils/tableStyles'
+import { pageStyle, overlayStyle, contentStyle, headingStyle, tableHeaderStyle, tableCellStyle } from '@/utils/tableStyles';
 import BackButton from '@/components/ui/back_button'
 import ManagerNavBar from '@/components/ui/manager_nav_bar';
 
@@ -28,7 +28,17 @@ export default function XReport() {
   useEffect(() => {
     const fetchXReport = async () => {
       try {
-        const response = await fetch('/api/reports/xreport');
+        const date = new Date().toISOString().split('T')[0];
+        // const date = "2023-09-21";
+        // const date = "2024-12-3";
+
+        const response = await fetch('/api/reports/xreport', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ date }),
+        });
         const data = await response.json();
   
         if (data.success) {
@@ -164,17 +174,17 @@ export default function XReport() {
               <div className="relative overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="bg-muted">
-                      <th className="px-6 py-3 text-center font-medium">Hour</th>
-                      <th className="px-6 py-3 text-center font-medium">Total Transactions</th>
-                      <th className="px-6 py-3 text-center font-medium">Total Sales</th>
-                      <th className="px-6 py-3 text-center font-medium">TAMU ID Sales</th>
-                      <th className="px-6 py-3 text-center font-medium">Credit Card Sales</th>
+                    <tr>
+                      <th style={tableHeaderStyle}>Hour</th>
+                      <th style={tableHeaderStyle}>Total Transactions</th>
+                      <th style={tableHeaderStyle}>Total Sales</th>
+                      <th style={tableHeaderStyle}>TAMU ID Sales</th>
+                      <th style={tableHeaderStyle}>Credit Card Sales</th>
                     </tr>
                   </thead>
                   <tbody>
                     {xReportData.map((item, index) => (
-                      <tr key={index} className="border-b">
+                      <tr key={index} className="hover:bg-gray-100 border-b">
                         <td className="px-6 py-4 text-center">{item.hour}</td>
                         <td className="px-6 py-4 text-center">{item.total_transactions}</td>
                         <td className="px-6 py-4 text-center">${Number(item.total_sales).toFixed(2)}</td>
@@ -193,3 +203,4 @@ export default function XReport() {
     </>
   )
 }
+
