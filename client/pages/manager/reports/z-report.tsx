@@ -1,9 +1,14 @@
-//need to implement logic for z report only being generated once a day
 import React, { useState, useEffect } from 'react';
 import { pageStyle, overlayStyle, contentStyle, headingStyle, tableHeaderStyle, tableCellStyle } from '@/utils/tableStyles';
 import BackButton from '@/components/ui/back_button';
 import { isDate } from 'date-fns';
 import ManagerNavBar from '@/components/ui/manager_nav_bar';
+import { Button } from "@/components/ui/button"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { AlertCircle } from 'lucide-react'
+import { Bar, BarChart, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 
 interface ZReportItem {
   employee_name: string;
@@ -13,28 +18,62 @@ interface ZReportItem {
 
 const ZReport: React.FC = () => {
   const [zReportData, setZReportData] = useState<ZReportItem[]>([]);
-  const [totals, setTotals] = useState({ totalTransactions: 0, totalSales: 0 });
+  const [totals, setTotals] = useState({
+    totalTransactions: 0,
+    totalSales: '0.00',
+    creditCardSales: '0.00',
+    tamuIdSales: '0.00',
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [alreadyGenerated, setAlreadyGenerated] = useState(false);
 
-  useEffect(() => {
-    const fetchZReport = async () => {
-      try {
-        const response = await fetch('/api/reports/zreport');
-        const data = await response.json();
+  const fetchZReport = async () => {
+    setIsLoading(true);
+    setError(null);
+    setAlreadyGenerated(false);
+    try {
+      const currentDate = new Date().toISOString().split('T')[0]; // 'YYYY-MM-DD'
+      const response = await fetch('/api/reports/zreport', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        // body: JSON.stringify({ date: currentDate }),
+        body: JSON.stringify({ date: "2024-10-20" }),
+      });
+      const data = await response.json();
 
-        if (data.success) {
-          setZReportData(data.report);
-          setTotals({
-            totalTransactions: data.totals.totalTransactions,
-            totalSales: data.totals.totalSales,
-          });
-        }
-      } catch (error) {
-        console.error('Failed to fetch Z Report data:', error);
+      if (data.success) {
+        const processedReportData = data.report.map((item: ZReportItem) => {
+          const firstName = item.employee_name.split(' ')[0];
+          const shortName = firstName.length > 6 ? `${firstName.substring(0, 6)}...` : firstName;
+        
+          return {
+            ...item,
+            total_sales: Number(item.total_sales),
+            short_name: shortName, 
+          };
+        });
+
+        setZReportData(processedReportData);
+        setTotals({
+          totalTransactions: data.totals.total_transactions,
+          totalSales: data.totals.total_sales,
+          creditCardSales: data.totals.credit_card_sales,
+          tamuIdSales: data.totals.tamu_id_sales,
+        });
+        setAlreadyGenerated(data.alreadyGenerated);
+      } else {
+        setError(data.message || 'Failed to fetch Z Report data');
       }
-    };
-
-    fetchZReport();
-  }, []);
+    } catch (error) {
+      console.error('Failed to fetch Z Report data:', error);
+      setError('Failed to fetch Z Report data');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <> <ManagerNavBar />
@@ -43,45 +82,155 @@ const ZReport: React.FC = () => {
       <div style={contentStyle}>
         <BackButton />
         {/* change current date  */}
-        <h2 style={headingStyle}>Z-Report for 2024-10-20 </h2>
-        <div>
-          <table style={{ width: '100%', textAlign: 'center', marginBottom: '20px' }}>
-            <thead>
-              <tr>
-                <th style={{ paddingRight: '20px' }}><p>Total Transactions:</p></th>
-                <th style={{ paddingLeft: '20px' }}><p>Total Sales:</p></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>{totals.totalTransactions}</td>
-                <td>${totals.totalSales}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <table>
-          <thead>
-            <tr>
-              <th style={tableHeaderStyle}>Employee</th>
-              <th style={tableHeaderStyle}>Total Transactions</th>
-              <th style={tableHeaderStyle}>Total Sales</th>
-            </tr>
-          </thead>
-          <tbody>
-            {zReportData.map((item, index) => (
-              <tr key={index}>
-                <td style={tableCellStyle}>{item.employee_name}</td>
-                <td style={tableCellStyle}>{item.total_transactions}</td>
-                <td style={tableCellStyle}>${item.total_sales}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <h2 style={headingStyle}>Z-Report for {new Date().toLocaleDateString()}</h2>
+
+        {/* <Button
+          onClick={fetchZReport}
+          variant={"outline"}
+          disabled={isLoading}
+          // className={`${
+          //   selectedCategory === category 
+          //     ? theme === 'night' 
+          //       ? 'bg-gray-700 text-white border-gray-600' 
+          //       : 'bg-gray-200 text-black border-gray-300 hover:bg-gray-200'
+          //     : theme === 'night'
+          //       ? 'bg-gray-900 text-white border-gray-700 hover:bg-gray-700'
+          //       : 'bg-white text-black border-gray-300 hover:bg-gray-200' 
+          // }`}
+
+          className={`${'bg-gray-200 text-black border-gray-300 hover:bg-gray-200'}`}
+        >
+          {isLoading ? 'Generating...' : 'Generate Report'}
+        </Button> */}
+
+        <div className="mb-4"> {/* Adds margin-bottom for spacing */}
+            <Button
+              onClick={fetchZReport}
+              variant="destructive"
+              disabled={isLoading}
+            >
+              {isLoading ? 'Generating...' : 'Generate Report'}
+            </Button>
+          </div>
+
+        {error && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+
+        {alreadyGenerated && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Report Already Generated</AlertTitle>
+            <AlertDescription>
+              The Z-Report for today has already been generated. The data shown is from the stored report.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {zReportData.length > 0 && (
+          <>
+            <div>
+              <table style={{ width: '100%', textAlign: 'center', marginBottom: '20px'}}>
+                <thead>
+                <tr>
+                  <th style={{ paddingRight: '20px' }}>Total Transactions:</th>
+                  <th style={{ paddingLeft: '20px' }}>Total Sales:</th>
+                  <th style={{ paddingLeft: '20px' }}>Tax Collected:</th>
+                  <th style={{ paddingLeft: '20px' }}>Credit Card Sales:</th>
+                  <th style={{ paddingLeft: '20px' }}>TAMU ID Sales:</th>
+                </tr> 
+                </thead>
+                <tbody>
+                <tr>
+                  <td>{totals.totalTransactions}</td>
+                  <td>${totals.totalSales}</td>
+                  <td>${(Number(totals.totalSales) * 0.0825).toFixed(2)}</td>
+                  <td>${totals.creditCardSales}</td>
+                  <td>${totals.tamuIdSales}</td>
+                </tr>   
+                </tbody>
+              </table>
+            </div>
+
+            {/* Bar Chart for Sales per Employee */}
+            <Card className="mb-8">
+              <CardHeader>
+                <CardTitle className="text-center">Sales per Employee</CardTitle>
+              </CardHeader>
+              <CardContent className="flex flex-col items-center">
+                <div style={{ width: '800px', height: '300px' }} className="w-full">
+                  <ChartContainer
+                    config={{
+                      total_sales: {
+                        label: 'Total Sales',
+                        color: 'hsl(var(--primary))',
+                      },
+                    }}
+                    className="h-[300px] w-[95%]"
+                  >
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={zReportData}>
+                        <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                        <XAxis
+                          dataKey="short_name"
+                          stroke="hsl(var(--muted-foreground))"
+                          fontSize={12}
+                          tickLine={false}
+                          axisLine={false}
+                          angle={-45} // Rotate labels by -45 degrees
+                          textAnchor="end"
+                          height={60}
+                          interval={0}
+                        />
+                        <YAxis
+                          stroke="hsl(var(--muted-foreground))"
+                          fontSize={12}
+                          tickLine={false}
+                          axisLine={false}
+                          tickFormatter={(value) => `$${value}`}
+                        />
+                        <ChartTooltip content={<ChartTooltipContent />} />
+                        <Bar
+                          dataKey="total_sales"
+                          fill="#D32F2F"
+                          radius={[4, 4, 0, 0]}
+                        />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </ChartContainer>
+                </div>
+              </CardContent>
+            </Card>
+
+            <table className="w-4/5 mx-auto border-collapse">
+              <thead>
+                <tr className="bg-[#D32F2F]">
+                  <th className="w-1/3 px-4 py-2 text-center border-b text-white">Employee</th>
+                  <th className="w-1/3 px-4 py-2 text-center border-b text-white">Total Transactions</th>
+                  <th className="w-1/3 px-4 py-2 text-center border-b text-white">Total Sales</th>
+                </tr>
+              </thead>
+              <tbody>
+                {zReportData.map((item, index) => (
+                  <tr key={index} className="hover:bg-gray-100">
+                    <td className="px-4 py-2 text-center border-b border-gray-300">{item.employee_name}</td>
+                    <td className="px-4 py-2 text-center border-b border-gray-300">{item.total_transactions}</td>
+                    <td className="px-4 py-2 text-center border-b border-gray-300">${Number(item.total_sales).toFixed(2)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
+        )}
       </div>
     </div>
     </>
   );
 };
+
 
 export default ZReport;

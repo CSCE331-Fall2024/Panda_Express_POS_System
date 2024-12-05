@@ -39,7 +39,7 @@ export default function CreditCardPayment() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          paymentType: 'TAMU_ID',
+          paymentType: 'Credit Card',
           paymentAmount: paymentAmount,
         }),
       });
