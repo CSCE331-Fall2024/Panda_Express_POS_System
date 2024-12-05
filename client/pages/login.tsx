@@ -177,14 +177,6 @@ const LoginPage: React.FC = () => {
       }}
     >
       {/* Dim Overlay */}
-      <div style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        backgroundColor: theme === 'day' ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)', // Adjust overlay based on theme
-      }}></div>
 
       {/* Full-Width Navbar */}
       <nav
@@ -244,7 +236,7 @@ const LoginPage: React.FC = () => {
           marginTop: '60px',
           width: '100%',
           maxWidth: '400px',
-          backgroundColor: 'rgba(255, 255, 255, 0.65)', // Slight white background for readability
+          backgroundColor: 'rgba(255, 255, 255, 0.75)', // Slight white background for readability
           borderRadius: '8px',
           position: 'relative',
           zIndex: 2
@@ -255,10 +247,10 @@ const LoginPage: React.FC = () => {
           <img
             src="https://s3.amazonaws.com/PandaExpressWebsite/www/px-enrollment-2023-hero-logo.svg"
             alt="Panda Rewards Logo"
-            style={{ width: '200px', marginBottom: '40px', display: 'block', marginLeft: 'auto', marginRight: 'auto' }}
+            style={{ width: '200px', marginBottom: '20px', display: 'block', marginLeft: 'auto', marginRight: 'auto' }}
           />
-          <h2 style={{ fontSize: '22px', color: 'var(--primary)', margin: 0 }}>GOOD FORTUNE AWAITS</h2>
-          <p style={{ color: '#888', fontSize: '14px' }}>Log in below to get started.</p>
+          {/* <h2 className="font-bold" style={{ fontSize: '22px', color: 'var(--primary)', margin: 0 }}>GOOD FORTUNE AWAITS</h2> */}
+          <p style={{fontSize: '18px', marginBottom: '10px'}} className="text-sm text-center font-semibold">Log in below to get started.</p>
 
           {/* Form */}
           <form onSubmit={handleLogin}>
@@ -273,7 +265,7 @@ const LoginPage: React.FC = () => {
                 color: '#171717',
                 margin: '10px 0',
                 border: '1px solid #CCC',
-                borderRadius: '4px'
+                borderRadius: '10px'
               }}
             />
             <input
@@ -287,7 +279,7 @@ const LoginPage: React.FC = () => {
                 color: '#171717',
                 margin: '10px 0',
                 border: '1px solid #CCC',
-                borderRadius: '4px'
+                borderRadius: '10px'
               }}
             />
             <button
