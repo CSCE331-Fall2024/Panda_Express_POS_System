@@ -35,8 +35,8 @@ interface MenuItems {
 }
 
 const weatherIcons = {
-  clearDay: <Sun className="h-6 w-6" />,
-  cloudsDay: <Cloud className="h-6 w-6" />,
+  clear: <Sun className="h-6 w-6" />,
+  clouds: <Cloud className="h-6 w-6" />,
   rain: <CloudRain className="h-6 w-6" />,
   snow: <CloudSnow className="h-6 w-6" />,
 };
@@ -632,23 +632,15 @@ const CustomerKiosk: React.FC = () => {
   }, []);
 
   const getWeatherIcon = () => {
-    if (!weather?.description || weather.isDay === undefined) return null;
-
+    if (!weather?.description) return null;
+  
     const description = weather.description.toLowerCase();
-
-    if (description.includes("clear")) {
-      return weatherIcons.clearDay;
-    }
-    if (description.includes("cloud")) {
-      return weatherIcons.cloudsDay;
-    }
-    if (description.includes("rain")) {
-      return weatherIcons.rain;
-    }
-    if (description.includes("snow")) {
-      return weatherIcons.snow;
-    }
-
+  
+    if (description.includes("clear")) return weatherIcons.clear;
+    if (description.includes("cloud")) return weatherIcons.clouds;
+    if (description.includes("rain")) return weatherIcons.rain;
+    if (description.includes("snow")) return weatherIcons.snow;
+  
     return <Cloud className="h-6 w-6" />; // Default icon
   };
 
@@ -661,12 +653,17 @@ const CustomerKiosk: React.FC = () => {
   }
 
   return (
-    <div className={`min-h-screen ${theme === 'night' ? 'bg-black text-white' : 'bg-white text-black'}`}>
+    <div 
+      className={`min-h-screen ${theme === 'night' ? 'bg-black text-white' : 'bg-white text-black'}`}>
       {/* Navbar */}
       <nav
         className={`p-4 flex items-center justify-between ${
           theme === 'night' ? 'bg-red-800 text-white' : 'bg-red-600 text-white'
         }`}
+        style={{
+          backgroundColor: 'var(--primary)',
+          color: 'var(--foreground)'
+        }}
       >
         {/* Left Side */}
         <div className="flex items-center gap-4">
@@ -674,9 +671,6 @@ const CustomerKiosk: React.FC = () => {
             variant="ghost"
             size="icon"
             onClick={() => router.push("/")}
-            className={`${
-              theme === 'night' ? 'text-white hover:bg-red-900' : 'text-white hover:bg-red-700'
-            }`}
           >
             <Home className="h-6 w-6" />
           </Button>
@@ -792,7 +786,6 @@ const CustomerKiosk: React.FC = () => {
                 <CardHeader>
                   <CardTitle 
                     className="text-lg">{item.name}
-                    
                   </CardTitle>
                   
                   <CardDescription>

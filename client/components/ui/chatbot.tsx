@@ -84,23 +84,43 @@ const Chatbot: React.FC = () => {
     <div>
       {/* Chatbot Toggle Button */}
       <button
-        className="fixed bottom-5 right-5 bg-red-500 text-white rounded-full p-4 shadow-lg"
+        className={`fixed bottom-5 right-5 text-white rounded-full p-4 shadow-lg ${
+          isOpen ? 'hidden' : ''
+        }`}
         onClick={toggleChatbot}
         aria-label="Toggle Chatbot"
+        style={{
+          backgroundColor: 'var(--primary)'
+        }}
       >
         💬
       </button>
 
       {/* Chatbot UI */}
       {isOpen && (
-        <div className="fixed bottom-16 right-5 w-80 h-96 bg-white shadow-lg flex flex-col">
+        <div className="fixed bottom-16 right-5 w-80 h-96 bg-gray-900 text-white shadow-lg flex flex-col rounded-lg border border-gray-700">
           {/* Header */}
-          <div className="bg-red-500 p-4 text-white flex justify-between items-center">
-            <h3 className="text-lg font-medium">Chatbot Assistant</h3>
+          <div 
+            className="p-4 flex justify-between items-center rounded-t-lg"
+            style = {{
+              backgroundColor: 'var(--primary)'
+            }}
+          >
+            <h3 
+              className="text-lg font-medium"
+              style={{
+                color: 'var(--foreground)'
+              }}
+            >
+              Chatbot Assistant
+            </h3>
             <button
-              className="text-white"
+              className="text-white hover:text-gray-300"
               onClick={toggleChatbot}
               aria-label="Close Chatbot"
+              style={{
+                backgroundColor: 'var(--primary)'
+              }}
             >
               ✕
             </button>
@@ -110,6 +130,9 @@ const Chatbot: React.FC = () => {
           <div
             className="flex-1 p-4 overflow-y-auto"
             ref={messageContainerRef}
+            style={{
+              backgroundColor: 'var(--menu-section-box)'
+            }}
           >
             {messages.map((message, index) => (
               <div
@@ -121,9 +144,13 @@ const Chatbot: React.FC = () => {
                 <div
                   className={`inline-block p-2 rounded-lg ${
                     message.sender === 'user'
-                      ? 'bg-red-500 text-white'
+                      ? ''
                       : 'bg-gray-200 text-gray-800'
                   }`}
+                  style={{
+                    backgroundColor: message.sender === 'user' ? 'var(--primary)' : undefined,
+                    color: message.sender === 'user' ? 'var(--foreground)' : undefined
+                  }}
                 >
                   {message.text}
                 </div>

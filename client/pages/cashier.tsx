@@ -476,7 +476,7 @@ const CashierPOS: React.FC = () => {
             <CardDescription>Current Transaction</CardDescription>
           </CardHeader>
           <CardContent>
-            <ScrollArea className="h-[400px]">
+            <ScrollArea className="h-[339px]">
               {order.map((item, index) => (
                 <div
                   key={index}

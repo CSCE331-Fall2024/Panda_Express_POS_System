@@ -26,8 +26,8 @@ interface MenuItems {
 }
 
 const weatherIcons = {
-  clearDay: <Sun className="h-6 w-6" />,
-  cloudsDay: <Cloud className="h-6 w-6" />,
+  clear: <Sun className="h-6 w-6" />,
+  clouds: <Cloud className="h-6 w-6" />,
   rain: <CloudRain className="h-6 w-6" />,
   snow: <CloudSnow className="h-6 w-6" />,
 };
@@ -89,22 +89,14 @@ const Menuboard: React.FC = () => {
   }, []);
 
   const getWeatherIcon = () => {
-    if (!weather?.description || weather.isDay === undefined) return null;
+    if (!weather?.description) return null;
   
     const description = weather.description.toLowerCase();
   
-    if (description.includes("clear")) {
-      return weatherIcons.clearDay;
-    }
-    if (description.includes("cloud")) {
-      return weatherIcons.cloudsDay;
-    }
-    if (description.includes("rain")) {
-      return weatherIcons.rain;
-    }
-    if (description.includes("snow")) {
-      return weatherIcons.snow;
-    }
+    if (description.includes("clear")) return weatherIcons.clear;
+    if (description.includes("cloud")) return weatherIcons.clouds;
+    if (description.includes("rain")) return weatherIcons.rain;
+    if (description.includes("snow")) return weatherIcons.snow;
   
     return <Cloud className="h-6 w-6" />; // Default icon
   };
@@ -161,7 +153,7 @@ const Menuboard: React.FC = () => {
 
           {/* Weather Data */}
           {weather && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '5px', color: 'var(--foreground)' }}>
               {getWeatherIcon()} {/* Weather icon */}
               <span>
                 {weather.temperature !== undefined ? `${Math.round(weather.temperature)}°F` : 'N/A'}
@@ -173,7 +165,7 @@ const Menuboard: React.FC = () => {
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
           <button
             onClick={toggleTheme}
-            className="flex items-center gap-2 p-2 rounded bg-gray-800 text-white"
+            className="flex items-center gap-2 p-2 rounded bg-gray-800"
           >
             {theme === "night" ? (
               <Sun className="h-5 w-5 text-yellow-500" />
@@ -185,8 +177,8 @@ const Menuboard: React.FC = () => {
             href="/login"
             style={{ color: '#FFFFFF', textDecoration: 'none', display: 'flex', alignItems: 'center' }}
           >
-            <User size={20} style={{ marginRight: '5px' }} />
-            <span style={{ fontWeight: 'bold' }}>Employee Sign In</span>
+            <User size={20} style={{ marginRight: '5px', color: 'var(--foreground)' }} />
+            <span style={{ fontWeight: 'bold', color:'var(--foreground)' }}>Employee Sign In</span>
           </a>
         </div>
       </nav>
