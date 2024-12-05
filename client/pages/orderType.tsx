@@ -15,6 +15,49 @@ export default function OrderTypeSelection() {
     // Redirect to the payment screen with "To Go" as the order type
     router.push("/payment?orderType=to-go")
   }
+  
+  const handleCancelOrder = () => {
+    console.log("Order canceled.")
+    router.push("/payment/orderCanceled")
+  }
+
+//attempting to add edit order button
+//   const handleEditOrder = () => {
+//     const storedOrder = sessionStorage.getItem("order");
+//     alert(storedOrder);
+
+//     if (storedOrder) {
+//         const parsedOrder = JSON.parse(storedOrder);
+//         console.log("Editing order with details:", parsedOrder);
+//         alert(JSON.stringify(parsedOrder));
+
+//         if (!parsedOrder.userRole) {
+            
+//             console.log("Redirecting to customer page.");
+//             // Redirect to the customer page
+//             router.push({
+//                 pathname: "/customer",
+//                 query: { edit: true, orderDetails: JSON.stringify(parsedOrder) },
+//             });
+//         } else {
+//             console.log("Redirecting to cashier page.");
+//             // Redirect to the cashier page
+//             router.push({
+//                 pathname: "/cashier",
+//                 query: { edit: true, orderDetails: JSON.stringify(parsedOrder) },
+//             });
+//         }
+//     } else {
+//         console.log("No stored order found.");
+
+//         // Optionally, clear any old orders if needed
+//         sessionStorage.removeItem("orderDetails");
+
+//         // Redirect to the kiosk page for a new order
+//         router.push("/customer");
+//     }
+// };
+
 
   return (
     <div className="flex h-screen justify-center items-center bg-background">
@@ -38,6 +81,21 @@ export default function OrderTypeSelection() {
           >
             To Go
           </Button>
+          {/* attempt to add edit order button */}
+          {/* <Button
+                onClick={handleEditOrder}
+                variant="destructive"
+                className="w-full py-3 text-lg font-semibold"
+              >
+                Edit Order
+              </Button> */}
+          <Button
+                onClick={handleCancelOrder}
+                variant="destructive"
+                className="w-full py-3 text-lg font-semibold"
+              >
+                Cancel Order
+              </Button>
         </CardContent>
       </Card>
     </div>

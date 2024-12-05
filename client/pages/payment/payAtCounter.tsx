@@ -4,11 +4,12 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useEffect } from "react"
 
-export default function CreditCardPayment() {
+export default function PayAtCounter() {
   const router = useRouter()
-  const [paymentAmount, setPaymentAmount] = React.useState<number | null>(null);
-  const [staffId, setStaffId] = React.useState<number | null>(null);
-  const [menuItemIds, setMenuItemIds] = React.useState<number[] | null>(null);
+    const [paymentAmount, setPaymentAmount] = React.useState<number | null>(null);
+    const [staffId, setStaffId] = React.useState<number | null>(null);
+    const [menuItemIds, setMenuItemIds] = React.useState<number[] | null>(null);
+  
 
   useEffect(() => {
     const total = sessionStorage.getItem('paymentAmount');
@@ -33,13 +34,13 @@ export default function CreditCardPayment() {
 
   }, [router]);
 
-  const handlePaymentSuccess = async () => {
+  const handlePaymentSuccess = async (paymentType: string) => {
     try {
       const response = await fetch('/api/payments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          paymentType: 'Credit Card',
+          paymentType,
           paymentAmount: paymentAmount,
         }),
       });
@@ -86,6 +87,9 @@ export default function CreditCardPayment() {
             else if (sessionStorage.getItem("userRole") === "employee") {
               router.push("/cashier")
             }
+            else if (sessionStorage.getItem("userRole") === "manager") {
+                router.push("/cashier")
+              }
           } else {
             console.error("Failed to add menu items to menu_item_order_jt:", jointData.message)
           }
@@ -108,17 +112,22 @@ export default function CreditCardPayment() {
     <div className="flex h-screen justify-center items-center bg-background">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Credit Card Payment</CardTitle>
+          <CardTitle>Choose Payment Method At Counter</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* <p>Enter your credit card information.</p>
-          Simulate form fields here */}
           <Button
-            onClick={handlePaymentSuccess}
+            onClick={() =>handlePaymentSuccess("Credit Card")}
             variant="default"
             className="w-full py-4 text-lg font-semibold"
           >
-            Confirm Payment
+            Credit Card
+          </Button>
+          <Button
+            onClick={() =>handlePaymentSuccess("TAMU_ID")}
+            variant="default"
+            className="w-full py-4 text-lg font-semibold"
+          >
+            Dining Dollars
           </Button>
         </CardContent>
       </Card>

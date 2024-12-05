@@ -34,6 +34,7 @@ async (accessToken, refreshToken, profile, done) => {
     // Check if the user's email exists in the database
     const query = 'SELECT staff_id, position FROM staff WHERE google_id = $1';
     const result = await pool.query(query, [email]);
+    console.log('Database result:', result.rows);
 
     if (result.rows.length === 0) {
       console.log("user not found", email);
@@ -41,6 +42,7 @@ async (accessToken, refreshToken, profile, done) => {
     }
     console.log("user found", email);
     const user = result.rows[0];
+    console.log('User authenticated successfully:', user);
     return done(null, user);
 } catch (error) {
     console.error('Error during Google OAuth callback:', error);

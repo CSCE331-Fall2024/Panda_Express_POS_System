@@ -114,8 +114,8 @@ export default function DiningDollarsPayment() {
           <CardTitle>Dining Dollars Payment</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p>Enter your dining dollars information.</p>
-          {/* Simulate form fields here */}
+          {/* <p>Enter your dining dollars information.</p>
+          Simulate form fields here */}
           <Button
             onClick={handlePaymentSuccess}
             variant="default"

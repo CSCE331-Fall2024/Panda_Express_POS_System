@@ -23,10 +23,10 @@ export default function PaymentScreen() {
   const handlePayAtCounter = () => {
     console.log("Proceeding to pay at counter...")
     if (sessionStorage.getItem("userRole") === "customer") {
-      router.push("/payment/orderSuccess")
+      router.push("/payment/payAtCounter")
     }
     else if (sessionStorage.getItem("userRole") === "employee") {
-      router.push("/cashier")
+      router.push("/payment/payAtCounter")
     }
   }
 
@@ -37,11 +37,11 @@ export default function PaymentScreen() {
 
   return (
     <div className="flex h-screen bg-background">
-      <aside className="w-16 bg-muted flex flex-col items-center py-4 space-y-4">
+      {/* <aside className="w-16 bg-muted flex flex-col items-center py-4 space-y-4">
         <Button variant="ghost" size="icon" onClick={() => router.push("/cashier")}>
           <Home className="h-6 w-6" />
         </Button>
-      </aside>
+      </aside> */}
       <main className="flex-1 p-6 space-y-6">
         <header>
           <h1 className="text-3xl font-bold text-primary">Payment</h1>
@@ -50,7 +50,7 @@ export default function PaymentScreen() {
           </p>
         </header>
         <div className="flex justify-center">
-          <Card className="w-full max-w-md">
+          <Card className="mt-[20vh] w-full max-w-md">
             <CardHeader>
               <CardTitle>Payment Options</CardTitle>
               <CardDescription>
