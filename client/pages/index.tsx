@@ -10,6 +10,7 @@ import {
 import { getUserLocation, getWeatherData } from "@/utils/apiHelpers";
 import { Sun, Moon, Cloud, CloudRain, CloudSnow, User } from "lucide-react";
 import { useTheme } from "@/components/context/theme_context";
+import Head from 'next/head';
 
 
 interface MenuItem {
@@ -41,7 +42,6 @@ const Menuboard: React.FC = () => {
   const [loading, setLoading] = React.useState<boolean>(true);
   const categories: MenuCategory[] = ['Combos', 'Appetizer', 'Entree', 'Side', 'Drink'];
   const { theme, toggleTheme } = useTheme();
-
   // Fetch menu items from the API
   useEffect(() => {
     fetch('/api/menu')
@@ -102,7 +102,9 @@ const Menuboard: React.FC = () => {
   };
 
   return (
-    <div
+    <><Head>
+      <title>Panda Express Menu Board</title>
+    </Head><div
       style={{
         display: 'flex',
         justifyContent: 'center',
@@ -116,135 +118,134 @@ const Menuboard: React.FC = () => {
         overflow: 'hidden',
       }}
     >
-      {/* Dim Overlay
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          backgroundColor: 'rgba(255, 255, 255, 0.2)', // 20% black overlay to dim background
-        }}
-      ></div> */}
+        {/* Dim Overlay
+    <div
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        backgroundColor: 'rgba(255, 255, 255, 0.2)', // 20% black overlay to dim background
+      }}
+    ></div> */}
 
-      {/* Full-Width Navbar */}
-      <nav
-        style={{
-          backgroundColor: 'var(--primary)',
-          color: 'var(--foreground)',
-          padding: '15px 20px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          width: '100%',
-          position: 'absolute',
-          top: 0,
-          zIndex: 1,
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          {/* Panda Express Logo aligned to the left */}
-          <img
-            src="https://s3.amazonaws.com/PandaExpressWebsite/Responsive/img/home/logo.png"
-            alt="Panda Express Logo"
-            style={{ width: '80px' }}
-          />
+        {/* Full-Width Navbar */}
+        <nav
+          style={{
+            backgroundColor: 'var(--primary)',
+            color: 'var(--foreground)',
+            padding: '15px 20px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            width: '100%',
+            position: 'absolute',
+            top: 0,
+            zIndex: 1,
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            {/* Panda Express Logo aligned to the left */}
+            <img
+              src="https://s3.amazonaws.com/PandaExpressWebsite/Responsive/img/home/logo.png"
+              alt="Panda Express Logo"
+              style={{ width: '80px' }} />
 
-          {/* Weather Data */}
-          {weather && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '5px', color: 'var(--foreground)' }}>
-              {getWeatherIcon()} {/* Weather icon */}
-              <span>
-                {weather.temperature !== undefined ? `${Math.round(weather.temperature)}°F` : 'N/A'}
-              </span>
-            </div>
-          )}
-        </div>
-        {/* Employee Signin */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-          <button
-            onClick={toggleTheme}
-            className="flex items-center gap-2 p-2 rounded bg-gray-800"
-          >
-            {theme === "night" ? (
-              <Sun className="h-5 w-5 text-yellow-500" />
-            ) : (
-              <Moon className="h-5 w-5 text-blue-500" />
+            {/* Weather Data */}
+            {weather && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '5px', color: 'var(--foreground)' }}>
+                {getWeatherIcon()} {/* Weather icon */}
+                <span>
+                  {weather.temperature !== undefined ? `${Math.round(weather.temperature)}°F` : 'N/A'}
+                </span>
+              </div>
             )}
-          </button>
-          <a
-            href="/login"
-            style={{ color: '#FFFFFF', textDecoration: 'none', display: 'flex', alignItems: 'center' }}
-          >
-            <User size={20} style={{ marginRight: '5px', color: 'var(--foreground)' }} />
-            <span style={{ fontWeight: 'bold', color:'var(--foreground)' }}>Employee Sign In</span>
-          </a>
-        </div>
-      </nav>
+          </div>
+          {/* Employee Signin */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+            <button
+              id='themetogglebutton'
+              onClick={toggleTheme}
+              className="flex items-center gap-2 p-2 rounded bg-gray-800"
+            >
+              {theme === "night" ? (
+                <Sun className="h-5 w-5 text-yellow-500" />
+              ) : (
+                <Moon className="h-5 w-5 text-blue-500" />
+              )}
+            </button>
+            <a
+              href="/login"
+              style={{ color: '#FFFFFF', textDecoration: 'none', display: 'flex', alignItems: 'center' }}
+            >
+              <User size={20} style={{ marginRight: '5px', color: 'var(--foreground)' }} />
+              <span style={{ fontWeight: 'bold', color: 'var(--foreground)' }}>Employee Sign In</span>
+            </a>
+          </div>
+        </nav>
 
-      {/* Menu viewing options - Spans Full Screen Width */}
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          padding: '20px',
-          marginTop: '100px',
-          width: '100%',
-          maxWidth: '100%',
-          height: '30%',
-          maxHeight: '75%',
-          zIndex: 20,
-        }}
-      >
-        {/* Welcome Message */}
-        <h1
+        {/* Menu viewing options - Spans Full Screen Width */}
+        <div
           style={{
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            fontSize: '50px',
-            fontWeight: 'bold',
-            marginBottom: '10px',
+            padding: '20px',
+            marginTop: '100px',
+            width: '100%',
+            maxWidth: '100%',
+            height: '30%',
+            maxHeight: '75%',
+            zIndex: 20,
           }}
         >
-          <img
-            src="https://s3.amazonaws.com/PandaExpressWebsite/www/hyp23/pr-logo.png"
-            alt="Panda Express Logo"
-            style={{ width: '90px' }}
-          />
-          Welcome to Panda Express!
-        </h1>
-        <h2
-        style={{
-          fontSize:'20px',
-          fontWeight: 'bold',
-          fontStyle: 'italic',
-          paddingBottom: '20px'
-        }}>
-          Chinese Flavors with American Tastes
-        </h2>
-        {/* order now button */}
-        <a
-              href="/customer"
-              style={{
-                width: '20%%',
-                padding: '12px',
-                backgroundColor: '#D32F2F',
-                color: '#FFFFFF',
-                border: 'none',
-                borderRadius: '4px',
-                fontSize: '16px',
-                fontWeight: 'bold',
-                cursor: 'pointer'
-              }}
-            >
-              Order Now
+          {/* Welcome Message */}
+          <h1
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              fontSize: '50px',
+              fontWeight: 'bold',
+              marginBottom: '10px',
+            }}
+          >
+            <img
+              src="https://s3.amazonaws.com/PandaExpressWebsite/www/hyp23/pr-logo.png"
+              alt="Panda Express Logo"
+              style={{ width: '90px' }} />
+            Welcome to Panda Express!
+          </h1>
+          <h2
+            style={{
+              fontSize: '20px',
+              fontWeight: 'bold',
+              fontStyle: 'italic',
+              paddingBottom: '20px'
+            }}>
+            Chinese Flavors with American Tastes
+          </h2>
+          {/* order now button */}
+          <a
+            href="/customer"
+            style={{
+              width: '20%%',
+              padding: '12px',
+              backgroundColor: '#D32F2F',
+              color: '#FFFFFF',
+              border: 'none',
+              borderRadius: '4px',
+              fontSize: '16px',
+              fontWeight: 'bold',
+              cursor: 'pointer'
+            }}
+          >
+            Order Now
             {/* </button> */}
-            </a>        
-      </div>
-    </div>
+          </a>
+        </div>
+      </div></>
   );
 };
 
