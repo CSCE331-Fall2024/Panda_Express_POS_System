@@ -40,7 +40,7 @@ const ZReport: React.FC = () => {
           'Content-Type': 'application/json',
         },
         // body: JSON.stringify({ date: currentDate }),
-        body: JSON.stringify({ date: "2024-10-20" }),
+        body: JSON.stringify({ date: "2023-09-21" }),
       });
       const data = await response.json();
 

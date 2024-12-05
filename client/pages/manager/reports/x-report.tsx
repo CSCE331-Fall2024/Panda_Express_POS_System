@@ -26,7 +26,17 @@ export default function XReport() {
   useEffect(() => {
     const fetchXReport = async () => {
       try {
-        const response = await fetch('/api/reports/xreport');
+        const date = new Date().toISOString().split('T')[0];
+        // const date = "2023-09-21";
+        // const date = "2024-12-3";
+
+        const response = await fetch('/api/reports/xreport', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ date }),
+        });
         const data = await response.json();
   
         if (data.success) {
