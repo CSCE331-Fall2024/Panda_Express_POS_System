@@ -73,7 +73,7 @@ const ManagerOrders: FC = () => {
     if (selectedDay !== 'default') query.append('day', selectedDay);
 
     try {
-      const response = await fetch(`http://localhost:8080/api/orders?${query.toString()}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/orders?${query.toString()}`);
       if (!response.ok) throw new Error('Failed to fetch orders');
       const data = await response.json();
       setOrders(data.orders);

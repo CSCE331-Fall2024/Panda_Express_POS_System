@@ -2,7 +2,7 @@
 export const getWeatherData = async (latitude, longitude) => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/weather?lat=${latitude}&lon=${longitude}`
+        `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/weather?lat=${latitude}&lon=${longitude}`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch weather data");

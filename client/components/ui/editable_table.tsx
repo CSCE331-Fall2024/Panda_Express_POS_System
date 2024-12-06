@@ -233,7 +233,7 @@ const EditableTable = <T extends BaseItem>({
                 onClick={() => setNewItem({})}
                 style={{ ...buttonStyle, width: "100%" }}
               >
-                Add New Item
+                Add New Entry
               </button>
             </td>
           </tr>
