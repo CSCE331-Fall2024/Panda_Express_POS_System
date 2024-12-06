@@ -73,6 +73,7 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
+        console.log('OAuth2 Callback started');
         // Fetch user info using the access token
         const response = await axios.get(
           'https://www.googleapis.com/oauth2/v1/userinfo',
@@ -97,6 +98,7 @@ passport.use(
 
         const user = result.rows[0];
         console.log('User authenticated:', user);
+        user.accessToken = accessToken;
         return done(null, user);
       } catch (error) {
         console.error('Error fetching user info or querying the database:', error);
@@ -106,12 +108,16 @@ passport.use(
   )
 );
 // Start OAuth2 flow
-app.get('/api/auth/google', (req, res, next) => {
-  passport.authenticate('oauth2', {
-    scope: ['email', 'profile'],
-    state: crypto.randomBytes(32).toString('hex'), // Use state to prevent CSRF
-  })(req, res, next);
-});
+// app.get('/api/auth/google', (req, res, next) => {
+//   passport.authenticate('oauth2', {
+//     scope: ['email', 'profile'],
+//     state: crypto.randomBytes(32).toString('hex'), // Use state to prevent CSRF
+//   })(req, res, next);
+// });
+app.get('/api/auth/google', passport.authenticate('oauth2', {
+  scope: ['email', 'profile'],
+  state: crypto.randomBytes(32).toString('hex'), // CSRF prevention
+}));
 
 // OAuth2 callback
 app.get(
@@ -121,25 +127,39 @@ app.get(
   }),
   (req, res) => {
     if (!req.user) {
+      console.error('User authentication failed, no user object in request');
       return res.redirect('/?error=User not found');
     }
 
     const baseUrl =
       process.env.NEXT_PUBLIC_FRONTEND_BASE_URL || 'https://project-3-team-0b.onrender.com';
-    const redirectUrl = `${baseUrl}/login?staff_id=${req.user.staff_id}&role=${req.user.position.toLowerCase()}`;
+    // const redirectUrl = `${baseUrl}/login?staff_id=${req.user.staff_id}&role=${req.user.position.toLowerCase()}`;
+    const redirectUrl = `${baseUrl}/login?staff_id=${req.user.staff_id}&role=${req.user.position.toLowerCase()}&accessToken=${req.user.accessToken}`;
+
+    console.log('Redirecting to:', redirectUrl);
     res.redirect(redirectUrl);
   }
 );
 passport.serializeUser((user, done) => {
-  done(null, user.staff_id);
+  console.log('Serializing user:', user);
+  done(null, { staff_id: user.staff_id, accessToken: user.accessToken});
 });
 
-passport.deserializeUser(async (id, done) => {
+passport.deserializeUser(async (userData, done) => {
+  const { staff_id, accessToken } = userData;
   try {
     const query = 'SELECT staff_id, position FROM staff WHERE staff_id = $1';
-    const result = await pool.query(query, [id]);
+    const result = await pool.query(query, [staff_id]);
+
+    if (result.rows.length === 0) {
+      console.error('No user found in database for staff_id:', staff_id);
+      return done(new Error('User not found'), null);
+    }
+
+    console.log('User deserialized:', result.rows[0]);
     done(null, result.rows[0]);
   } catch (error) {
+    console.error('Error during deserialization:', error);
     done(error, null);
   }
 });
@@ -150,12 +170,11 @@ const session = require('express-session');
 
 // Set up express-session middleware
 app.use(session({
-    secret: '$(process.env.GOOGLE_CLIENT_SECRET)',
+    secret: process.env.GOOGLE_CLIENT_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: { secure: false } 
 }));
-let userCredential = null;
 // // Home route for OAuth authorization
 // app.get('/', (req, res) => {
 //   const state = crypto.randomBytes(32).toString('hex');
@@ -191,8 +210,8 @@ let userCredential = null;
 // });
 
 
-// // Passport session initialization
-// app.use(passport.session());
+// Passport session initialization
+app.use(passport.session());
 
 // // Serialize and deserialize user
 // passport.serializeUser((user, done) => {
@@ -203,26 +222,26 @@ let userCredential = null;
 //     done(null, user);
 // });
 
-// Endpoint to start Google OAuth2 authentication
-app.get('/api/auth/google',
-  passport.authenticate('google', { scope: ['profile', 'email'] })
-);
+// // Endpoint to start Google OAuth2 authentication
+// app.get('/api/auth/google',
+//   passport.authenticate('google', { scope: ['profile', 'email'] })
+// );
 
-// Callback endpoint for Google OAuth2
-app.get('/api/auth/google/callback',
-  passport.authenticate('google', { 
-    failureRedirect: '/?error=authentication_failed',
-    session: true
-  }),
-  (req, res) => {
-    if (!req.user) {
-      return res.redirect('/?error=User not found');
-  }
-  const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_BASE_URL || 'https://project-3-team-0b.onrender.com/';
-  const redirectUrl = `${baseUrl}/login?staff_id=${req.user.staff_id}&role=${req.user.position.toLowerCase()}`;
-    res.redirect(redirectUrl.toString());
-  }
-);
+// // Callback endpoint for Google OAuth2
+// app.get('/api/auth/google/callback',
+//   passport.authenticate('google', { 
+//     failureRedirect: '/?error=authentication_failed',
+//     session: true
+//   }),
+//   (req, res) => {
+//     if (!req.user) {
+//       return res.redirect('/?error=User not found');
+//   }
+//   const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_BASE_URL || 'https://project-3-team-0b.onrender.com/';
+//   const redirectUrl = `${baseUrl}/login?staff_id=${req.user.staff_id}&role=${req.user.position.toLowerCase()}`;
+//     res.redirect(redirectUrl.toString());
+//   }
+// );
 
 // Middleware
 app.use(express.json());
@@ -291,6 +310,7 @@ app.post('/api/translate', async (req, res) => {
 // Home page endpoint
 app.get('/', (req, res) => {
     // res.send('You are not an authorized user.');
+    console.log('Home route');
     const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_BASE_URL || 'https://project-3-team-0b.onrender.com/';
     const redirectUrl = `${baseUrl}/login`;
     res.redirect(redirectUrl.toString());

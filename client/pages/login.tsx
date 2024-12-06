@@ -146,10 +146,14 @@ const LoginPage: React.FC = () => {
     const staff_id = urlParams.get('staff_id');
     const role = urlParams.get('role');
     const error = urlParams.get('error');
+    const accessToken = urlParams.get('accessToken');
 
     if (staff_id && role) {
       setUser({ role });
       sessionStorage.setItem('staff_id', staff_id);
+      if (accessToken) {
+        sessionStorage.setItem('accessToken', accessToken);
+      }
 
       if (role === 'cashier') router.push('/cashier');
       else if (role === 'manager') router.push('/manager');
