@@ -467,9 +467,9 @@ const CustomerKiosk: React.FC = () => {
         } else if (item.item_type === "Entree" && carteSelected === "Entree") {
           setCarteSelected(null);
         }
-      }
-      if (item.name !== "A La Carte") {
-        setTotal(prevTotal => Math.max(0, prevTotal - item.price));
+        if (item.name !== "A La Carte") {
+          setTotal(prevTotal => Math.max(0, prevTotal - item.price));
+        }
       }
     }
   
