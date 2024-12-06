@@ -316,13 +316,8 @@ const LoginPage: React.FC = () => {
         >
             Sign in with Google
         </button>
-
-
-          {/* Remove the old error message display */}
-          {/* {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>} */}
         </div>
       </div>
-
       {/* Render Error Popup */}
       {showErrorPopup && (
         <ErrorPopup 

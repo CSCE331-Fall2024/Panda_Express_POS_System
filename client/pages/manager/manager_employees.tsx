@@ -9,7 +9,7 @@ import {
 } from "@/utils/tableStyles";
 import { GetServerSideProps } from "next";
 import { Pool } from "pg";
-import React, { useState, useEffect } from "react";
+import { FC, useState, useEffect } from "react";
 
 interface Employee {
   id: number;
@@ -23,7 +23,7 @@ interface ManagerEmployeesProps {
   employees: Employee[];
 }
 
-const ManagerEmployees: React.FC<ManagerEmployeesProps> = ({ employees }) => {
+const ManagerEmployees: FC<ManagerEmployeesProps> = ({ employees }) => {
   const [localEmployees, setLocalEmployees] = useState<Employee[]>(employees || []);
 
   // Language and translation
@@ -150,7 +150,6 @@ const ManagerEmployees: React.FC<ManagerEmployeesProps> = ({ employees }) => {
   return (
     <>
       <ManagerNavBar language={language} setLanguage={setLanguage} />
-
       <div style={pageStyle}>
         <div style={overlayStyle}></div>
         <div style={contentStyle}>

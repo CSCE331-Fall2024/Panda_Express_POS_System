@@ -1,13 +1,12 @@
 // 'use client'
-import React, { useState } from 'react'
+import { FC, useState } from 'react'
 import { Calendar } from '@/components/ui/calendar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {pageStyle, overlayStyle, contentStyle, headingStyle, tableHeaderStyle, tableCellStyle} from '@/utils/tableStyles'
 import BackButton from '@/components/ui/back_button'
-import ManagerNavBar from '@/components/ui/manager_nav_bar';
 
-const Sales: React.FC = () => {
+const Sales: FC = () => {
   const [dateRange, setDateRange] = useState<{ from: Date; to: Date | undefined }>({
     from: new Date(),
     to: new Date(),

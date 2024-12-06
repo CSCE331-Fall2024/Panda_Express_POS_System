@@ -1,14 +1,13 @@
-import * as React from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/router"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { useEffect } from "react"
 
 export default function CreditCardPayment() {
   const router = useRouter()
-  const [paymentAmount, setPaymentAmount] = React.useState<number | null>(null);
-  const [staffId, setStaffId] = React.useState<number | null>(null);
-  const [menuItemIds, setMenuItemIds] = React.useState<number[] | null>(null);
+  const [paymentAmount, setPaymentAmount] = useState<number | null>(null);
+  const [staffId, setStaffId] = useState<number | null>(null);
+  const [menuItemIds, setMenuItemIds] = useState<number[] | null>(null);
 
   useEffect(() => {
     const total = sessionStorage.getItem('paymentAmount');

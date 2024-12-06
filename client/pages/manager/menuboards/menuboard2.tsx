@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react';
+import {FC, useEffect, useState } from 'react';
 import { getUserLocation, getWeatherData } from "@/utils/apiHelpers";
-import { Cloud, Sun, CloudRain, CloudSnow, User } from "lucide-react";
-
+import { Cloud, Sun, CloudRain, CloudSnow} from "lucide-react";
 
 interface MenuItem {
   menu_item_id: number;
@@ -23,15 +22,10 @@ const weatherIcons = {
   snow: <CloudSnow className="h-6 w-6" />,
 };
 
-type MenuCategory = string;
-
-const Menuboard: React.FC = () => {
-  const [menuItems, setMenuItems] = React.useState<MenuItems>({});
-  // const [selectedCategory, setSelectedCategory] = React.useState<MenuCategory>('Combos');
-  const [weather, setWeather] = React.useState<{ temperature?: number; description?: string } | null>(null);
-  const [loading, setLoading] = React.useState<boolean>(true);
-
-
+const Menuboard: FC = () => {
+  const [menuItems, setMenuItems] = useState<MenuItems>({});
+  const [weather, setWeather] = useState<{ temperature?: number; description?: string } | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
   // Fetch menu items from the API
   useEffect(() => {
     fetch('/api/menu')
@@ -92,13 +86,8 @@ const Menuboard: React.FC = () => {
   
   const entreeItems = menuItems['Entree'] || [];
   const appItems = [...(menuItems['Appetizer'] || []), ...(menuItems['Drink'] || [])];
-
-
-
-
   return (
     <>
-      
     <div
       style={{
         display: 'flex',
@@ -125,7 +114,6 @@ const Menuboard: React.FC = () => {
           backgroundColor: 'rgba(0, 0, 0, 0.75)', // 50% black overlay to dim background
         }}
       ></div>
-
       {/* Full-Width Navbar */}
       <nav
         style={{
@@ -150,7 +138,6 @@ const Menuboard: React.FC = () => {
             style={{ width: '80px', paddingTop:'10px'}}
           />
         </div>
-
         {/* Weather Data */}
         {weather && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
@@ -161,7 +148,6 @@ const Menuboard: React.FC = () => {
             </div>
           )}
       </nav>
-
       {/* Menu viewing options - Spans Full Screen Width */}
       <div
         style={{
@@ -171,7 +157,6 @@ const Menuboard: React.FC = () => {
           transform: 'scale(0.95)',
         }}
       >
-    
         <div className="mt-2 w-full flex flex-col items-center">
         <h2 className="text-white text-2xl font-semibold mb-2 pt-10">Step 3: Choose Your Entrees</h2>
         <div className="grid grid-cols-2 sm:grid-cols-5 md:grid-cols-3 lg:grid-cols-4 xl: grid-cols-7 gap-2">
@@ -208,7 +193,6 @@ const Menuboard: React.FC = () => {
             ))}
         </div>
         </div>
-
     </div>
     </div>
     </>

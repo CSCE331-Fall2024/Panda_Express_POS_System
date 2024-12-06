@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { getUserLocation, getWeatherData } from "@/utils/apiHelpers";
 import { Sun, Moon, Cloud, CloudRain, CloudSnow, User } from "lucide-react";
 import { useTheme } from "@/components/context/theme_context";
@@ -23,19 +23,15 @@ const weatherIcons = {
   snow: <CloudSnow className="h-6 w-6" />,
 };
 
-type MenuCategory = string;
-
-const Menuboard: React.FC = () => {
-  const [menuItems, setMenuItems] = React.useState<MenuItems>({});
-  const [selectedCategory, setSelectedCategory] = React.useState<MenuCategory>('Combos');
-  const [weather, setWeather] = React.useState<{ temperature?: number; description?: string; isDay?: boolean } | null>(null);
-  const [loading, setLoading] = React.useState<boolean>(true);
-  const categories: MenuCategory[] = ['Combos', 'Appetizer', 'Entree', 'Side', 'Drink'];
+const Menuboard: FC = () => {
+  const [menuItems, setMenuItems] = useState<MenuItems>({});
+  const [weather, setWeather] = useState<{ temperature?: number; description?: string; isDay?: boolean } | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
   const { theme, toggleTheme } = useTheme();
 
   // Language State
-  const [language, setLanguage] = React.useState<'en' | 'es'>('en');
-  const [translations, setTranslations] = React.useState<{[key:string]:string}>({});
+  const [language, setLanguage] = useState<'en' | 'es'>('en');
+  const [translations, setTranslations] = useState<{[key:string]:string}>({});
 
   const staticTexts = [
     "Welcome to Panda Express!",

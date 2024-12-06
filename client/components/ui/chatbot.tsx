@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { FC, useState, useEffect, useRef } from 'react';
 
 // Define the message type
 interface Message {
@@ -7,7 +7,7 @@ interface Message {
   options?: string[];
 }
 
-const Chatbot: React.FC = () => {
+const Chatbot: FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const messageContainerRef = useRef<HTMLDivElement>(null);

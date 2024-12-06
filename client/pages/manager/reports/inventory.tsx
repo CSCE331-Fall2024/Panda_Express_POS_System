@@ -1,6 +1,5 @@
 // pages/manager/manager_reports/inventory_usage_chart.tsx
-
-import React, { useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -19,8 +18,6 @@ import {
   headingStyle,
 } from '@/utils/tableStyles';
 import BackButton from '@/components/ui/back_button';
-import ManagerNavBar from '@/components/ui/manager_nav_bar';
-
 // Register Chart.js components
 ChartJS.register(
   LineElement,
@@ -64,7 +61,7 @@ const formatChartData = (usageData: InventoryUsageData[]): InventoryChartData =>
 };
 
 // Chart component
-const InventoryUsageChart: React.FC = () => {
+const InventoryUsageChart: FC = () => {
   const [chartData, setChartData] = useState<InventoryChartData | null>(null);
   const [error, setError] = useState<string | null>(null);
 

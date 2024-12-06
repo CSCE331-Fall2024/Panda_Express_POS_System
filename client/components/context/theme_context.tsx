@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import { FC, createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
 type Theme = 'day' | 'night';
 
@@ -9,7 +9,7 @@ interface ThemeContextProps {
 
 const ThemeContext = createContext<ThemeContextProps | undefined>(undefined);
 
-export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const ThemeProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useState<Theme>('day'); // Default to 'day'
 
   const updateBackgroundImage = (currentTheme: Theme) => {
