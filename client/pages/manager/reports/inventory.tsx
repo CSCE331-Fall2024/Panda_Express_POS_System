@@ -89,7 +89,7 @@ const InventoryUsageChart: React.FC = () => {
   if (error) {
     return (
       <>
-        <ManagerNavBar />
+        {/* <ManagerNavBar /> */}
         <div style={{ ...pageStyle, paddingTop: '40px' }}>
           <div style={overlayStyle}></div>
           <div style={contentStyle}>
@@ -105,7 +105,7 @@ const InventoryUsageChart: React.FC = () => {
   if (!chartData) {
     return (
       <>
-        <ManagerNavBar />
+        {/* <ManagerNavBar /> */}
         <div style={{ ...pageStyle, paddingTop: '40px' }}>
           <div style={overlayStyle}></div>
           <div style={contentStyle}>
@@ -161,7 +161,7 @@ const InventoryUsageChart: React.FC = () => {
 
   return (
     <>
-      <ManagerNavBar />
+      {/* <ManagerNavBar /> */}
       <div style={{ ...pageStyle, paddingTop: '40px' }}>
         <div style={overlayStyle}></div>
         <div style={contentStyle}>
