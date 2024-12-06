@@ -90,7 +90,7 @@ const Sales: React.FC = () => {
                       to: range?.to || undefined,
                     })
                   }
-                  className="rounded-md border"
+                  className="rounded-md border shadow "
                 />
                 <div className="mt-4 space-y-4 text-center">
                   <div>
