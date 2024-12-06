@@ -265,7 +265,7 @@ const CustomerKiosk: React.FC = () => {
         }
       }
     }
-  }, [menuItems]); // Added menuItems as a dependency to ensure menuItems are loaded before translations
+  }, []); // Added menuItems as a dependency to ensure menuItems are loaded before translations
 
   // Save sessionStorage whenever relevant states change
   useEffect(() => {
@@ -446,50 +446,53 @@ const CustomerKiosk: React.FC = () => {
   const removeFromOrder = (index: number): void => {
     const item = order[index];
     const newOrder = [...order];
-    newOrder.splice(index, 1);
+    newOrder.splice(index, 1); // Remove the selected item
 
-    if (selectedCategory === 'Side') {
-      setSelectedSides(Math.max(0, selectedSides - 1));
-      if(carteSelected === "Side") {
-        setCarteSelected(null);
+    if (
+      (currentItemType === "Plate" ||
+       currentItemType === "Bigger Plate" ||
+       currentItemType === "Bowl" ||
+       currentItemType === "A La Carte") &&
+      (item.item_type === "Side" || item.item_type === "Entree")
+    ) {
+      if (item.item_type === "Side") {
+        setSelectedSides(prev => Math.max(0, prev - 1));
+      } else if (item.item_type === "Entree") {
+        setSelectedEntrees(prev => Math.max(0, prev - 1));
       }
-    } else if (selectedCategory === 'Entree') {
-      setSelectedEntrees(Math.max(0, selectedEntrees - 1));
-      if(carteSelected === "Entree") {
-        setCarteSelected(null);
+  
+      if (currentItemType === "A La Carte") {
+        if (item.item_type === "Side" && carteSelected === "Side") {
+          setCarteSelected(null);
+        } else if (item.item_type === "Entree" && carteSelected === "Entree") {
+          setCarteSelected(null);
+        }
+      }
+      if (item.name !== "A La Carte") {
+        setTotal(prevTotal => Math.max(0, prevTotal - item.price));
       }
     }
   
+    if (item.item_type === "Appetizer" || item.item_type === "Drink") {
+      setTotal(prevTotal => Math.max(0, prevTotal - item.price));
+    }
+  
+    if (item.special) {
+      setTotal(prevTotal => Math.max(0, prevTotal - 1.5));
+    }
+  
     if (["Plate", "Bowl", "Bigger Plate"].includes(item.name)) {
-      setTotal((prevTotal) => Math.max(0, prevTotal - item.price));
+      setTotal(prevTotal => Math.max(0, prevTotal - item.price));
+  
       let sidesToRemove = 0;
       let entreesToRemove = 0;
   
-      // Determine how many sides and entrees to treat as a la carte based on combo type
-      if(selectedSides > 0 || selectedEntrees > 0) {
-        if (item.name === "Plate" || item.name === "Bowl" || item.name === "Bigger Plate") {
-          sidesToRemove = selectedSides;
-          entreesToRemove = selectedEntrees;
-        } 
-      } else {
-        if (item.name === "Plate"){
-          sidesToRemove = 1;
-          entreesToRemove = 2;
-        } else if (item.name === "Bigger Plate"){
-          sidesToRemove = 1;
-          entreesToRemove = 3;
-        } else if (item.name === "Bowl"){
-          sidesToRemove = 1;
-          entreesToRemove = 1;
-        }
-      }
+      sidesToRemove = selectedSides;
+      entreesToRemove = selectedEntrees;
   
       const itemsToRemove = [];
-  
-      // Traverse the order backward to find the last items matching sides/entrees
-      for (let i = newOrder.length - 1; i >= 0; i--) {
+      for (let i = newOrder.length - 1; i >= 0 && (sidesToRemove > 0 || entreesToRemove > 0); i--) {
         const currentItem = newOrder[i];
-  
         if (sidesToRemove > 0 && currentItem.item_type === "Side") {
           sidesToRemove--;
           itemsToRemove.push(i);
@@ -497,44 +500,28 @@ const CustomerKiosk: React.FC = () => {
           entreesToRemove--;
           itemsToRemove.push(i);
         }
-  
-        // Break early if all sides and entrees are accounted for
-        if (sidesToRemove === 0 && entreesToRemove === 0) {
-          break;
-        }
       }
-
+  
       const specialItemsCount = itemsToRemove.reduce(
         (count, i) => (newOrder[i].special ? count + 1 : count),
         0
       );
+      setTotal(prevTotal => Math.max(0, prevTotal - specialItemsCount * 1.5));
   
-      setTotal((prevTotal) => Math.max(0, prevTotal - specialItemsCount * 1.5));
+      itemsToRemove.sort((a, b) => b - a).forEach(i => newOrder.splice(i, 1));
   
-      // Remove the identified items from the order
-      itemsToRemove.sort((a, b) => b - a).forEach((i) => newOrder.splice(i, 1));
-  
-      // Update the total and state
       setCurrentItemType(null);
       setSelectedSides(0);
       setSelectedEntrees(0);
-    } else if (currentItemType === "A La Carte") {
+    } else if (currentItemType === "A La Carte" && item.name === "A La Carte") {
       let sidesToRemove = 0;
       let entreesToRemove = 0;
-
-      // Determine how many sides or entrees to remove
-      if (carteSelected === "Side") {
-        sidesToRemove = 1;
-      } else if (carteSelected === "Entree") {
-        entreesToRemove = 1;
-      }
-
+      if (carteSelected === "Side") sidesToRemove = selectedSides;
+      if (carteSelected === "Entree") entreesToRemove = selectedEntrees;
+  
       const itemsToRemove = [];
-
-      // Traverse the order backward to find the last items matching sides/entrees
-      for (let i = newOrder.length - 1; i >= 0; i--) {
+      for (let i = newOrder.length - 1; i >= 0 && (sidesToRemove > 0 || entreesToRemove > 0); i--) {
         const currentItem = newOrder[i];
-
         if (sidesToRemove > 0 && currentItem.item_type === "Side") {
           sidesToRemove--;
           itemsToRemove.push(i);
@@ -542,45 +529,22 @@ const CustomerKiosk: React.FC = () => {
           entreesToRemove--;
           itemsToRemove.push(i);
         }
-
-        // Break early if all sides and entrees are accounted for
-        if (sidesToRemove === 0 && entreesToRemove === 0) {
-          break;
-        }
       }
-
-      // Remove the identified items from the order
+  
       itemsToRemove.sort((a, b) => b - a).forEach((i) => {
         const removedItem = newOrder.splice(i, 1)[0];
         if (removedItem.name !== "A La Carte" ) {
-          setTotal((prevTotal) => Math.max(0, prevTotal - removedItem.price));
+          setTotal(prevTotal => Math.max(0, prevTotal - removedItem.price));
         } 
       });
-
-      // Update counts and reset carteSelected
-      if (carteSelected === "Side") {
-        setSelectedSides(Math.max(0, selectedSides - 1));
-      } else if (carteSelected === "Entree") {
-        setSelectedEntrees(Math.max(0, selectedEntrees - 1));
-      }
-
+  
+      setSelectedSides(0);
+      setSelectedEntrees(0);
       setCarteSelected(null);
-    } else {
-      // If it's a regular item, no change to the total
-      if (item.special) {
-        setTotal((prevTotal) => Math.max(0, prevTotal - 1.5));
-      }
-    }
-
-    if (item.item_type === "Appetizer" || item.item_type === "Drink") {
-      setTotal((prevTotal) => Math.max(0, prevTotal - item.price));
+      setCurrentItemType(null);
     }
   
     setOrder(newOrder);
-
-    console.log(selectedCategory);
-    console.log(selectedSides);
-    console.log(selectedEntrees);
   };
 
 
