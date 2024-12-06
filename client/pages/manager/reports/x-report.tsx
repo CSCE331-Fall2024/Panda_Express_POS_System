@@ -1,10 +1,6 @@
-'use client';
-
-import React, { useState, useEffect } from 'react';
-import { Bar, BarChart, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
+import { FC, useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import { pageStyle, overlayStyle, contentStyle, headingStyle, tableHeaderStyle } from '@/utils/tableStyles';
+import { pageStyle, overlayStyle, contentStyle, headingStyle} from '@/utils/tableStyles';
 import BackButton from '@/components/ui/back_button';
 import ManagerNavBar from '@/components/ui/manager_nav_bar';
 
@@ -16,7 +12,7 @@ interface XReportItem {
   credit_card_sales: number;
 }
 
-const XReport: React.FC = () => {
+const XReport: FC = () => {
   const [xReportData, setXReportData] = useState<XReportItem[]>([]);
   const [reportGenerationTime, setReportGenerationTime] = useState('');
   const [totalTransactions, setTotalTransactions] = useState(0);
@@ -108,7 +104,7 @@ const XReport: React.FC = () => {
             <CardContent>
               <p>{t('Report Generation Time')}: {reportGenerationTime}</p>
               <p>{t('Total Transactions')}: {totalTransactions}</p>
-              <p>{t('Total Sales')}: ${totalSales.toFixed(2)}</p>
+              <p>{t('Total Sales')}: ${totalSales}</p>
             </CardContent>
           </Card>
           {/* Add BarChart or Table rendering here */}

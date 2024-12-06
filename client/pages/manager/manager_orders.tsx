@@ -1,14 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import { FC, useState, useEffect } from 'react';
 import { pageStyle, overlayStyle, contentStyle, headingStyle, tableHeaderStyle, tableCellStyle } from '@/utils/tableStyles';
 import BackButton from '@/components/ui/back_button';
 import ManagerNavBar from '@/components/ui/manager_nav_bar';
 
-const ManagerOrders: React.FC = () => {
+const ManagerOrders: FC = () => {
   const [orders, setOrders] = useState([]);
   const [selectedYear, setSelectedYear] = useState('default');
   const [selectedMonth, setSelectedMonth] = useState('default');
   const [selectedDay, setSelectedDay] = useState('default');
-
   // Translation
   const [language, setLanguage] = useState<'en'|'es'>('en');
   const [translations, setTranslations] = useState<{[key:string]:string}>({});
@@ -66,7 +65,6 @@ const ManagerOrders: React.FC = () => {
   },[language]);
 
   const t=(text:string)=>translations[text]||text;
-
   // Fetch orders based on the selected year, month, and day
   const fetchOrders = async () => {
     const query = new URLSearchParams();
@@ -96,7 +94,6 @@ const ManagerOrders: React.FC = () => {
         <div style={contentStyle}>
           <BackButton />
           <h2 style={headingStyle}>{t("Manage Orders")}</h2>
-
           {/* Dropdowns and Filter Button */}
           <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
             {/* Year Dropdown */}
@@ -105,7 +102,6 @@ const ManagerOrders: React.FC = () => {
               <option value="2023">2023</option>
               <option value="2024">2024</option>
             </select>
-
             {/* Month Dropdown */}
             <select value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)} style={{ padding: '8px' }}>
               <option value="default">{t("Select Month")}</option>
@@ -115,7 +111,6 @@ const ManagerOrders: React.FC = () => {
                 </option>
               ))}
             </select>
-
             {/* Day Dropdown */}
             <select value={selectedDay} onChange={(e) => setSelectedDay(e.target.value)} style={{ padding: '8px' }}>
               <option value="default">{t("Select Day")}</option>
@@ -125,7 +120,6 @@ const ManagerOrders: React.FC = () => {
                 </option>
               ))}
             </select>
-
             {/* Filter Button */}
             <button
               onClick={fetchOrders}
@@ -141,7 +135,6 @@ const ManagerOrders: React.FC = () => {
               {t("Filter")}
             </button>
           </div>
-
           {/* Orders Table */}
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>

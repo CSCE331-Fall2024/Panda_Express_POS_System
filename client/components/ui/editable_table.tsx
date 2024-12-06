@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { CSSProperties, useState } from "react";
 
 // Base types and interfaces
 export interface BaseItem {
@@ -243,13 +243,13 @@ const EditableTable = <T extends BaseItem>({
   );
 };
 
-const tableStyle: React.CSSProperties = {
+const tableStyle: CSSProperties = {
   width: "100%",
   borderCollapse: "collapse",
   tableLayout: "fixed",
 };
 
-const tableHeaderStyle: React.CSSProperties = {
+const tableHeaderStyle: CSSProperties = {
   padding: "12px",
   backgroundColor: "#D32F2F",
   color: "#FFFFFF",
@@ -257,14 +257,14 @@ const tableHeaderStyle: React.CSSProperties = {
   fontWeight: "bold",
 };
 
-const tableCellStyle: React.CSSProperties = {
+const tableCellStyle: CSSProperties = {
   padding: "12px",
   borderBottom: "1px solid #777777",
   height: "40px",
   overflow: "hidden",
 };
 
-const buttonStyle: React.CSSProperties = {
+const buttonStyle: CSSProperties = {
   margin: "0 5px",
   padding: "8px",
   backgroundColor: "#D32F2F",
@@ -274,20 +274,20 @@ const buttonStyle: React.CSSProperties = {
   cursor: "pointer",
 };
 
-const inputStyle: React.CSSProperties = {
+const inputStyle: CSSProperties = {
   padding: "8px",
   borderRadius: "4px",
   border: "1px solid #cccccc",
 };
 
-const buttonContainerStyle: React.CSSProperties = {
+const buttonContainerStyle: CSSProperties = {
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
   gap: "10px",
 };
 
-const wrapperStyle: React.CSSProperties = {
+const wrapperStyle: CSSProperties = {
   overflowY: "auto",
   overflowX: "hidden",
 };

@@ -7,7 +7,6 @@ const axios = require('axios');
 const { Pool } = require('pg');
 const path = require('path');
 const cors = require('cors');
-
 const app = express();
 const PORT = 8080;
 

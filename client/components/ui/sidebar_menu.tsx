@@ -1,9 +1,9 @@
-import React from 'react';
+import { FC } from 'react';
 import { useRouter } from 'next/router';
 import { LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-const SidebarMenu: React.FC = () => {
+const SidebarMenu: FC = () => {
   const router = useRouter();
 
   return (

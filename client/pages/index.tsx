@@ -1,12 +1,4 @@
-import React, { useEffect } from 'react';
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { FC, useEffect, useState } from 'react';
 import { getUserLocation, getWeatherData } from "@/utils/apiHelpers";
 import { Sun, Moon, Cloud, CloudRain, CloudSnow, User } from "lucide-react";
 import { useTheme } from "@/components/context/theme_context";
@@ -33,14 +25,10 @@ const weatherIcons = {
   snow: <CloudSnow className="h-6 w-6" />,
 };
 
-type MenuCategory = string;
-
-const Menuboard: React.FC = () => {
-  const [menuItems, setMenuItems] = React.useState<MenuItems>({});
-  const [selectedCategory, setSelectedCategory] = React.useState<MenuCategory>('Combos');
-  const [weather, setWeather] = React.useState<{ temperature?: number; description?: string; isDay?: boolean } | null>(null);
-  const [loading, setLoading] = React.useState<boolean>(true);
-  const categories: MenuCategory[] = ['Combos', 'Appetizer', 'Entree', 'Side', 'Drink'];
+const Menuboard: FC = () => {
+  const [menuItems, setMenuItems] = useState<MenuItems>({});
+  const [weather, setWeather] = useState<{ temperature?: number; description?: string; isDay?: boolean } | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
   const { theme, toggleTheme } = useTheme();
   // Fetch menu items from the API
   useEffect(() => {
@@ -118,18 +106,6 @@ const Menuboard: React.FC = () => {
         overflow: 'hidden',
       }}
     >
-        {/* Dim Overlay
-    <div
-      style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        backgroundColor: 'rgba(255, 255, 255, 0.2)', // 20% black overlay to dim background
-      }}
-    ></div> */}
-
         {/* Full-Width Navbar */}
         <nav
           style={{

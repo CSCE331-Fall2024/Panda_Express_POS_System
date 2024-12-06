@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import ManagerNavBar from '@/components/ui/manager_nav_bar';
 import { pageStyle, overlayStyle } from '@/utils/tableStyles';
@@ -12,7 +12,7 @@ interface BusiestDay {
   total_sales: number;
 }
 
-const Manager: React.FC = () => {
+const Manager: FC = () => {
   const router = useRouter();
   const { user, isManager, isCashier } = useUser();
   const [busiestDaysData, setBusiestDaysData] = useState<BusiestDay[]>([]);

@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -10,7 +10,7 @@ interface OrderSummaryProps {
   onCheckout: () => void;
 }
 
-const OrderSummary: React.FC<OrderSummaryProps> = ({ order, total, onRemoveFromOrder, onCheckout }) => (
+const OrderSummary: FC<OrderSummaryProps> = ({ order, total, onRemoveFromOrder, onCheckout }) => (
   <Card
     className="w-80"
     style={{

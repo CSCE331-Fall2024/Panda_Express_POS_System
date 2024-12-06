@@ -1,14 +1,13 @@
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "next/router";
-import * as React from "react";
-import { useEffect } from "react";
 
 export default function DiningDollarsPayment() {
   const router = useRouter();
-  const [paymentAmount, setPaymentAmount] = React.useState<number | null>(null);
-  const [staffId, setStaffId] = React.useState<number | null>(null);
-  const [menuItemIds, setMenuItemIds] = React.useState<number[] | null>(null);
+  const [paymentAmount, setPaymentAmount] = useState<number | null>(null);
+  const [staffId, setStaffId] = useState<number | null>(null);
+  const [menuItemIds, setMenuItemIds] = useState<number[] | null>(null);
 
   useEffect(() => {
     const total = sessionStorage.getItem("paymentAmount");

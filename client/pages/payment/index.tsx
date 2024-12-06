@@ -1,6 +1,4 @@
-import * as React from "react"
 import { useRouter } from "next/router"
-import { Home } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -12,8 +10,6 @@ import {
 
 export default function PaymentScreen() {
   const router = useRouter()
-  const orderType = router.query.orderType // Retrieve orderType from the query
-
   const handlePayHere = () => {
     console.log("Processing payment via Pay Here method...")
     console.log(sessionStorage.getItem("staff_id"));
@@ -37,20 +33,9 @@ export default function PaymentScreen() {
 
   return (
     <div className="flex h-screen bg-background justify-center items-center">
-      {/* <aside className="w-16 bg-muted flex flex-col items-center py-4 space-y-4">
-        <Button variant="ghost" size="icon" onClick={() => router.push("/cashier")}>
-          <Home className="h-6 w-6" />
-        </Button>
-      </aside> */}
       <main className="flex-1 p-6 space-y-6">
-
         <header>
-          {/* <h1 className="text-3xl font-bold text-primary">Payment</h1> */}
-          {/* <p className="text-muted-foreground"> */}
-            {/* Order Type: {orderType === "here" ? "Here" : "To Go"} Display order type */}
-          {/* </p> */}
         </header>
-
         <div className="flex justify-center">
           <Card className="w-full max-w-md text-center bg-white/75">
             <CardHeader>

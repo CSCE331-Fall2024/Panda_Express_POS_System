@@ -1,10 +1,9 @@
 // File: components/CustomerKiosk.tsx
 
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useTheme } from "@/components/context/theme_context";
 import Chatbot from "@/components/ui/chatbot";
-
 import {
   Card,
   CardContent,
@@ -18,7 +17,6 @@ import { Separator } from "@/components/ui/separator";
 import { getUserLocation, getWeatherData } from "@/utils/apiHelpers";
 import { Home, ShoppingBag, Sun, Cloud, CloudRain, CloudSnow, ChevronDown } from "lucide-react";
 import { useRouter } from "next/router";
-import * as React from "react";
 
 interface MenuItem {
   menu_item_id: number;
@@ -61,7 +59,7 @@ const categoryTranslations: Record<string, Record<string, string>> = {
   },
 };
 
-const CustomerKiosk: React.FC = () => {
+const CustomerKiosk: FC = () => {
   const router = useRouter();
   const [menuItems, setMenuItems] = useState<MenuItems>({});
   const [loading, setLoading] = useState<boolean>(true);

@@ -1,10 +1,10 @@
-import React from 'react';
+import { FC } from 'react';
 
 interface HeaderProps {
   mode: string;
 }
 
-const Header: React.FC<HeaderProps> = ({ }) => (
+const Header: FC<HeaderProps> = ({ }) => (
   <header>
     <h1 className="text-3xl font-bold text-primary" 
         style={{

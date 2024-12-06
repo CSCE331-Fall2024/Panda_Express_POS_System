@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { FC, useState, useEffect } from 'react';
 import { GetServerSideProps } from 'next';
 import { Pool } from 'pg';
 import { pageStyle, overlayStyle, contentStyle, headingStyle } from '@/utils/tableStyles';
@@ -16,9 +16,8 @@ interface ManagerInventoryItemsProps {
   inventoryItems: InventoryItem[];
 }
 
-const ManagerInventoryItems: React.FC<ManagerInventoryItemsProps> = ({ inventoryItems }) => {
+const ManagerInventoryItems: FC<ManagerInventoryItemsProps> = ({ inventoryItems }) => {
   const [localInventoryItems, setLocalInventoryItems] = useState<InventoryItem[]>(inventoryItems);
-
   // Translation
   const [language, setLanguage] = useState<'en'|'es'>('en');
   const [translations, setTranslations] = useState<{[key:string]:string}>({});

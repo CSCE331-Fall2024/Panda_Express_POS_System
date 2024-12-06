@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { FC, useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { 
   Card, 
@@ -12,7 +12,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { useRouter } from 'next/router';
 import { useUser } from '@/components/ui/user_context';
-import { Home, ShoppingCart, ChevronDown } from "lucide-react";
+import { Home, ShoppingCart } from "lucide-react";
 import { useTheme } from "@/components/context/theme_context";
 
 interface MenuItem {
@@ -29,7 +29,7 @@ interface MenuItems {
   [key: string]: MenuItem[];
 }
 
-const CashierPOS: React.FC = () => {
+const CashierPOS: FC = () => {
   const router = useRouter();
   const { user, isManager, isCashier } = useUser();
   const { theme } = useTheme();
