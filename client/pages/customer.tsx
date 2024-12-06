@@ -971,7 +971,7 @@ const CustomerKiosk: React.FC = () => {
               disabled={order.length === 0}
               onClick={clearOrder}
             >
-                {translations['clear'] || 'Clear Order'}
+                {language === 'es' ? 'Borrar orden' : 'Clear Order'}
             </Button>
           </CardFooter>
         </Card>
