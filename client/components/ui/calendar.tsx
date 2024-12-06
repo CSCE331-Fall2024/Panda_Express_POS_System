@@ -1,9 +1,17 @@
+'use client'
+
 import * as React from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { DayPicker } from "react-day-picker"
 
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
+
+// Hardcoded colors derived from your original HSL values
+const accent = "#eef5fb"
+const accentForeground = "#0b1426"
+const primary = "#0b1426"
+const primaryForeground = "#f7fafc"
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>
 
@@ -34,26 +42,48 @@ function Calendar({
         head_cell:
           "text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]",
         row: "flex w-full mt-2",
-        cell: "h-9 w-9 text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+        cell: cn(
+          "h-9 w-9 text-center text-sm p-0 relative",
+          // Ensuring the selected day gets rounded corners 
+          "[&:has([aria-selected].day-range-end)]:rounded-r-md",
+          "[&:has([aria-selected].day-outside)]:bg-[rgba(238,245,251,0.5)]", // accent/50
+          "[&:has([aria-selected])]:bg-[#eef5fb]",
+          "first:[&:has([aria-selected])]:rounded-l-md",
+          "last:[&:has([aria-selected])]:rounded-r-md",
+          "focus-within:relative focus-within:z-20"
+        ),
         day: cn(
-          buttonVariants({ variant: "ghost" }),
+          buttonVariants({ variant: "secondary" }),
           "h-9 w-9 p-0 font-normal aria-selected:opacity-100"
         ),
         day_range_end: "day-range-end",
-        day_selected:
-          "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
-        day_today: "bg-accent text-accent-foreground",
-        day_outside:
-          "day-outside text-muted-foreground aria-selected:bg-accent/50 aria-selected:text-muted-foreground",
+        // Applying primary & primaryForeground to the selected day
+        day_selected: cn(
+          "bg-[#0b1426] text-[#f7fafc]",
+          "hover:bg-[#0b1426] hover:text-[#f7fafc]",
+          "focus:bg-[#0b1426] focus:text-[#f7fafc]"
+        ),
+        // Applying accent & accentForeground to the today day
+        day_today: cn(
+          `bg-[${accent}] text-[${accentForeground}]`
+        ),
+        // Outside days appear with reduced opacity
+        day_outside: cn(
+          "day-outside text-muted-foreground opacity-50",
+          "aria-selected:bg-[rgba(238,245,251,0.5)] aria-selected:text-muted-foreground"
+        ),
+        // Disabled days appear with reduced opacity
         day_disabled: "text-muted-foreground opacity-50",
-        day_range_middle:
-          "aria-selected:bg-accent aria-selected:text-accent-foreground",
+        // Middle of a range gets the accent colors
+        day_range_middle: cn(
+          "aria-selected:bg-[#eef5fb] aria-selected:text-[#0b1426]"
+        ),
         day_hidden: "invisible",
         ...classNames,
       }}
       components={{
-        IconLeft: ({ ...props }) => <ChevronLeft className="h-4 w-4" />,
-        IconRight: ({ ...props }) => <ChevronRight className="h-4 w-4" />,
+        IconLeft: () => <ChevronLeft className="h-4 w-4" />,
+        IconRight: () => <ChevronRight className="h-4 w-4" />,
       }}
       {...props}
     />

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { CSSProperties, FC, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 
 interface ManagerNavBarProps {
@@ -6,7 +6,7 @@ interface ManagerNavBarProps {
   setLanguage: (lang: 'en' | 'es') => void;
 }
 
-const ManagerNavBar: React.FC<ManagerNavBarProps> = ({ language, setLanguage }) => {
+const ManagerNavBar: FC<ManagerNavBarProps> = ({ language, setLanguage }) => {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -161,7 +161,7 @@ const ManagerNavBar: React.FC<ManagerNavBarProps> = ({ language, setLanguage }) 
 };
 
 // Style for dropdown menu items
-const menuItemStyle: React.CSSProperties = {
+const menuItemStyle: CSSProperties = {
   padding: '12px 20px',
   cursor: 'pointer',
   backgroundColor: '#FFFFFF',

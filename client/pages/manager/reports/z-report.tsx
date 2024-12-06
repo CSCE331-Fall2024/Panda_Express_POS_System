@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { pageStyle, overlayStyle, contentStyle, headingStyle, tableHeaderStyle, tableCellStyle } from '@/utils/tableStyles';
+import { FC,  useState } from 'react';
+import { pageStyle, overlayStyle, contentStyle, headingStyle } from '@/utils/tableStyles';
 import BackButton from '@/components/ui/back_button';
-import { isDate } from 'date-fns';
-import ManagerNavBar from '@/components/ui/manager_nav_bar';
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { AlertCircle } from 'lucide-react'
@@ -16,7 +14,7 @@ interface ZReportItem {
   total_sales: number;
 }
 
-const ZReport: React.FC = () => {
+const ZReport: FC = () => {
   const [zReportData, setZReportData] = useState<ZReportItem[]>([]);
   const [totals, setTotals] = useState({
     totalTransactions: 0,
@@ -33,7 +31,6 @@ const ZReport: React.FC = () => {
     setError(null);
     setAlreadyGenerated(false);
     try {
-      const currentDate = new Date().toISOString().split('T')[0]; // 'YYYY-MM-DD'
       const response = await fetch('/api/reports/zreport', {
         method: 'POST',
         headers: {
@@ -137,7 +134,6 @@ const ZReport: React.FC = () => {
                   </tbody>
                 </table>
               </div>
-
               {/* Bar Chart for Sales per Employee */}
               <Card className="mb-8">
                 <CardHeader>

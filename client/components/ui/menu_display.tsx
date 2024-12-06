@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -7,7 +7,7 @@ interface MenuDisplayProps {
   onAddToOrder: (item: string) => void;
 }
 
-const MenuDisplay: React.FC<MenuDisplayProps> = ({ menuItems, onAddToOrder }) => (
+const MenuDisplay: FC<MenuDisplayProps> = ({ menuItems, onAddToOrder }) => (
   <Tabs defaultValue="combos">
     <TabsList>
       {Object.keys(menuItems).map((category) => (

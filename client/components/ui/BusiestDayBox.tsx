@@ -1,4 +1,4 @@
-import React from 'react';
+import {FC, CSSProperties} from 'react';
 
 interface BusiestDay {
   period: string;
@@ -11,7 +11,7 @@ interface BusiestDaysBoxProps {
   busiestDaysData: BusiestDay[];
 }
 
-const BusiestDaysBox: React.FC<BusiestDaysBoxProps> = ({ busiestDaysData }) => {
+const BusiestDaysBox: FC<BusiestDaysBoxProps> = ({ busiestDaysData }) => {
   return (
     <div
       style={{
@@ -58,7 +58,7 @@ const BusiestDaysBox: React.FC<BusiestDaysBoxProps> = ({ busiestDaysData }) => {
   );
 };
 
-const tableHeaderStyle: React.CSSProperties = {
+const tableHeaderStyle: CSSProperties = {
   borderBottom: '2px solid #ddd',
   padding: '10px',
   textAlign: 'left',
@@ -66,7 +66,7 @@ const tableHeaderStyle: React.CSSProperties = {
   color: '#555',
 };
 
-const tableCellStyle: React.CSSProperties = {
+const tableCellStyle: CSSProperties = {
   borderBottom: '1px solid #ddd',
   padding: '8px',
   fontSize: '14px',

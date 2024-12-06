@@ -1,14 +1,11 @@
 // pages/manager_reports.tsx
-import React, { useEffect, useState } from 'react';
+import {CSSProperties, FC, useEffect, useState } from 'react';
 import { pageStyle, overlayStyle, contentStyle, headingStyle } from '@/utils/tableStyles';
 import BackButton from '@/components/ui/back_button';
 import Link from 'next/link';
 import ManagerNavBar from '@/components/ui/manager_nav_bar';
-import { useRouter } from 'next/router';
 
-const ManagerReports: React.FC = () => {
-  const router = useRouter();
-
+const ManagerReports: FC = () => {
   // Language and translation states
   const [language, setLanguage] = useState<'en'|'es'>('en');
   const [translations, setTranslations] = useState<{[key:string]:string}>({});
@@ -90,7 +87,7 @@ const ManagerReports: React.FC = () => {
   );
 };
 
-const buttonStyle: React.CSSProperties = {
+const buttonStyle: CSSProperties = {
   margin: '0 5px',
   padding: '8px',
   backgroundColor: '#D32F2F',
