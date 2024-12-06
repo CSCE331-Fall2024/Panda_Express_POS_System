@@ -461,13 +461,13 @@ app.post('/api/login', async (req, res) => {
 });
 
 
-// app.use(express.static(path.join(__dirname, 'client/build')));
+app.use(express.static(path.join(__dirname, 'client/build')));
 
-// // Redirect all non-API routes to the frontend
-// app.get('*', (req, res) => {
-//   if (req.originalUrl.startsWith('/api')) return; // Exclude API routes
-//   res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
-// });
+// Redirect all non-API routes to the frontend
+app.get('*', (req, res) => {
+  if (req.originalUrl.startsWith('/api')) return; // Exclude API routes
+  res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+});
 
 app.listen(PORT, () => {
    console.log(`Server is running on port ${PORT}`);
