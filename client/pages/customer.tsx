@@ -423,19 +423,19 @@ const CustomerKiosk: React.FC = () => {
   const addToOrder = (item: MenuItem, category: string): void => {
     // Logic for handling combo selections
     if (category === 'Combos') {
-      if (item.name === "Plate") {
+      if (item.name === "Plate" || item.name === "Lámina") {
         setCurrentItemType("Plate");
         setSelectedSides(0);
         setSelectedEntrees(0);
-      } else if (item.name === "Bigger Plate") {
+      } else if (item.name === "Bigger Plate" || item.name == "Plato más grande") {
         setCurrentItemType("Bigger Plate");
         setSelectedSides(0);
         setSelectedEntrees(0);
-      } else if (item.name === "Bowl") {
+      } else if (item.name === "Bowl" || item.name === "Bol") {
         setCurrentItemType("Bowl");
         setSelectedSides(0);
         setSelectedEntrees(0);
-      } else if (item.name === "A La Carte") {
+      } else if (item.name === "A La Carte" || item.name === "A la carta") {
         setCurrentItemType("A La Carte");
         setCarteSelected(null);
         setSelectedSides(0);
@@ -461,14 +461,14 @@ const CustomerKiosk: React.FC = () => {
 
     // Add item to order
     setOrder([...order, item]);
-    if(category === 'Combos' && item.name !== "A La Carte") {
+    if((category === 'Combos' && item.name !== "A La Carte") || (category === 'Combos' && item.name === "A la carta")) {
       setTotal(total + item.price);
     } else if (category === 'Appetizer' || category === 'Drink') {
       setTotal(total + item.price);
     }
 
     if (currentItemType === "A La Carte") {
-      if(item.name !== "A La Carte") {
+      if(item.name !== "A La Carte" && item.name !== "A la carta") {
         setTotal(total + item.price);
       }
 
@@ -525,25 +525,25 @@ const CustomerKiosk: React.FC = () => {
       }
     }
   
-    if (["Plate", "Bowl", "Bigger Plate"].includes(item.name)) {
+    if (["Plate", "Bowl", "Bigger Plate", "Bol", "Lámina", "Plato más grande"].includes(item.name)) {
       setTotal((prevTotal) => Math.max(0, prevTotal - item.price));
       let sidesToRemove = 0;
       let entreesToRemove = 0;
   
       // Determine how many sides and entrees to treat as a la carte based on combo type
       if(selectedSides > 0 || selectedEntrees > 0) {
-        if (item.name === "Plate" || item.name === "Bowl" || item.name === "Bigger Plate") {
+        if (item.name === "Plate" || item.name === "Bowl" || item.name === "Bigger Plate" || item.name === "Bol" || item.name === "Lámina" || item.name === "Plato más grande") {
           sidesToRemove = selectedSides;
           entreesToRemove = selectedEntrees;
         } 
       } else {
-        if (item.name === "Plate"){
+        if (item.name === "Plate" || item.name === "Lámina") {
           sidesToRemove = 1;
           entreesToRemove = 2;
-        } else if (item.name === "Bigger Plate"){
+        } else if (item.name === "Bigger Plate" || item.name === "Plato más grande") {
           sidesToRemove = 1;
           entreesToRemove = 3;
-        } else if (item.name === "Bowl"){
+        } else if (item.name === "Bowl" || item.name === "Bol"){
           sidesToRemove = 1;
           entreesToRemove = 1;
         }
@@ -617,7 +617,7 @@ const CustomerKiosk: React.FC = () => {
       // Remove the identified items from the order
       itemsToRemove.sort((a, b) => b - a).forEach((i) => {
         const removedItem = newOrder.splice(i, 1)[0];
-        if (removedItem.name !== "A La Carte" ) {
+        if (removedItem.name !== "A La Carte" && removedItem.name !== "A la carta") {
           setTotal((prevTotal) => Math.max(0, prevTotal - removedItem.price));
         } 
       });
