@@ -79,6 +79,7 @@ export default function CreditCardPayment() {
             console.log("Menu items added to menu_item_order_jt successfully.")
             sessionStorage.removeItem("paymentAmount")
             sessionStorage.removeItem("menuItemIds")
+            sessionStorage.removeItem("order")
             if (sessionStorage.getItem("userRole") === "customer") {
               router.push("/payment/orderSuccess")
             }

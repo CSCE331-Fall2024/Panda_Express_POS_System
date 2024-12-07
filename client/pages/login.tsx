@@ -4,6 +4,8 @@ import { useUser } from '@/components/ui/user_context';
 import { useTheme } from '@/components/context/theme_context';
 import { getUserLocation, getWeatherData } from "@/utils/apiHelpers";
 import { Cloud, Sun, CloudRain, CloudSnow, X } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle } from 'lucide-react';
 
 const weatherIcons = {
   clear: <Sun className="h-6 w-6" />,
@@ -53,6 +55,7 @@ const LoginPage: React.FC = () => {
   // State for error popup
   const [showErrorPopup, setShowErrorPopup] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   // Fetch weather data based on the user's location
   useEffect(() => {
@@ -67,6 +70,7 @@ const LoginPage: React.FC = () => {
         }
       } catch (error) {
         console.error('Error fetching weather or location:', error);
+        // setError('Unable to fetch weather data.');
       }
     };
 
@@ -110,8 +114,9 @@ const LoginPage: React.FC = () => {
       if (!response.ok) {
         // If response is not ok, set the error message and show popup
         const message = data.message || 'Login failed. Please try again.';
-        setErrorMessage(message);
-        setShowErrorPopup(true);
+        setError(message);
+        // setErrorMessage(message);
+        // setShowErrorPopup(true);
         return; // Exit the function early
       }
 
@@ -125,13 +130,15 @@ const LoginPage: React.FC = () => {
         if (data.role === 'cashier') router.push('/cashier');
         else if (data.role === 'manager') router.push('/manager');
       } else { 
-        setErrorMessage('Unauthorized role');
-        setShowErrorPopup(true);
+        setError('Unauthorized role');
+        // setErrorMessage('Unauthorized role');
+        // setShowErrorPopup(true);
       }
     } catch (err: any) {
-      console.error('Login error:', err);
-      setErrorMessage(err.message || 'Network error or server not reachable');
-      setShowErrorPopup(true);
+      // console.error('Login error:', err);
+      // setErrorMessage(err.message || 'Network error or server not reachable');
+      // setShowErrorPopup(true);
+      setError(err.message || 'Network error or server not reachable');
     }
   };
 
@@ -255,6 +262,14 @@ const LoginPage: React.FC = () => {
           />
           {/* <h2 className="font-bold" style={{ fontSize: '22px', color: 'var(--primary)', margin: 0 }}>GOOD FORTUNE AWAITS</h2> */}
           <p style={{fontSize: '18px', marginBottom: '10px'}} className="text-sm text-center font-semibold">Log in below to get started.</p>
+          
+          {error && (
+            <Alert variant="destructive" className="mb-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
 
           {/* Form */}
           <form onSubmit={handleLogin}>
