@@ -945,3 +945,33 @@ const CustomerKiosk: FC = () => {
 };
 
 export default CustomerKiosk;
+
+
+
+<button
+              type="submit"
+              className="w-full p-2 bg-red-500 text-white rounded-md font-bold hover:bg-red-600"
+            >
+              SIGN IN
+            </button>
+          </form>
+          <button
+            onClick={handleGoogleLogin}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              width: '100%',
+              padding: '12px',
+              backgroundColor: '#FFFFFF',
+              color: '#3c4043',
+              border: '1px solid #dcdcdc',
+              borderRadius: '4px',
+              fontSize: '14px',
+              fontWeight: '500',
+              cursor: 'pointer',
+              marginTop: '10px',
+              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+            }}
+          ></button>
