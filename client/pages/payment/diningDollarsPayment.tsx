@@ -78,9 +78,14 @@ export default function DiningDollarsPayment() {
 
           if (jointData.success) {
             console.log("Menu items added to menu_item_order_jt successfully.");
-            sessionStorage.removeItem("paymentAmount");
-            sessionStorage.removeItem("menuItemIds");
+            sessionStorage.removeItem("paymentAmount")
+            sessionStorage.removeItem("menuItemIds")
             sessionStorage.removeItem("order")
+            sessionStorage.removeItem("total")
+            sessionStorage.removeItem("selectedSides")
+            sessionStorage.removeItem("selectedEntrees")
+            sessionStorage.removeItem("currentItemType")
+            sessionStorage.removeItem("carteSelected")
             if (sessionStorage.getItem("userRole") === "customer") {
               router.push("/payment/orderSuccess");
             } else if (sessionStorage.getItem("userRole") === "employee") {

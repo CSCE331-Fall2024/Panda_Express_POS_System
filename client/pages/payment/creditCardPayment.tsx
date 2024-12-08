@@ -80,6 +80,11 @@ export default function CreditCardPayment() {
             sessionStorage.removeItem("paymentAmount")
             sessionStorage.removeItem("menuItemIds")
             sessionStorage.removeItem("order")
+            sessionStorage.removeItem("total")
+            sessionStorage.removeItem("selectedSides")
+            sessionStorage.removeItem("selectedEntrees")
+            sessionStorage.removeItem("currentItemType")
+            sessionStorage.removeItem("carteSelected")
             if (sessionStorage.getItem("userRole") === "customer") {
               router.push("/payment/orderSuccess")
             }
