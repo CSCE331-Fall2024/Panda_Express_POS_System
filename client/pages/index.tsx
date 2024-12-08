@@ -61,6 +61,7 @@ const Menuboard: FC = () => {
   useEffect(() => {
     const fetchWeatherForLocation = async () => {
       try {
+        console.log('Fetching weather data...');
         const location = await getUserLocation();
         if (location) {
           const weatherData = await getWeatherData(location.latitude, location.longitude);
