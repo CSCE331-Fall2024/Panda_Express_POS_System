@@ -303,17 +303,7 @@ const LoginPage: React.FC = () => {
             />
             <button
               type="submit"
-              style={{
-                width: '100%',
-                padding: '12px',
-                backgroundColor: 'var(--primary)',
-                color: '#FFFFFF',
-                border: 'none',
-                borderRadius: '4px',
-                fontSize: '16px',
-                fontWeight: 'bold',
-                cursor: 'pointer'
-              }}
+              className="w-full h-15 p-2 bg-red text-white rounded-md font-bold hover:bg-red-500"
             >
               SIGN IN
             </button>
@@ -321,20 +311,30 @@ const LoginPage: React.FC = () => {
           <button
             onClick={handleGoogleLogin}
             style={{
-                width: '100%',
-                padding: '12px',
-                backgroundColor: '#4285F4',
-                color: '#FFFFFF',
-                border: 'none',
-                borderRadius: '4px',
-                fontSize: '16px',
-                fontWeight: 'bold',
-                cursor: 'pointer',
-                marginTop: '10px'
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              width: '100%',
+              padding: '12px',
+              backgroundColor: '#FFFFFF',
+              color: '#3c4043',
+              border: '1px solid #dcdcdc',
+              borderRadius: '4px',
+              fontSize: '14px',
+              fontWeight: '500',
+              cursor: 'pointer',
+              marginTop: '10px',
+              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
             }}
-        >
+          >
+            <img 
+              src="https://developers.google.com/identity/images/g-logo.png" 
+              alt="Google Logo" 
+              style={{ width: '18px', height: '18px' }}
+            />
             Sign in with Google
-        </button>
+          </button>
         </div>
       </div>
       {/* Render Error Popup */}
