@@ -248,6 +248,7 @@ app.get('/api/auth/google/callback',
  }),
  (req, res) => {
     if (!req.user) {
+      // return res.redirect(`${process.env.NEXT_PUBLIC_FRONTEND_BASE_URL}/login?error=unauthorized_email`);
       return res.redirect('/?error=User not found');
     }
     // const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_BASE_URL || 'http://localhost:3000';
