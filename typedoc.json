@@ -1,0 +1,7 @@
+{
+  "entryPoints": ["client"],
+  "entryPointStrategy": "expand",
+  "out": "docs",
+  "tsconfig": "./client/tsconfig.json",
+  "exclude": ["node_modules", ".next"]
+}

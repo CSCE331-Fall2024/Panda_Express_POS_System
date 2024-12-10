@@ -1,4 +1,7 @@
-// pages/manager/manager_reports/inventory_usage_chart.tsx
+/**
+ * @file Inventory Usage Chart
+ * Displays a chart for total inventory usage across a date range for managers.
+ */
 import { FC, useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import {
@@ -29,17 +32,38 @@ ChartJS.register(
   Legend
 );
 
+/**
+ * Represents the inventory usage data for an individual item.
+ * @typedef {Object} InventoryUsageData
+ * @property {string} inventory_name - The name of the inventory item.
+ * @property {number} total_used - The total amount of the item used in the specified date range.
+ */
 interface InventoryUsageData {
   inventory_name: string;
   total_used: number;
 }
 
+/**
+ * Represents the data for the inventory usage chart.
+ * @typedef {Object} InventoryChartData
+ * @property {string[]} labels - The labels for the chart.
+ * @property {number[]} dataSet - The data for the chart.
+ */
 interface InventoryChartData {
   labels: string[];
   dataSet: number[];
 }
 
-// Fetch data from the `/api/reports/inventory` endpoint
+/**
+ * Fetches inventory usage data for a given date range.
+ *
+ * @async
+ * @function
+ * @param {string} from - The start date of the date range in `YYYY-MM-DD` format.
+ * @param {string} to - The end date of the date range in `YYYY-MM-DD` format.
+ * @returns {Promise<InventoryUsageData[]>} A promise that resolves with the inventory usage data.
+ * @throws {Error} Throws an error if the fetch request fails or the response is not successful.
+ */
 const fetchInventoryData = async (from: string, to: string): Promise<InventoryUsageData[]> => {
   const response = await fetch(`/api/reports/inventory?from=${from}&to=${to}`);
   if (!response.ok) {
@@ -52,7 +76,13 @@ const fetchInventoryData = async (from: string, to: string): Promise<InventoryUs
   return data.data;
 };
 
-// Format data for the chart
+/**
+ * Formats raw inventory usage data for display in the chart.
+ *
+ * @function
+ * @param {InventoryUsageData[]} usageData - The raw inventory usage data.
+ * @returns {InventoryChartData} The formatted chart data.
+ */
 const formatChartData = (usageData: InventoryUsageData[]): InventoryChartData => {
   const labels = usageData.map((item) => item.inventory_name);
   const dataSet = usageData.map((item) => Number(item.total_used));
@@ -60,7 +90,12 @@ const formatChartData = (usageData: InventoryUsageData[]): InventoryChartData =>
   return { labels, dataSet };
 };
 
-// Chart component
+/**
+ * Displays an interactive chart for inventory usage across a date range.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered InventoryUsageChart component.
+ */
 const InventoryUsageChart: FC = () => {
   const [chartData, setChartData] = useState<InventoryChartData | null>(null);
   const [error, setError] = useState<string | null>(null);
