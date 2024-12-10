@@ -13,5 +13,8 @@
     },
     "dependencies": {
         "project-root": "file:"
+    },
+    "devDependencies": {
+        "jsdoc": "^4.0.4"
     }
 }
