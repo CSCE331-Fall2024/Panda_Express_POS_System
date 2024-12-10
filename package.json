@@ -9,9 +9,18 @@
         "dev": "npm run dev --prefix client & npm run dev --prefix server",
         "client:build": "npm run build --prefix client",
         "client:start": "npm run start --prefix client",
-        "server:start": "npm run start --prefix server"
+        "server:start": "npm run start --prefix server",
+        "docs": "npx jsdoc -c jsdoc.config.json"
     },
     "dependencies": {
         "project-root": "file:"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.26.0",
+        "@babel/preset-env": "^7.26.0",
+        "@babel/preset-typescript": "^7.26.0",
+        "jsdoc": "^4.0.4",
+        "jsdoc-babel": "^0.5.0",
+        "typedoc": "^0.27.4"
     }
 }
