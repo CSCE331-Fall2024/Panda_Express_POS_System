@@ -15,6 +15,15 @@ type ErrorResponse = {
   error: string;
 };
 
+/**
+ * API handler for text translation requests.
+ * 
+ * Accepts a POST request with an array of texts and a target language.
+ * Forwards the request to a backend translation service and returns the translations.
+ * 
+ * @param req - The incoming HTTP request.
+ * @param res - The HTTP response to be sent back.
+ */
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<TranslateResponse | ErrorResponse>

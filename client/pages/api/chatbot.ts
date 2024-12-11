@@ -2,7 +2,12 @@
 
 import { NextApiRequest, NextApiResponse } from 'next';
 
-// Chatbot request handler
+/**
+ * Chatbot request handler for processing user messages and returning responses.
+ * 
+ * @param req - The HTTP request object.
+ * @param res - The HTTP response object.
+ */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     // Handle non-POST requests
@@ -80,8 +85,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   res.status(200).json({ response: responseText, options });
 }
 
-// Intent Handlers
-
+/**
+ * Handles the intent for combo information.
+ * 
+ * @returns A string describing combo options available at Panda Express.
+ */
 function handleComboInfoIntent(): string {
   return `At Panda Express, we offer several combo options:
 
@@ -92,6 +100,12 @@ function handleComboInfoIntent(): string {
 To select a combo, tap on the 'Combos' category and choose the option you prefer.`;
 }
 
+/**
+ * Handles the intent for kiosk help based on user-provided entities.
+ * 
+ * @param entities - Extracted entities containing the kiosk topic.
+ * @returns A string providing guidance on the requested kiosk topic.
+ */
 function handleKioskHelpIntent(entities: any): string {
   const topic: string | undefined = entities.topic;
 
@@ -110,6 +124,12 @@ function handleKioskHelpIntent(entities: any): string {
   return 'How can I assist you with using the kiosk? You can ask about adding items, removing items, or checking out.';
 }
 
+/**
+ * Handles general inquiries based on user-provided entities.
+ * 
+ * @param entities - Extracted entities containing the inquiry type.
+ * @returns A string providing answers to the general inquiry.
+ */
 function handleGeneralInquiryIntent(entities: any): string {
   const inquiry: string | undefined = entities.inquiry;
 
@@ -124,13 +144,12 @@ function handleGeneralInquiryIntent(entities: any): string {
   return 'What would you like to know? I can assist with questions about store hours, location, and using the kiosk.';
 }
 
-// Simple NLU Processor
-
-interface NLUResult {
-  intent: string;
-  entities: any;
-}
-
+/**
+ * Processes a user message to identify intent and extract relevant entities.
+ * 
+ * @param message - The user's message.
+ * @returns An object containing the identified intent and extracted entities.
+ */
 function processMessage(message: string): NLUResult {
   const text = message.toLowerCase().trim();
 
@@ -141,7 +160,12 @@ function processMessage(message: string): NLUResult {
   return { intent, entities };
 }
 
-// Function to identify the user's intent based on the message
+/**
+ * Identifies the user's intent based on their message.
+ * 
+ * @param text - The user's message in lowercase and trimmed.
+ * @returns The identified intent as a string.
+ */
 function identifyIntent(text: string): string {
   if (/^(hi|hello|hey)\b/.test(text)) {
     return 'greeting';
@@ -166,7 +190,13 @@ function identifyIntent(text: string): string {
   return 'unknown';
 }
 
-// Function to extract entities based on the identified intent
+/**
+ * Extracts entities based on the identified intent and user message.
+ * 
+ * @param intent - The identified intent.
+ * @param text - The user's message.
+ * @returns An object containing extracted entities.
+ */
 function extractEntities(intent: string, text: string): any {
   switch (intent) {
     case 'kiosk_help':
@@ -182,7 +212,12 @@ function extractEntities(intent: string, text: string): any {
   }
 }
 
-// Helper function to extract kiosk topics from the user's message
+/**
+ * Extracts kiosk-related topics from the user's message.
+ * 
+ * @param text - The user's message.
+ * @returns The extracted topic as a string or undefined.
+ */
 function extractKioskTopic(text: string): string | undefined {
   if (/add|order|select|add an item/i.test(text)) return 'add_item';
   if (/remove|delete|cancel|remove an item/i.test(text)) return 'remove_item';
@@ -190,9 +225,24 @@ function extractKioskTopic(text: string): string | undefined {
   return undefined;
 }
 
-// Helper function to extract general inquiries from the user's message
+/**
+ * Extracts general inquiry types from the user's message.
+ * 
+ * @param text - The user's message.
+ * @returns The extracted inquiry type as a string or undefined.
+ */
 function extractGeneralInquiry(text: string): string | undefined {
   if (/hours|open|close|closing/i.test(text)) return 'hours';
   if (/location|address|find you|where are you/i.test(text)) return 'location';
   return undefined;
+}
+
+/**
+ * Represents the result of natural language understanding.
+ */
+interface NLUResult {
+  /** The identified intent. */
+  intent: string;
+  /** Extracted entities. */
+  entities: any;
 }
