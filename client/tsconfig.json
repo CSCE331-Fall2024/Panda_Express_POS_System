@@ -1,7 +1,10 @@
 {
   "compilerOptions": {
     "target": "ESNext", // Allows modern JavaScript features
-    "lib": ["dom", "esnext"],
+    "lib": [
+      "dom",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -11,10 +14,12 @@
     "moduleResolution": "node", // Ensures compatibility with TypeDoc
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "react-jsx", // Ensures JSX compatibility for TypeDoc
+    "jsx": "preserve", // Ensures JSX compatibility for TypeDoc
     "incremental": true,
     "paths": {
-      "@/*": ["./*"] // Alias support
+      "@/*": [
+        "./*"
+      ] // Alias support
     }
   },
   "include": [
@@ -22,5 +27,7 @@
     "**/*.ts",
     "**/*.tsx"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }

@@ -1,3 +1,10 @@
+/**
+ * This file implements a ManagerInventoryItems component that allows managers to 
+ * view, edit, and manage inventory item details through a user interface. It includes 
+ * server-side rendering to fetch inventory data and client-side functionalities 
+ * for adding and updating inventory records.
+ */
+
 import { FC, useState, useEffect } from 'react';
 import { GetServerSideProps } from 'next';
 import { Pool } from 'pg';
@@ -6,21 +13,42 @@ import BackButton from '@/components/ui/back_button';
 import EditableTable, { Column } from '@/components/ui/editable_table';
 import ManagerNavBar from '@/components/ui/manager_nav_bar';
 
-interface InventoryItem {
+/**
+ * Represents the attributes of an inventory item.
+ *
+ * @interface InventoryItem
+ * @property {number} id - The unique identifier for the inventory item.
+ * @property {string} item_name - The name of the inventory item.
+ * @property {number} quantity - The current quantity of the inventory item.
+ */
+export interface InventoryItem {
   id: number;
   item_name: string;
   quantity: number;
 }
 
-interface ManagerInventoryItemsProps {
+/**
+ * Represents the properties passed to the ManagerInventoryItems component.
+ *
+ * @interface ManagerInventoryItemsProps
+ * @property {InventoryItem[]} inventoryItems - The list of inventory items managed by the component.
+ */
+export interface ManagerInventoryItemsProps {
   inventoryItems: InventoryItem[];
 }
 
+/**
+ * ManagerInventoryItems component allows managers to view and edit inventory item details.
+ *
+ * @param {ManagerInventoryItemsProps} props - The properties passed to the component.
+ * @returns {JSX.Element} The rendered ManagerInventoryItems component.
+ */
 const ManagerInventoryItems: FC<ManagerInventoryItemsProps> = ({ inventoryItems }) => {
   const [localInventoryItems, setLocalInventoryItems] = useState<InventoryItem[]>(inventoryItems);
-  // Translation
-  const [language, setLanguage] = useState<'en'|'es'>('en');
-  const [translations, setTranslations] = useState<{[key:string]:string}>({});
+
+  // State variables for language selection and translations.
+  const [language, setLanguage] = useState<'en' | 'es'>('en');
+  const [translations, setTranslations] = useState<{ [key: string]: string }>({});
 
   const staticTexts = [
     "Manage Inventory Items",
@@ -29,44 +57,54 @@ const ManagerInventoryItems: FC<ManagerInventoryItemsProps> = ({ inventoryItems 
     "Quantity"
   ];
 
-  useEffect(()=>{
-    const saved=localStorage.getItem('language');
-    if(saved==='es') setLanguage('es');
-  },[]);
+  /**
+   * Initializes the language setting from localStorage.
+   */
+  useEffect(() => {
+    const saved = localStorage.getItem('language');
+    if (saved === 'es') setLanguage('es');
+  }, []);
 
-  useEffect(()=>{
-    if(language==='en'){
-      const map:{[k:string]:string}={};
-      staticTexts.forEach(t=>map[t]=t);
+  /**
+   * Updates the translations based on the selected language.
+   */
+  useEffect(() => {
+    if (language === 'en') {
+      const map: { [k: string]: string } = {};
+      staticTexts.forEach((t) => (map[t] = t));
       setTranslations(map);
     } else {
-      fetch('/api/translate',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({texts:staticTexts,targetLanguage:'es'})
+      fetch('/api/translate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ texts: staticTexts, targetLanguage: 'es' }),
       })
-      .then(r=>r.json())
-      .then(data=>{
-        if(data.translatedTexts){
-          const map:{[k:string]:string}={};
-          staticTexts.forEach((t,i)=>map[t]=data.translatedTexts[i]);
+        .then((r) => r.json())
+        .then((data) => {
+          const map: { [k: string]: string } = {};
+          if (data.translatedTexts) {
+            staticTexts.forEach((t, i) => (map[t] = data.translatedTexts[i]));
+          } else {
+            staticTexts.forEach((t) => (map[t] = t));
+          }
           setTranslations(map);
-        } else {
-          const map:{[k:string]:string}={};
-          staticTexts.forEach(t=>map[t]=t);
+        })
+        .catch(() => {
+          const map: { [k: string]: string } = {};
+          staticTexts.forEach((t) => (map[t] = t));
           setTranslations(map);
-        }
-      })
-      .catch(()=>{
-        const map:{[k:string]:string}={};
-        staticTexts.forEach(t=>map[t]=t);
-        setTranslations(map);
-      })
+        });
     }
     localStorage.setItem('language', language);
-  },[language]);
+  }, [language]);
 
-  const t=(text:string)=>translations[text]||text;
+  /**
+   * Translates the given text using the current translations.
+   *
+   * @param {string} text - The text to be translated.
+   * @returns {string} The translated text.
+   */
+  const t = (text: string) => translations[text] || text;
 
   const columns: Column[] = [
     { key: 'inventory_item_id', header: t("Item ID") },
@@ -74,6 +112,13 @@ const ManagerInventoryItems: FC<ManagerInventoryItemsProps> = ({ inventoryItems 
     { key: 'quantity', header: t("Quantity"), editable: true, type: 'number' },
   ];
 
+  /**
+   * Updates an inventory item's details by sending a PUT request to the server.
+   *
+   * @param {number} id - The unique identifier of the inventory item to update.
+   * @param {string} field - The field to be updated.
+   * @param {any} value - The new value for the field.
+   */
   const updateInventoryItem = async (id: number, field: string, value: any) => {
     try {
       const response = await fetch(`/api/inventory_items/${id}`, {
@@ -94,6 +139,11 @@ const ManagerInventoryItems: FC<ManagerInventoryItemsProps> = ({ inventoryItems 
     }
   };
 
+  /**
+   * Adds a new inventory item by sending a POST request to the server.
+   *
+   * @param {Omit<InventoryItem, 'id'>} item - The inventory item details excluding the ID.
+   */
   const addInventoryItem = async (item: Omit<InventoryItem, 'id'>) => {
     try {
       const response = await fetch('/api/inventory_items', {
@@ -132,6 +182,11 @@ const ManagerInventoryItems: FC<ManagerInventoryItemsProps> = ({ inventoryItems 
   );
 };
 
+/**
+ * Fetches inventory data from the database and passes it to the component as props.
+ *
+ * @type {GetServerSideProps}
+ */
 export const getServerSideProps: GetServerSideProps = async () => {
   const pool = new Pool({
     user: process.env.PSQL_USER,

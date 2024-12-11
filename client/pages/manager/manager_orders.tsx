@@ -1,17 +1,31 @@
+/**
+ * This file implements the ManagerOrders component, allowing managers to 
+ * view and filter orders based on the selected year, month, and day. It 
+ * includes a dynamically generated table for displaying order details and 
+ * a translation feature for multilingual support.
+ */
+
 import { FC, useState, useEffect } from 'react';
 import { pageStyle, overlayStyle, contentStyle, headingStyle, tableHeaderStyle, tableCellStyle } from '@/utils/tableStyles';
 import BackButton from '@/components/ui/back_button';
 import ManagerNavBar from '@/components/ui/manager_nav_bar';
 
+/**
+ * ManagerOrders component allows managers to view and filter order details.
+ *
+ * @returns {JSX.Element} The rendered ManagerOrders component.
+ */
 const ManagerOrders: FC = () => {
-  const [orders, setOrders] = useState([]);
-  const [selectedYear, setSelectedYear] = useState('default');
-  const [selectedMonth, setSelectedMonth] = useState('default');
-  const [selectedDay, setSelectedDay] = useState('default');
-  // Translation
-  const [language, setLanguage] = useState<'en'|'es'>('en');
-  const [translations, setTranslations] = useState<{[key:string]:string}>({});
+  const [orders, setOrders] = useState<any[]>([]); // List of orders
+  const [selectedYear, setSelectedYear] = useState<string>('default');
+  const [selectedMonth, setSelectedMonth] = useState<string>('default');
+  const [selectedDay, setSelectedDay] = useState<string>('default');
+  
+  // State variables for language selection and translations
+  const [language, setLanguage] = useState<'en' | 'es'>('en');
+  const [translations, setTranslations] = useState<{ [key: string]: string }>({});
 
+  // Static texts for translation
   const staticTexts = [
     "Manage Orders",
     "Select Year",
@@ -27,45 +41,58 @@ const ManagerOrders: FC = () => {
     "View / Edit"
   ];
 
-  useEffect(()=>{
-    const saved=localStorage.getItem('language');
-    if(saved==='es') setLanguage('es');
-  },[]);
+  /**
+   * Initializes the language state from localStorage.
+   */
+  useEffect(() => {
+    const saved = localStorage.getItem('language');
+    if (saved === 'es') setLanguage('es');
+  }, []);
 
-  useEffect(()=>{
-    if(language==='en'){
-      const map:{[k:string]:string}={};
-      staticTexts.forEach(t=>map[t]=t);
+  /**
+   * Updates the translations map based on the selected language.
+   */
+  useEffect(() => {
+    if (language === 'en') {
+      const map: { [key: string]: string } = {};
+      staticTexts.forEach((text) => (map[text] = text));
       setTranslations(map);
     } else {
-      fetch('/api/translate',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({texts:staticTexts, targetLanguage:'es'})
+      fetch('/api/translate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ texts: staticTexts, targetLanguage: 'es' })
       })
-      .then(r=>r.json())
-      .then(data=>{
-        if(data.translatedTexts){
-          const map:{[k:string]:string}={};
-          staticTexts.forEach((t,i)=>map[t]=data.translatedTexts[i]);
+        .then((res) => res.json())
+        .then((data) => {
+          const map: { [key: string]: string } = {};
+          if (data.translatedTexts) {
+            staticTexts.forEach((text, i) => (map[text] = data.translatedTexts[i]));
+          } else {
+            staticTexts.forEach((text) => (map[text] = text));
+          }
           setTranslations(map);
-        } else {
-          const map:{[k:string]:string}={};
-          staticTexts.forEach(t=>map[t]=t);
+        })
+        .catch(() => {
+          const map: { [key: string]: string } = {};
+          staticTexts.forEach((text) => (map[text] = text));
           setTranslations(map);
-        }
-      })
-      .catch(()=>{
-        const map:{[k:string]:string}={};
-        staticTexts.forEach(t=>map[t]=t);
-        setTranslations(map);
-      })
+        });
     }
     localStorage.setItem('language', language);
-  },[language]);
+  }, [language]);
 
-  const t=(text:string)=>translations[text]||text;
-  // Fetch orders based on the selected year, month, and day
+  /**
+   * Translates the given text using the current translations map.
+   *
+   * @param {string} text - The text to be translated.
+   * @returns {string} The translated text.
+   */
+  const t = (text: string) => translations[text] || text;
+
+  /**
+   * Fetches orders based on the selected filters (year, month, day).
+   */
   const fetchOrders = async () => {
     const query = new URLSearchParams();
     if (selectedYear !== 'default') query.append('year', selectedYear);
@@ -82,12 +109,18 @@ const ManagerOrders: FC = () => {
     }
   };
 
-  const formatDate = (dateString: string) => {
+  /**
+   * Formats a date string to display only the date part (YYYY-MM-DD).
+   *
+   * @param {string} dateString - The ISO date string to format.
+   * @returns {string} The formatted date string.
+   */
+  const formatDate = (dateString: string): string => {
     return dateString.split('T')[0];
   };
 
   return (
-    <> 
+    <>
       <ManagerNavBar language={language} setLanguage={setLanguage} />
       <div style={pageStyle}>
         <div style={overlayStyle}></div>

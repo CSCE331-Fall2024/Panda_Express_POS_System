@@ -1,3 +1,10 @@
+/**
+ * This file implements the ManagerMenuItems component, allowing managers to 
+ * view, edit, and manage menu items through a user interface. It includes 
+ * server-side rendering to fetch menu data and client-side functionalities 
+ * for adding and updating menu items.
+ */
+
 import React, { useState, useEffect } from 'react';
 import { GetServerSideProps } from 'next';
 import { Pool } from 'pg';
@@ -6,7 +13,17 @@ import BackButton from '@/components/ui/back_button';
 import EditableTable, { Column } from '@/components/ui/editable_table';
 import ManagerNavBar from '@/components/ui/manager_nav_bar';
 
-interface MenuItem {
+/**
+ * Represents the attributes of a menu item.
+ *
+ * @interface MenuItem
+ * @property {number} id - The unique identifier of the menu item.
+ * @property {string} name - The name of the menu item.
+ * @property {string} item_type - The category of the menu item (e.g., appetizer, entree).
+ * @property {number} price - The price of the menu item.
+ * @property {boolean} is_deleted - Whether the menu item is currently available.
+ */
+export interface MenuItem {
   id: number;
   name: string;
   item_type: string;
@@ -14,18 +31,29 @@ interface MenuItem {
   is_deleted: boolean;
 }
 
-interface ManagerMenuItemsProps {
+/**
+ * Represents the properties passed to the ManagerMenuItems component.
+ *
+ * @interface ManagerMenuItemsProps
+ * @property {MenuItem[]} menuItems - The list of menu items managed by the component.
+ */
+export interface ManagerMenuItemsProps {
   menuItems: MenuItem[];
 }
 
+/**
+ * ManagerMenuItems component allows managers to view and edit menu item details.
+ *
+ * @param {ManagerMenuItemsProps} props - The properties passed to the component.
+ * @returns {JSX.Element} The rendered ManagerMenuItems component.
+ */
 const ManagerMenuItems: React.FC<ManagerMenuItemsProps> = ({ menuItems }) => {
   const [localMenuItems, setLocalMenuItems] = useState<MenuItem[]>(menuItems);
 
-  // Introduce a language state and a translations map
+  // State variables for language selection and translations.
   const [language, setLanguage] = useState<'en' | 'es'>('en');
-  const [translations, setTranslations] = useState<{[key:string]:string}>({});
+  const [translations, setTranslations] = useState<{ [key: string]: string }>({});
 
-  // Define texts that you want to translate
   const staticTexts = [
     "Manage Menu Items",
     "Item ID",
@@ -41,71 +69,76 @@ const ManagerMenuItems: React.FC<ManagerMenuItemsProps> = ({ menuItems }) => {
     "Unavailable"
   ];
 
+  /**
+   * Updates the translations map based on the selected language.
+   */
   useEffect(() => {
     if (language === 'en') {
-      // English default - no need to translate
-      const map: {[k:string]:string} = {};
-      staticTexts.forEach(t => (map[t] = t));
+      const map: { [k: string]: string } = {};
+      staticTexts.forEach((t) => (map[t] = t));
       setTranslations(map);
     } else {
-      // Translate to Spanish
       fetch('/api/translate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ texts: staticTexts, targetLanguage: 'es' })
+        body: JSON.stringify({ texts: staticTexts, targetLanguage: 'es' }),
       })
-      .then(res => res.json())
-      .then(data => {
-        if (data.translatedTexts) {
-          const map: {[k:string]:string} = {};
-          staticTexts.forEach((t, i) => {
-            map[t] = data.translatedTexts[i];
-          });
+        .then((res) => res.json())
+        .then((data) => {
+          const map: { [k: string]: string } = {};
+          if (data.translatedTexts) {
+            staticTexts.forEach((t, i) => (map[t] = data.translatedTexts[i]));
+          } else {
+            staticTexts.forEach((t) => (map[t] = t));
+          }
           setTranslations(map);
-        } else {
-          // If something goes wrong, fallback to original
-          const map: {[k:string]:string} = {};
-          staticTexts.forEach(t => (map[t] = t));
+        })
+        .catch(() => {
+          const map: { [k: string]: string } = {};
+          staticTexts.forEach((t) => (map[t] = t));
           setTranslations(map);
-        }
-      })
-      .catch(() => {
-        // On error, fallback to original text
-        const map: {[k:string]:string} = {};
-        staticTexts.forEach(t => (map[t] = t));
-        setTranslations(map);
-      });
+        });
     }
   }, [language]);
 
+  /**
+   * Translates the given text using the current translations map.
+   *
+   * @param {string} text - The text to be translated.
+   * @returns {string} The translated text.
+   */
   const t = (text: string) => translations[text] || text;
 
+  /**
+   * Formats a price value to display as a string with two decimal places.
+   *
+   * @param {number | string | null | undefined} value - The value to be formatted.
+   * @returns {string} The formatted price.
+   */
   const formatPrice = (value: number | string | null | undefined): string => {
     const numValue = typeof value === 'string' ? parseFloat(value) : value;
-    // Check if we have a valid number
     if (typeof numValue === 'number' && !isNaN(numValue)) {
       return `$${numValue.toFixed(2)}`;
     }
-    // Invalid Price
     return '$0.00';
   };
 
   const columns: Column[] = [
     { key: 'menu_item_id', header: t('Item ID') },
     { key: 'name', header: t('Name'), editable: true, type: 'text' },
-    { 
-      key: 'item_type', 
-      header: t('Item Type'), 
-      editable: true, 
+    {
+      key: 'item_type',
+      header: t('Item Type'),
+      editable: true,
       type: 'select',
-      options: [t('Appetizer'), t('Entree'), t('Side'), t('Beverage')]
+      options: [t('Appetizer'), t('Entree'), t('Side'), t('Beverage')],
     },
-    { 
-      key: 'price', 
-      header: t('Price'), 
-      editable: true, 
+    {
+      key: 'price',
+      header: t('Price'),
+      editable: true,
       type: 'number',
-      formatValue: formatPrice
+      formatValue: formatPrice,
     },
     {
       key: 'is_deleted',
@@ -113,13 +146,19 @@ const ManagerMenuItems: React.FC<ManagerMenuItemsProps> = ({ menuItems }) => {
       editable: true,
       type: 'select',
       options: [t('Available'), t('Unavailable')],
-      formatValue: (value: boolean) => value ? t('Unavailable') : t('Available')
-    }
+      formatValue: (value: boolean) => (value ? t('Unavailable') : t('Available')),
+    },
   ];
 
+  /**
+   * Updates a menu item's details by sending a PUT request to the server.
+   *
+   * @param {number} id - The unique identifier of the menu item to update.
+   * @param {string} field - The field to update.
+   * @param {any} value - The new value for the field.
+   */
   const updateMenuItem = async (id: number, field: string, value: any) => {
     try {
-      // If updating price, ensure it's a valid number
       if (field === 'price') {
         const numValue = typeof value === 'string' ? parseFloat(value) : value;
         if (isNaN(numValue)) {
@@ -130,9 +169,7 @@ const ManagerMenuItems: React.FC<ManagerMenuItemsProps> = ({ menuItems }) => {
 
       const response = await fetch(`/api/menu_items/${id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id, [field]: value }),
       });
 
@@ -150,13 +187,16 @@ const ManagerMenuItems: React.FC<ManagerMenuItemsProps> = ({ menuItems }) => {
     }
   };
 
+  /**
+   * Adds a new menu item by sending a POST request to the server.
+   *
+   * @param {Omit<MenuItem, 'id'>} item - The menu item details excluding the ID.
+   */
   const addMenuItem = async (item: Omit<MenuItem, 'id'>) => {
     try {
       const response = await fetch('/api/menu_items', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(item),
       });
 
@@ -172,19 +212,17 @@ const ManagerMenuItems: React.FC<ManagerMenuItemsProps> = ({ menuItems }) => {
   };
 
   return (
-    <> 
-      {/* Pass language and setLanguage to the ManagerNavBar */}
+    <>
       <ManagerNavBar language={language} setLanguage={setLanguage} />
-      <div style={{...pageStyle, paddingTop:'40px'}}>
+      <div style={{ ...pageStyle, paddingTop: '40px' }}>
         <div style={overlayStyle}></div>
         <div style={contentStyle}>
-          <BackButton />
           <BackButton />
           <h2 style={headingStyle}>{t('Manage Menu Items')}</h2>
           <EditableTable<MenuItem>
             items={localMenuItems}
             columns={columns}
-            idField={"menu_item_id" as keyof MenuItem}
+            idField={'menu_item_id' as keyof MenuItem}
             onUpdate={updateMenuItem}
             onAdd={addMenuItem}
           />
@@ -194,6 +232,11 @@ const ManagerMenuItems: React.FC<ManagerMenuItemsProps> = ({ menuItems }) => {
   );
 };
 
+/**
+ * Fetches menu data from the database and passes it to the component as props.
+ *
+ * @type {GetServerSideProps}
+ */
 export const getServerSideProps: GetServerSideProps = async () => {
   const pool = new Pool({
     user: process.env.PSQL_USER,
