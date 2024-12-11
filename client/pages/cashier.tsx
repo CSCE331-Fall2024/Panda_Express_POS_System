@@ -1,3 +1,12 @@
+/**
+ * CashierPOS Component
+ * 
+ * This component provides a Point of Sale interface for cashiers to manage orders.
+ * It fetches menu items dynamically, manages state for order and totals, and supports
+ * adding/removing items from the order and navigating to checkout
+ * 
+ * @component
+ */
 import { FC, useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { 
@@ -15,6 +24,18 @@ import { useUser } from '@/components/ui/user_context';
 import { Home, ShoppingCart } from "lucide-react";
 import { useTheme } from "@/components/context/theme_context";
 
+/**
+ * Represents a single menu item.
+ * @typedef {Object} MenuItem
+ * @property {number} menu_item_id - Unique ID for the menu item.
+ * @property {number} price - Price of the menu item.
+ * @property {string} item_type - Type of the menu item (Side, Entree, Appetizer, Drink).
+ * @property {string} name - Name of the menu item.
+ * @property {string} description - Description of the menu item.
+ * @property {boolean} special - Indicates if the item is special.
+ * @property {string} image - URL to the item's image.
+ */
+
 interface MenuItem {
   menu_item_id: number;
   price: number;
@@ -25,6 +46,11 @@ interface MenuItem {
   image: string;
 }
 
+ /**
+ * Interface representing categorized menu items.
+ * 
+ * @interface
+ */
 interface MenuItems {
   [key: string]: MenuItem[];
 }
@@ -46,6 +72,8 @@ const CashierPOS: FC = () => {
   const [carteSelected, setCarteSelected] = useState<string | null>(null);
 
   // Category order and translations
+  // Menu Categories
+  /** @type {Object<string, string>} Maps categories to their translations. */
   const categoryTranslations = {
     "Combos": "Combos",
     "Side": "Sides",
@@ -54,9 +82,14 @@ const CashierPOS: FC = () => {
     "Drink": "Drinks"
   };
 
+    /** @type {string[]} Specifies the order of menu categories. */
   const categoryOrder = ["Combos", "Side", "Entree", "Appetizer", "Drink"];
 
   // Fetch menu items
+   /**
+   * Fetches menu items from the server and groups them by categories.
+   * @async
+   */
   useEffect(() => {
     const fetchMenuItems = async () => {
       try {
@@ -85,7 +118,9 @@ const CashierPOS: FC = () => {
     fetchMenuItems();
   }, []);
 
-  // Save sessionStorage whenever relevant states change
+   /**
+   * Updates sessionStorage whenever relevant state variables change.
+   */
   useEffect(() => {
     console.log('Saving to sessionStorage:', {
       order,
@@ -110,6 +145,9 @@ const CashierPOS: FC = () => {
   }, [order, total, selectedSides, selectedEntrees, currentItemType, carteSelected]);
 
   // Authentication check
+    /**
+   * Redirects unauthenticated users to the login page.
+   */
   useEffect(() => {
     if (!(isManager() || isCashier())) {
       router.push('/login');
@@ -118,7 +156,11 @@ const CashierPOS: FC = () => {
 
 
   
-
+  /**
+   * Adds an item to the order.
+   * @param {MenuItem} item - The menu item to add.
+   * @param {string} category - The category of the menu item.
+   */
   // Order management functions
   const addToOrder = (item: MenuItem, category: string): void => {
     // Logic for handling combo selections
@@ -207,7 +249,11 @@ const CashierPOS: FC = () => {
       }
     }
   };
-
+  /**
+   * Removes an item from the order. If the item is a combo, all corresponding
+   * components of the combo order are removed as well. 
+   * @param {number} index - The index of the item to remove.
+   */
   const removeFromOrder = (index: number): void => {
     const item = order[index];
     const newOrder = [...order];
@@ -347,6 +393,9 @@ const CashierPOS: FC = () => {
     console.log(selectedSides);
     console.log(selectedEntrees);
   };
+  /**
+   * Removes all items from the order.
+   */
   const clearOrder = () => {
     setOrder([]);
     setTotal(0);
@@ -355,7 +404,10 @@ const CashierPOS: FC = () => {
     setCurrentItemType(null);
     setCarteSelected(null);
   };
-
+/**
+ * Handles the checkout process by saving the payment amount, order details,
+ * and redirecting the user to the next page.
+ */
   const handleCheckout = () => {
     sessionStorage.setItem('paymentAmount', parseFloat((total * 1.0825).toFixed(2)).toString());
     sessionStorage.setItem('order', JSON.stringify(order));

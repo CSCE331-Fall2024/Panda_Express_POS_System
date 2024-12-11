@@ -1,7 +1,22 @@
+/**
+ * Menuboard 2 Component
+ * 
+ * This component displays a menu board where users can view items such as combos, sides, and more.
+ * The menu data is fetched dynamically from the server, and weather information is also displayed
+ * using weather icons based on the current location's weather conditions.
+ * 
+ * @component
+ */
 import {FC, useEffect, useState } from 'react';
 import { getUserLocation, getWeatherData } from "@/utils/apiHelpers";
 import { Cloud, Sun, CloudRain, CloudSnow} from "lucide-react";
 
+/**
+ * MenuItem Interface
+ * Represents a menu item with its properties like ID, price, type, name, image, and description.
+ * 
+ * @interface
+ */
 interface MenuItem {
   menu_item_id: number;
   price: number;
@@ -10,22 +25,51 @@ interface MenuItem {
   image: string;
   description: string;
 }
-
+/**
+ * MenuItems Interface
+ * Represents a collection of menu items categorized by their type.
+ * 
+ * @interface
+ */
 interface MenuItems {
   [key: string]: MenuItem[];
 }
-
+/**
+ * Weather icons mapping
+ * Maps weather conditions to corresponding icons using Lucide icons.
+ */
 const weatherIcons = {
   clear: <Sun className="h-6 w-6" />,
   clouds: <Cloud className="h-6 w-6" />,
   rain: <CloudRain className="h-6 w-6" />,
   snow: <CloudSnow className="h-6 w-6" />,
 };
-
+/**
+ * Menuboard Functional Component
+ * Renders the menu board and displays weather information based on the user's location.
+ * 
+ * @returns {JSX.Element} The rendered Menuboard component.
+ */
 const Menuboard: FC = () => {
+  /**
+   * State to store menu items categorized by type.
+   * @state
+   */
   const [menuItems, setMenuItems] = useState<MenuItems>({});
+   /**
+   * State to store the weather data including temperature and description.
+   * @state
+   */
   const [weather, setWeather] = useState<{ temperature?: number; description?: string } | null>(null);
+  /**
+   * State to indicate whether data is still being loaded.
+   * @state
+   */
   const [loading, setLoading] = useState<boolean>(true);
+  /**
+   * Effect to fetch menu items from the server API.
+   * The data is organized into categories and stored in the `menuItems` state.
+   */
   // Fetch menu items from the API
   useEffect(() => {
     fetch('/api/menu')
@@ -53,8 +97,10 @@ const Menuboard: FC = () => {
       });
   }, []);
 
-  // Get weather data based on the location
-  useEffect(() => {
+  /**
+   * Effect to fetch weather data based on the user's location.
+   * Uses helper functions `getUserLocation` and `getWeatherData` for this purpose.
+   */  useEffect(() => {
     const fetchWeatherForLocation = async () => {
       try {
         const location = await getUserLocation();
@@ -72,6 +118,11 @@ const Menuboard: FC = () => {
     fetchWeatherForLocation();
   }, []);
 
+  /**
+   * Helper function to determine the appropriate weather icon based on the weather description.
+   * 
+   * @returns {JSX.Element | null} A weather icon component or null if no description is available.
+   */
   const getWeatherIcon = () => {
     if (!weather?.description) return null;
     const description = weather.description.toLowerCase();
@@ -83,7 +134,9 @@ const Menuboard: FC = () => {
 
     return <Cloud className="h-6 w-6" />; // Default icon
   };
-  
+  /**
+   * Combo items and side items extracted from `menuItems` state.
+   */
   const entreeItems = menuItems['Entree'] || [];
   const appItems = [...(menuItems['Appetizer'] || []), ...(menuItems['Drink'] || [])];
   return (

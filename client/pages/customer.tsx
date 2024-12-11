@@ -1,5 +1,13 @@
 // File: components/CustomerKiosk.tsx
-
+/**
+ * CustomerPOS Component
+ * 
+ * This component provides a Point of Sale interface for customers to place orders.
+ * It fetches menu items dynamically, manages state for order and totals, and supports
+ * adding/removing items from the order and navigating to checkout
+ * 
+ * @component
+ */
 import { Button } from "@/components/ui/button";
 import { FC, useEffect, useState } from 'react';
 import { useTheme } from "@/components/context/theme_context";
@@ -18,6 +26,18 @@ import { getUserLocation, getWeatherData } from "@/utils/apiHelpers";
 import { Home, ShoppingBag, Sun, Cloud, CloudRain, CloudSnow, ChevronDown } from "lucide-react";
 import { useRouter } from "next/router";
 
+/**
+ * Represents a single menu item.
+ * @typedef {Object} MenuItem
+ * @property {number} menu_item_id - Unique ID for the menu item.
+ * @property {number} price - Price of the menu item.
+ * @property {string} item_type - Type of the menu item (Side, Entree, Appetizer, Drink).
+ * @property {string} name - Name of the menu item.
+ * @property {string} description - Description of the menu item.
+ * @property {boolean} special - Indicates if the item is special.
+ * @property {string} image - URL to the item's image.
+ */
+
 interface MenuItem {
   menu_item_id: number;
   price: number;
@@ -27,11 +47,17 @@ interface MenuItem {
   description: string;
   special: boolean;
 }
-
+/**
+ * Interface representing categorized menu items.
+ * 
+ * @interface
+ */
 interface MenuItems {
   [key: string]: MenuItem[];
 }
-
+/**
+ * Icons for weather conditions.
+ */
 const weatherIcons = {
   clear: <Sun className="h-6 w-6" />,
   clouds: <Cloud className="h-6 w-6" />,
@@ -40,6 +66,7 @@ const weatherIcons = {
 };
 
 // Define category translations
+  /** @type {Object<string, string>} Maps categories to their translations. */
 const categoryTranslations: Record<string, Record<string, string>> = {
   en: {
     "Combos": "Combos",
@@ -58,7 +85,11 @@ const categoryTranslations: Record<string, Record<string, string>> = {
     "Drink": "Bebida",
   },
 };
-
+/**
+ * CustomerKiosk functional component.
+ * 
+ * @returns {JSX.Element} The CustomerKiosk component.
+ */
 const CustomerKiosk: FC = () => {
   const router = useRouter();
   const [menuItems, setMenuItems] = useState<MenuItems>({});
@@ -84,7 +115,9 @@ const CustomerKiosk: FC = () => {
     { code: 'es', label: 'Spanish' },
     // Add more languages as needed
   ];
-
+  /**
+   * Keys for translation texts used in the component.
+   */
   const translationKeys = [
     { key: 'mode', text: 'Customer Self-Service' },
     { key: 'items', text: 'items' },
@@ -114,6 +147,12 @@ const CustomerKiosk: FC = () => {
 
   
   //Helper for translations
+  /**
+   * Fetch translations for the current language.
+   * 
+   * @param {string} languageCode - The language code to fetch translations for.
+   * @returns {Promise<void>} - A promise that resolves when translations are fetched.
+   */
   const fetchTranslations = async (languageCode: string) => {
     try {
       const staticTexts = translationKeys.map(k => k.text);
@@ -182,7 +221,9 @@ const CustomerKiosk: FC = () => {
     }
   };
 
-  // Fetch menu items on component mount
+  /**
+   * Fetch menu items and organize them by category.
+   */
   useEffect(() => {
     const fetchMenuItems = async () => {
       try {
@@ -274,6 +315,7 @@ const CustomerKiosk: FC = () => {
   
 
   // Load sessionStorage on component mount
+  
   useEffect(() => {
     console.log('Loading from sessionStorage', {
       order: sessionStorage.getItem('order'),
@@ -330,7 +372,9 @@ const CustomerKiosk: FC = () => {
     }
   }, []); // Added menuItems as a dependency to ensure menuItems are loaded before translations
 
-  // Save sessionStorage whenever relevant states change
+  /**
+   * Updates sessionStorage whenever relevant state variables change.
+   */
   useEffect(() => {
     console.log('Saving to sessionStorage:', {
       order,
@@ -358,6 +402,9 @@ const CustomerKiosk: FC = () => {
   }, [order, total, selectedSides, selectedEntrees, currentItemType, carteSelected, language]);
 
   // Listen for languageChange events to update language state
+  /**
+ * React hook to listen for `languageChange` events and update the language state.
+ */
   useEffect(() => {
     const handleLanguageEvent = (event: Event) => {
       const customEvent = event as CustomEvent<string>;
@@ -376,6 +423,9 @@ const CustomerKiosk: FC = () => {
   }, [language]);
 
   // Fetch translations whenever language or menuItems change
+  /**
+ * React hook to fetch translations when the language or menuItems change.
+ */
   useEffect(() => {
     if (language !== 'en' && Object.keys(menuItems).length > 0) {
       const cachedTranslations = localStorage.getItem(`translations_${language}`);
@@ -392,6 +442,10 @@ const CustomerKiosk: FC = () => {
   }, [language, menuItems]);
 
   // Handle language change with caching and event dispatch
+  /**
+ * Handles the language change, including caching translations and dispatching events.
+ * @param {string} newLanguage - The new language code.
+ */
   const handleLanguageChange = async (newLanguage: string) => {
     setLanguage(newLanguage);
     setDropdownOpen(false); // Close the dropdown after selection
@@ -417,7 +471,11 @@ const CustomerKiosk: FC = () => {
     // Fetch translations from the API
     await fetchTranslations(newLanguage);
   };
-
+  /**
+   * Adds an item to the order.
+   * @param {MenuItem} item - The menu item to add.
+   * @param {string} category - The category of the menu item.
+   */
   const addToOrder = (item: MenuItem, category: string): void => {
     // Logic for handling combo selections
     if (category === 'Combos') {
@@ -505,7 +563,11 @@ const CustomerKiosk: FC = () => {
       }
     }
   };
-
+  /**
+   * Removes an item from the order. If the item is a combo, all corresponding
+   * components of the combo order are removed as well. 
+   * @param {number} index - The index of the item to remove.
+   */
   const removeFromOrder = (index: number): void => {
     const item = order[index];
     const newOrder = [...order];
@@ -611,7 +673,9 @@ const CustomerKiosk: FC = () => {
   };
 
 
-
+  /**
+   * Removes all items from the order.
+   */
   const clearOrder = () => {
     setOrder([]);
     setTotal(0);
@@ -620,7 +684,10 @@ const CustomerKiosk: FC = () => {
     setCurrentItemType(null);
     setCarteSelected(null);
   };
-
+/**
+ * Handles the checkout process by saving the payment amount, order details,
+ * and redirecting the user to the next page.
+ */
   const handleCheckout = () => {
     sessionStorage.setItem('paymentAmount', parseFloat((total * 1.0825).toFixed(2)).toString());
     sessionStorage.setItem('order', JSON.stringify(order));
@@ -639,6 +706,9 @@ const CustomerKiosk: FC = () => {
   };
 
   // Get weather data based on the location
+/**
+ * Fetches weather data based on the user's location.
+ */
   useEffect(() => {
     const fetchWeatherForLocation = async () => {
       try {
@@ -657,7 +727,12 @@ const CustomerKiosk: FC = () => {
 
     fetchWeatherForLocation();
   }, []);
-
+  
+  
+  /**
+ * Returns the appropriate weather icon based on the weather description.
+ * @returns {JSX.Element | null} The weather icon or null if no description is available.
+ */
   const getWeatherIcon = () => {
     if (!weather?.description) return null;
   
