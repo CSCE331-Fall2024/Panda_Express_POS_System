@@ -1,6 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Pool } from 'pg';
 
+/**
+ * PostgreSQL connection pool.
+ */
 const pool = new Pool({
   user: process.env.PSQL_USER,
   host: process.env.PSQL_HOST,
@@ -10,6 +13,12 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false },
 });
 
+/**
+ * API route handler for managing orders in the database.
+ * 
+ * @param req - The HTTP request object.
+ * @param res - The HTTP response object.
+ */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     const { total, staffId, paymentId } = req.body;

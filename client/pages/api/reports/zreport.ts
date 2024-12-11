@@ -1,6 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Pool } from 'pg';
 
+/**
+ * PostgreSQL connection pool.
+ */
 const pool = new Pool({
   user: process.env.PSQL_USER,
   host: process.env.PSQL_HOST,
@@ -10,6 +13,16 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false },
 });
 
+/**
+ * API handler for generating and retriving Z Report for a given date.
+ * If a report for the specified date already exists in the database, it returns the stored data.
+ * Otherwise, it generates a new report, stores it in the database, and then returns the new report.
+ * 
+ * @param req - The request object from Next.js API.
+ * @param res - The response object from Next.js API.
+ * 
+ * @returns {void} A JSON response with the report data or an error message.
+ */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     try {

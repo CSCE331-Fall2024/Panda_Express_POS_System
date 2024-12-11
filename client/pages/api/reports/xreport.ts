@@ -1,6 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Pool } from 'pg';
 
+/**
+ * PostgreSQL connection pool.
+ */
 const pool = new Pool({
   user: process.env.PSQL_USER,
   host: process.env.PSQL_HOST,
@@ -10,6 +13,15 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false },
 });
 
+/**
+ * API handler to fetch hourly sales data for a given date.
+ * The report contains total transactions, total sales, TAMU ID sales, and credit card sales for each hour.
+ * 
+ * @param req - The request object from Next.js API.
+ * @param res - The response object from Next.js API.
+ * 
+ * @returns {void} A JSON response with the hourly sales report or an error message.
+ */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     try {

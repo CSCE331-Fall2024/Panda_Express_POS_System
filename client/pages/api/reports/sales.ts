@@ -3,6 +3,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Pool } from 'pg';
 
+/**
+ * PostgreSQL connection pool.
+ */
 const pool = new Pool({
   user: process.env.PSQL_USER,
   host: process.env.PSQL_HOST,
@@ -12,6 +15,15 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false },
 });
 
+/**
+ * API handler to fetch sales data for a given date range.
+ * The report contains sales data for each menu item, including the sales amount and quantity sold.
+ * 
+ * @param req - The request object from Next.js API.
+ * @param res - The response object from Next.js API.
+ * 
+ * @returns {void} A JSON response with the sales data for the given date range or an error message.
+ */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     const { from, to } = req.query;

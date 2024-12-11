@@ -1,6 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Pool } from 'pg';
 
+/**
+ * PostgreSQL connection pool.
+ */
 const pool = new Pool({
   user: process.env.PSQL_USER,
   host: process.env.PSQL_HOST,
@@ -10,6 +13,14 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false },
 });
 
+/**
+ * Represents attributes of the busiest day
+ * @typedef {Object} BusiestDay
+ * @property {string} period - The time period (week, month, year).
+ * @property {string} date - The date of the busiest day in the period.
+ * @property {string} day - The day name of the busiest day (e.g., Monday).
+ * @property {number} total_sales - The total sales for the busiest day.
+ */
 interface BusiestDay {
   period: string;
   date: string;
@@ -17,6 +28,15 @@ interface BusiestDay {
   total_sales: number;
 }
 
+/**
+ * API handler for fetching the busiest day for given time periods (week, month, year).
+ * It queries the database for the highest total sales within each time period.
+ * 
+ * @param req - The request object from Next.js API.
+ * @param res - The response object from Next.js API.
+ * 
+ * @returns {void} A JSON response with the busiest days or an error message.
+ */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     try {

@@ -3,6 +3,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Pool } from 'pg';
 
+/**
+ * PostgreSQL connection pool.
+ */
 const pool = new Pool({
   user: process.env.PSQL_USER,
   host: process.env.PSQL_HOST,
@@ -12,6 +15,15 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false },
 });
 
+/**
+ * API handler to fetch inventory usage data.
+ * It aggregates the total quantity used for each inventory item.
+ * 
+ * @param req - The request object from Next.js API.
+ * @param res - The response object from Next.js API.
+ * 
+ * @returns {void} A JSON response with the inventory usage data.
+ */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const query = `
