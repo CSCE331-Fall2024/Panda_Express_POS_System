@@ -1,6 +1,10 @@
 /**
  * @file Inventory Usage Chart
  * Displays a chart for total inventory usage across a date range for managers.
+ * 
+ * @remarks
+ * This component uses Chart.js for rendering a line chart to visualize inventory usage.
+ * It fetches data from the backend API and formats it for display in a chart.
  */
 import { FC, useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';

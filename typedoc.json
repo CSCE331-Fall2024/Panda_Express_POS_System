@@ -1,5 +1,5 @@
 {
-  "entryPoints": ["client"],
+  "entryPoints": ["client/pages/manager/reports/inventory.tsx"],
   "entryPointStrategy": "expand",
   "out": "docs",
   "tsconfig": "./client/tsconfig.json",

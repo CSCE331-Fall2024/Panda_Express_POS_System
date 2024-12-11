@@ -7,7 +7,6 @@
  * 
  * @component
  */
-
 import { FC, useState, useEffect } from 'react';
 import { getUserLocation, getWeatherData } from "@/utils/apiHelpers";
 import { Cloud, Sun, CloudRain, CloudSnow } from "lucide-react";
