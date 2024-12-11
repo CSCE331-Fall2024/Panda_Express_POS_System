@@ -1,3 +1,46 @@
+/**
+ * This component handles the payment process at the counter.
+ * It retrieves payment details from session storage and allows the user to choose a payment method.
+ * Upon successful payment, it creates an order and associates menu items with the order.
+ * 
+ * @component
+ * @returns {JSX.Element} The PayAtCounter component.
+ * 
+ * @example
+ * // Usage
+ * <PayAtCounter />
+ * 
+ * @remarks
+ * This component uses the Next.js `useRouter` hook for navigation and the `useState` and `useEffect` hooks for state management.
+ * It also uses custom `Button` and `Card` components for UI.
+ * 
+ * @function
+ * @name PayAtCounter
+ * 
+ * @typedef {Object} PaymentResponse
+ * @property {boolean} success - Indicates if the payment was successful.
+ * @property {string} paymentId - The ID of the processed payment.
+ * 
+ * @typedef {Object} OrderResponse
+ * @property {boolean} success - Indicates if the order creation was successful.
+ * @property {string} orderId - The ID of the created order.
+ * 
+ * @typedef {Object} JointResponse
+ * @property {boolean} success - Indicates if the menu items were successfully added to the order.
+ * 
+ * @hook
+ * @name useEffect
+ * @description Retrieves payment details from session storage and sets the state accordingly. Redirects to the customer page if details are missing.
+ * 
+ * @hook
+ * @name useState
+ * @description Manages the state for payment amount, staff ID, and menu item IDs.
+ * 
+ * @param {string} paymentType - The type of payment selected by the user.
+ * @returns {Promise<void>} Handles the payment success process, including creating an order and associating menu items.
+ * 
+ * @throws Will throw an error if the payment or order creation fails.
+ */
 import { useState } from "react"
 import { useRouter } from "next/router"
 import { Button } from "@/components/ui/button"

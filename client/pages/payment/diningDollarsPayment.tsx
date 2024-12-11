@@ -1,8 +1,34 @@
+/**
+ * DiningDollarsPayment component handles the payment process using Dining Dollars.
+ * It retrieves payment details from session storage, processes the payment, creates an order,
+ * and associates menu items with the order.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered component.
+ *
+ * @example
+ * // Usage example:
+ * <DiningDollarsPayment />
+ *
+ * @remarks
+ * This component uses the Next.js `useRouter` hook for navigation and `useState` and `useEffect` hooks
+ * for managing state and side effects. It also interacts with several API endpoints to process payments
+ * and create orders.
+ *
+ * @function
+ * @name DiningDollarsPayment
+ */
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "next/router";
 
+/**
+ * DiningDollarsPayment Functional Component
+ * Renders the dining dollars payment page where users can confirm their payment.
+ *
+ * @returns {JSX.Element} The rendered DiningDollarsPayment component.
+ */
 export default function DiningDollarsPayment() {
   const router = useRouter();
   const [paymentAmount, setPaymentAmount] = useState<number | null>(null);
@@ -33,6 +59,12 @@ export default function DiningDollarsPayment() {
     }
   }, [router]);
 
+  /**
+   * Function to handle the payment success.
+   * It processes the payment, creates an order, and associates menu items with the order.
+   * If successful, it redirects the user to the order success page.
+   * If an error occurs, it logs the error to the console.
+   */
   const handlePaymentSuccess = async () => {
     try {
       const response = await fetch("/api/payments", {

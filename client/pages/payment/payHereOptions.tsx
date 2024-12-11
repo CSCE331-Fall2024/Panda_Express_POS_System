@@ -1,14 +1,32 @@
+/**
+ * @fileoverview This file contains the PayHereOptions component which provides
+ * users with options to choose their payment method.
+ */
+
 import { useRouter } from "next/router"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
+/**
+ * PayHereOptions component renders a card with two buttons allowing users to
+ * choose between Credit Card and Dining Dollars payment methods.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered component.
+ */
 export default function PayHereOptions() {
   const router = useRouter()
 
+  /**
+   * Redirects the user to the Credit Card Payment page.
+   */
   const handleCreditCardPayment = () => {
     router.push("/payment/creditCardPayment")
   }
 
+  /**
+   * Redirects the user to the Dining Dollars Payment page.
+   */
   const handleDiningDollarsPayment = () => {
     router.push("/payment/diningDollarsPayment")
   }

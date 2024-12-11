@@ -1,17 +1,33 @@
+/**
+ * @file creditCardPayment.tsx
+ * @description This file contains the CreditCardPayment component which handles the credit card payment process.
+ */
+
 import { useState, useEffect } from "react"
 import { useRouter } from "next/router"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
+/**
+ * CreditCardPayment component handles the credit card payment process.
+ * It retrieves payment details from session storage, processes the payment,
+ * creates an order, and associates menu items with the order.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered component.
+ */
 export default function CreditCardPayment() {
   const router = useRouter()
   const [paymentAmount, setPaymentAmount] = useState<number | null>(null);
   const [staffId, setStaffId] = useState<number | null>(null);
   const [menuItemIds, setMenuItemIds] = useState<number[] | null>(null);
 
+  /**
+   * useEffect hook to retrieve payment details from session storage and set state variables.
+   * Redirects to the customer page if payment details are not found.
+   */
   useEffect(() => {
     const total = sessionStorage.getItem('paymentAmount');
-    // const total = "100";
     
     if(total) {
       setPaymentAmount(parseFloat(total));
@@ -32,6 +48,11 @@ export default function CreditCardPayment() {
 
   }, [router]);
 
+  /**
+   * Handles the payment success process.
+   * Sends payment details to the server, creates an order, and associates menu items with the order.
+   * Redirects to the appropriate success page based on user role.
+   */
   const handlePaymentSuccess = async () => {
     try {
       const response = await fetch('/api/payments', {
@@ -47,7 +68,6 @@ export default function CreditCardPayment() {
 
       if (data.success) {
         console.log('Payment processed successfully via Credit Card.');
-        // sessionStorage.removeItem('paymentAmount');
 
         const orderResponse = await fetch('/api/orders', {
           method: 'POST',
@@ -116,8 +136,6 @@ export default function CreditCardPayment() {
           <CardTitle>Credit Card Payment</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* <p>Enter your credit card information.</p>
-          Simulate form fields here */}
           <Button
             onClick={handlePaymentSuccess}
             variant="default"

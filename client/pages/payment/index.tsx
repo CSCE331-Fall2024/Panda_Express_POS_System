@@ -1,3 +1,10 @@
+/**
+ * @fileoverview PaymentScreen component that provides options for payment methods.
+ * Users can choose to pay here, pay at the counter, or cancel the order.
+ * 
+ * @package
+ */
+
 import { useRouter } from "next/router"
 import { Button } from "@/components/ui/button"
 import {
@@ -8,24 +15,42 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
+/**
+ * PaymentScreen component renders the payment options screen.
+ * 
+ * @component
+ * @returns {JSX.Element} The rendered component.
+ */
 export default function PaymentScreen() {
   const router = useRouter()
+
+  /**
+   * Handles the "Pay Here" button click event.
+   * Logs the action and redirects to the Pay Here options page.
+   */
   const handlePayHere = () => {
     console.log("Processing payment via Pay Here method...")
-    console.log(sessionStorage.getItem("staff_id"));
+    console.log(sessionStorage.getItem("staff_id"))
     router.push("/payment/payHereOptions")
   }
 
+  /**
+   * Handles the "Pay at Counter" button click event.
+   * Logs the action and redirects to the Pay at Counter page based on user role.
+   */
   const handlePayAtCounter = () => {
     console.log("Proceeding to pay at counter...")
     if (sessionStorage.getItem("userRole") === "customer") {
       router.push("/payment/payAtCounter")
-    }
-    else if (sessionStorage.getItem("userRole") === "employee") {
+    } else if (sessionStorage.getItem("userRole") === "employee") {
       router.push("/payment/payAtCounter")
     }
   }
 
+  /**
+   * Handles the "Cancel Order" button click event.
+   * Logs the action and redirects to the Order Canceled page.
+   */
   const handleCancelOrder = () => {
     console.log("Order canceled.")
     router.push("/payment/orderCanceled")
