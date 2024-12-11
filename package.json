@@ -10,7 +10,7 @@
         "client:build": "npm run build --prefix client",
         "client:start": "npm run start --prefix client",
         "server:start": "npm run start --prefix server",
-        "docs": "npx jsdoc -c jsdoc.config.json"
+        "docs": "npx typedoc"
     },
     "dependencies": {
         "project-root": "file:"
