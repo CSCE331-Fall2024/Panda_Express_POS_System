@@ -1,3 +1,11 @@
+/**
+ * Represents a chart component.
+ * 
+ * @remarks
+ * This component provides a chart interface with customizable styles.
+ * 
+ * @returns {JSX.Element} The rendered chart component.
+ */
 import * as React from "react"
 import * as RechartsPrimitive from "recharts"
 

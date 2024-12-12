@@ -1,3 +1,11 @@
+/**
+ * Represents an order summary component.
+ * 
+ * @remarks
+ * This component provides a summary of the order with customizable styles.
+ * 
+ * @returns {JSX.Element} The rendered order summary component.
+ */
 import { FC } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';

@@ -1,3 +1,11 @@
+/**
+ * Represents a calendar component.
+ * 
+ * @remarks
+ * This component provides a calendar interface with customizable styles.
+ * 
+ * @returns {JSX.Element} The rendered calendar component.
+ */
 'use client'
 
 import * as React from "react"

@@ -1,3 +1,11 @@
+/**
+ * Represents a user context component.
+ * 
+ * @remarks
+ * This component provides a user context with user information and roles.
+ * 
+ * @returns {JSX.Element} The rendered user context component.
+ */
 import { FC, createContext, ReactNode, useContext, useState } from "react";
 
 interface UserContextType {

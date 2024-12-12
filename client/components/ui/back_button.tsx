@@ -1,9 +1,25 @@
+/**
+ * Represents a back button component.
+ * 
+ * @remarks
+ * This component provides a back button for navigation.
+ * 
+ * @returns {JSX.Element} The rendered back button component.
+ */
 import { FC } from 'react';
 import { buttonStyle } from '@/utils/tableStyles';
 import { useRouter } from 'next/router';
 import { ArrowBigLeft } from 'lucide-react';
 
-const BackButton: FC = () => {
+/**
+ * Represents the back button component.
+ * 
+ * @remarks
+ * This component provides a back button for navigation.
+ * 
+ * @returns {JSX.Element} The rendered back button component.
+ */
+export const BackButton: FC = () => {
   const router = useRouter();
   return (
     <button onClick={() => router.push('/manager')} style={buttonStyle}>

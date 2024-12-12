@@ -1,5 +1,5 @@
 {
-  "entryPoints": ["client/pages"],
+  "entryPoints": ["client/pages", "client/components", "server/server.js"],
   "entryPointStrategy": "expand",
   "out": "docs",
   "tsconfig": "./client/tsconfig.json",
