@@ -1,3 +1,11 @@
+/**
+ * Represents the main Menuboard component.
+ * 
+ * @remarks
+ * Represents the main Menuboard component.
+ * 
+ * @returns {JSX.Element} The rendered component.
+ */
 import { FC, useEffect, useState } from 'react';
 import { getUserLocation, getWeatherData } from "@/utils/apiHelpers";
 import { Sun, Moon, Cloud, CloudRain, CloudSnow, User } from "lucide-react";
@@ -5,7 +13,18 @@ import { useTheme } from "@/components/context/theme_context";
 import Head from 'next/head';
 
 
-interface MenuItem {
+/**
+ * Represents a single menu item.
+ * 
+ * @typedef {Object} MenuItem
+ * @property {number} menu_item_id - Unique ID for the menu item.
+ * @property {number} price - Price of the menu item.
+ * @property {string} item_type - Type of the menu item (Side, Entree, Appetizer, Drink).
+ * @property {string} name - Name of the menu item.
+ * @property {string} image - URL to the item's image.
+ * @property {string} description - Description of the menu item.
+ */
+export interface MenuItem {
   menu_item_id: number;
   price: number;
   item_type: string;
@@ -14,18 +33,41 @@ interface MenuItem {
   description: string;
 }
 
-interface MenuItems {
+/**
+ * Represents categorized menu items.
+ * 
+ * @typedef {Object} MenuItems
+ * @property {[key: string]: MenuItem[]} [key: string] - The key is the category of the menu item.
+ */
+export interface MenuItems {
   [key: string]: MenuItem[];
 }
 
-const weatherIcons = {
+/**
+ * Represents weather icons.
+ * 
+ * @typedef {Object} WeatherIcons
+ * @property {JSX.Element} clear - The icon for clear weather.
+ * @property {JSX.Element} clouds - The icon for cloudy weather.
+ * @property {JSX.Element} rain - The icon for rainy weather.
+ * @property {JSX.Element} snow - The icon for snowy weather.
+ */
+export const weatherIcons = {
   clear: <Sun className="h-6 w-6" />,
   clouds: <Cloud className="h-6 w-6" />,
   rain: <CloudRain className="h-6 w-6" />,
   snow: <CloudSnow className="h-6 w-6" />,
 };
 
-const Menuboard: FC = () => {
+/**
+ * Represents the main Menuboard component.
+ * 
+ * @remarks
+ * Represents the main Menuboard component.
+ * 
+ * @returns {JSX.Element} The rendered component.
+ */
+export const Menuboard: FC = () => {
   const [menuItems, setMenuItems] = useState<MenuItems>({});
   const [weather, setWeather] = useState<{ temperature?: number; description?: string; isDay?: boolean } | null>(null);
   const [loading, setLoading] = useState<boolean>(true);

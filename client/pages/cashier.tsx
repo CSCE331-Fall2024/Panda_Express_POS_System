@@ -5,7 +5,20 @@
  * It fetches menu items dynamically, manages state for order and totals, and supports
  * adding/removing items from the order and navigating to checkout
  * 
- * @component
+ * @remarks
+ * This component provides a Point of Sale interface for cashiers to manage orders.
+ * It fetches menu items dynamically, manages state for order and totals, and supports
+ * adding/removing items from the order and navigating to checkout
+ * 
+ * @example
+ * // To use this component, simply import and include it in your Next.js page
+ * import CashierPOS from 'path/to/CashierPOS';
+ *
+ * function MyApp() {
+ *   return <CashierPOS />;
+ * }
+ * 
+ * @returns {JSX.Element} The rendered component.
  */
 import { FC, useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
@@ -26,6 +39,10 @@ import { useTheme } from "@/components/context/theme_context";
 
 /**
  * Represents a single menu item.
+ * 
+ * @remarks
+ * Represents a single menu item.
+ * 
  * @typedef {Object} MenuItem
  * @property {number} menu_item_id - Unique ID for the menu item.
  * @property {number} price - Price of the menu item.
@@ -34,9 +51,18 @@ import { useTheme } from "@/components/context/theme_context";
  * @property {string} description - Description of the menu item.
  * @property {boolean} special - Indicates if the item is special.
  * @property {string} image - URL to the item's image.
+ * 
+ * @example
+ * // To use this component, simply import and include it in your Next.js page
+ * import CashierPOS from 'path/to/CashierPOS';
+ *
+ * function MyApp() {
+ *   return <CashierPOS />;
+ * }
+ * 
+ * @returns {JSX.Element} The rendered component.
  */
-
-interface MenuItem {
+export interface MenuItem {
   menu_item_id: number;
   price: number;
   item_type: string;
@@ -46,16 +72,39 @@ interface MenuItem {
   image: string;
 }
 
- /**
- * Interface representing categorized menu items.
+/**
+ * Represents categorized menu items.
  * 
- * @interface
+ * @remarks
+ * Represents categorized menu items.
+ * 
+ * @typedef {Object} MenuItems
+ * @property {[key: string]: MenuItem[]} [key: string] - The key is the category of the menu item.
+ * @property {MenuItem[]} MenuItem[] - The value is an array of menu items.
+ * 
+ * @example
+ * // To use this component, simply import and include it in your Next.js page
+ * import CashierPOS from 'path/to/CashierPOS';
+ *
+ * function MyApp() {
+ *   return <CashierPOS />;
+ * }
+ * 
+ * @returns {JSX.Element} The rendered component.
  */
-interface MenuItems {
+export interface MenuItems {
   [key: string]: MenuItem[];
 }
 
-const CashierPOS: FC = () => {
+/**
+ * Represents the main CashierPOS component.
+ * 
+ * @remarks
+ * Represents the main CashierPOS component.
+ * 
+ * @returns {JSX.Element} The rendered component.
+ */
+export const CashierPOS: FC = () => {
   const router = useRouter();
   const { user, isManager, isCashier } = useUser();
   const { theme } = useTheme();
@@ -82,7 +131,7 @@ const CashierPOS: FC = () => {
     "Drink": "Drinks"
   };
 
-    /** @type {string[]} Specifies the order of menu categories. */
+  /** @type {string[]} Specifies the order of menu categories. */
   const categoryOrder = ["Combos", "Side", "Entree", "Appetizer", "Drink"];
 
   // Fetch menu items

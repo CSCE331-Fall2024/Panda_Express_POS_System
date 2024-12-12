@@ -1,3 +1,14 @@
+/**
+ * Z Report Component
+ * 
+ * @remarks
+ * This component displays a Z Report for a given date.
+ * It uses the fetchZReport function to get the Z Report data from the backend API.
+ * It then processes the data and displays it in a table and chart format.
+ */
+
+'use client'
+
 import { FC,  useState } from 'react';
 import { pageStyle, overlayStyle, contentStyle, headingStyle } from '@/utils/tableStyles';
 import BackButton from '@/components/ui/back_button';
@@ -8,13 +19,39 @@ import { Bar, BarChart, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 
-interface ZReportItem {
+/**
+ * Represents a single item in the Z Report with transaction and sales data.
+ * 
+ * @remarks
+ * This interface defines the structure of transaction data for each employee.
+ * 
+ * @property {string} employee_name - The name of the employee.
+ * @property {number} total_transactions - The total number of transactions for the employee.
+ * @property {number} total_sales - The total sales for the employee.
+ * 
+ * @example
+ * ```typescript
+ * const zReportData: ZReportItem[] = [
+ *   { employee_name: 'John Doe', total_transactions: 10, total_sales: 100 },
+ *   { employee_name: 'Jane Smith', total_transactions: 5, total_sales: 50 },
+ * ];
+ * ```
+ */
+export interface ZReportItem {
   employee_name: string;
   total_transactions: number;
   total_sales: number;
 }
 
-const ZReport: FC = () => {
+/**
+ * Z Report Component
+ * 
+ * @remarks
+ * This component displays a Z Report for a given date.
+ * It uses the fetchZReport function to get the Z Report data from the backend API.
+ * It then processes the data and displays it in a table and chart format.
+ */
+export const ZReport: FC = () => {
   const [zReportData, setZReportData] = useState<ZReportItem[]>([]);
   const [totals, setTotals] = useState({
     totalTransactions: 0,

@@ -2,7 +2,6 @@
  * This component renders a page that informs the user that their order has been canceled.
  * It displays a card with a message and a button to return to the home page.
  *
- * @component
  * @example
  * // To use this component, simply import and include it in your Next.js page
  * import OrderCanceled from 'path/to/OrderCanceled';

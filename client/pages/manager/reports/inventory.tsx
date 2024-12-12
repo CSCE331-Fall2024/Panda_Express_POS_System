@@ -1,5 +1,4 @@
 /**
- * @file Inventory Usage Chart
  * Displays a chart for total inventory usage across a date range for managers.
  * 
  * @remarks
@@ -41,8 +40,16 @@ ChartJS.register(
  * @typedef {Object} InventoryUsageData
  * @property {string} inventory_name - The name of the inventory item.
  * @property {number} total_used - The total amount of the item used in the specified date range.
+ * 
+ * @example
+ * ```typescript
+ * const inventoryData: InventoryUsageData[] = [
+ *   { inventory_name: 'Item 1', total_used: 100 },
+ *   { inventory_name: 'Item 2', total_used: 50 },
+ * ];
+ * ```
  */
-interface InventoryUsageData {
+export interface InventoryUsageData {
   inventory_name: string;
   total_used: number;
 }
@@ -52,23 +59,38 @@ interface InventoryUsageData {
  * @typedef {Object} InventoryChartData
  * @property {string[]} labels - The labels for the chart.
  * @property {number[]} dataSet - The data for the chart.
+ * 
+ * @example
+ * ```typescript
+ * const inventoryChartData: InventoryChartData = {
+ *   labels: ['Item 1', 'Item 2'],
+ *   dataSet: [100, 50],
+ * };
+ * ```
  */
-interface InventoryChartData {
+export interface InventoryChartData {
   labels: string[];
   dataSet: number[];
 }
 
 /**
  * Fetches inventory usage data for a given date range.
- *
- * @async
- * @function
+ * 
+* @remarks 
+ * This function fetches inventory usage data for a given date range from the backend API.
+ * It returns a promise that resolves with the inventory usage data.
+ * 
+ * @example
+ * ```typescript
+ * const inventoryData = await fetchInventoryData('2024-01-01', '2024-01-31');
+ * ```
+ * 
  * @param {string} from - The start date of the date range in `YYYY-MM-DD` format.
  * @param {string} to - The end date of the date range in `YYYY-MM-DD` format.
  * @returns {Promise<InventoryUsageData[]>} A promise that resolves with the inventory usage data.
  * @throws {Error} Throws an error if the fetch request fails or the response is not successful.
  */
-const fetchInventoryData = async (from: string, to: string): Promise<InventoryUsageData[]> => {
+export const fetchInventoryData = async (from: string, to: string): Promise<InventoryUsageData[]> => {
   const response = await fetch(`/api/reports/inventory?from=${from}&to=${to}`);
   if (!response.ok) {
     throw new Error(`Failed to fetch inventory data: ${response.statusText}`);
@@ -83,11 +105,19 @@ const fetchInventoryData = async (from: string, to: string): Promise<InventoryUs
 /**
  * Formats raw inventory usage data for display in the chart.
  *
- * @function
+ * @remarks
+ * This function formats raw inventory usage data for display in the chart.
+ * It takes the raw inventory usage data and returns the formatted chart data.
+ * 
+ * @example
+ * ```typescript
+ * const inventoryChartData = formatChartData(inventoryData);
+ * ```
+ * 
  * @param {InventoryUsageData[]} usageData - The raw inventory usage data.
  * @returns {InventoryChartData} The formatted chart data.
  */
-const formatChartData = (usageData: InventoryUsageData[]): InventoryChartData => {
+export const formatChartData = (usageData: InventoryUsageData[]): InventoryChartData => {
   const labels = usageData.map((item) => item.inventory_name);
   const dataSet = usageData.map((item) => Number(item.total_used));
 
@@ -96,11 +126,15 @@ const formatChartData = (usageData: InventoryUsageData[]): InventoryChartData =>
 
 /**
  * Displays an interactive chart for inventory usage across a date range.
- *
- * @component
+ * 
+ * @remarks 
+ * This component displays an interactive chart for inventory usage across a date range.
+ * It uses the fetchInventoryData function to get the inventory usage data from the backend API.
+ * It then processes the data and displays it in a chart format.
+ * 
  * @returns {JSX.Element} The rendered InventoryUsageChart component.
  */
-const InventoryUsageChart: FC = () => {
+export const InventoryUsageChart: FC = () => {
   const [chartData, setChartData] = useState<InventoryChartData | null>(null);
   const [error, setError] = useState<string | null>(null);
 

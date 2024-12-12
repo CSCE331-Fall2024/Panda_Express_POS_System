@@ -5,7 +5,10 @@
  * The menu data is fetched dynamically from the server, and weather information is also displayed
  * using weather icons based on the current location's weather conditions.
  * 
- * @component
+ * @remarks
+ * This component displays a menu board where users can select items such as combos, sides, and more.
+ * The menu data is fetched dynamically from the server, and weather information is also displayed
+ * using weather icons based on the current location's weather conditions.
  */
 import { FC, useState, useEffect } from 'react';
 import { getUserLocation, getWeatherData } from "@/utils/apiHelpers";
@@ -15,9 +18,22 @@ import { Cloud, Sun, CloudRain, CloudSnow } from "lucide-react";
  * MenuItem Interface
  * Represents a menu item with its properties like ID, price, type, name, image, and description.
  * 
- * @interface
+ * @remarks
+ * This interface defines the structure of a menu item.
+ * 
+ * @property {number} menu_item_id - The unique identifier of the menu item.
+ * @property {number} price - The price of the menu item.
+ * @property {string} item_type - The type of the menu item.
+ * @property {string} name - The name of the menu item.
+ * @property {string} image - The image URL of the menu item.
+ * @property {string} description - The description of the menu item.
+ * 
+ * @example
+ * ```typescript
+ * const menuItem: MenuItem = { menu_item_id: 1, price: 10.99, item_type: 'Combo', name: 'Chicken Combo', image: 'https://example.com/chicken-combo.jpg', description: 'A delicious chicken combo with rice and vegetables.' };
+ * ```
  */
-interface MenuItem {
+export interface MenuItem {
   menu_item_id: number;
   price: number;
   item_type: string;
@@ -30,17 +46,38 @@ interface MenuItem {
  * MenuItems Interface
  * Represents a collection of menu items categorized by their type.
  * 
- * @interface
+* @remarks
+ * This interface defines the structure of a collection of menu items categorized by their type.
+ * 
+ * @property {[key: string]: MenuItem[]} - A map of menu item types to their corresponding items.
+ * 
+ * @example
+ * ```typescript
+ * const menuItems: MenuItems = { 'Combo': [{ menu_item_id: 1, price: 10.99, item_type: 'Combo', name: 'Chicken Combo', image: 'https://example.com/chicken-combo.jpg', description: 'A delicious chicken combo with rice and vegetables.' }], 'Side': [{ menu_item_id: 2, price: 5.99, item_type: 'Side', name: 'Green Salad', image: 'https://example.com/green-salad.jpg', description: 'A fresh green salad with lettuce, tomato, and cucumber.' }] };
+ * ```
  */
-interface MenuItems {
+export interface MenuItems {
   [key: string]: MenuItem[];
 }
 
 /**
  * Weather icons mapping
  * Maps weather conditions to corresponding icons using Lucide icons.
+ * 
+ * @remarks
+ * This constant maps weather conditions to corresponding icons using Lucide icons.
+ * 
+ * @property {string} clear - The icon for clear weather.
+ * @property {string} clouds - The icon for cloudy weather.
+ * @property {string} rain - The icon for rainy weather.
+ * @property {string} snow - The icon for snowy weather.
+ * 
+ * @example
+ * ```typescript
+ * const weatherIcons = { clear: <Sun className="h-6 w-6" />, clouds: <Cloud className="h-6 w-6" />, rain: <CloudRain className="h-6 w-6" />, snow: <CloudSnow className="h-6 w-6" /> };
+ * ```
  */
-const weatherIcons = {
+export const weatherIcons = {
   clear: <Sun className="h-6 w-6" />,
   clouds: <Cloud className="h-6 w-6" />,
   rain: <CloudRain className="h-6 w-6" />,
@@ -51,9 +88,12 @@ const weatherIcons = {
  * Menuboard Functional Component
  * Renders the menu board and displays weather information based on the user's location.
  * 
+ * @remarks 
+ * This component renders the menu board and displays weather information based on the user's location.
+ * 
  * @returns {JSX.Element} The rendered Menuboard component.
  */
-const Menuboard: FC = () => {
+export const Menuboard: FC = () => {
   /**
    * State to store menu items categorized by type.
    * @state

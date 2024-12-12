@@ -1,8 +1,17 @@
 /**
- * @fileoverview This file contains the `OrderSuccess` component which displays a success message
- * after a successful order payment. It includes a button to navigate back to the home page.
+ * This component renders a success message for the user after a successful order payment.
+ * It includes a button that redirects the user to the home page.
+ *
+ * @example
+ * // To use this component, simply import and include it in your Next.js page
+ * import OrderSuccess from 'path/to/OrderSuccess';
+ *
+ * function MyApp() {
+ *   return <OrderSuccess />;
+ * }
+ *
+ * @returns {JSX.Element} The rendered component.
  */
-
 import { useRouter } from "next/router"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -10,8 +19,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 /**
  * `OrderSuccess` component renders a success message for the user after a successful order payment.
  * It includes a button that redirects the user to the home page.
- *
- * @component
+ * 
+ * @remarks
+ * This component renders a success message for the user after a successful order payment.
+ * It includes a button that redirects the user to the home page.
+ * 
  * @example
  * return (
  *   <OrderSuccess />

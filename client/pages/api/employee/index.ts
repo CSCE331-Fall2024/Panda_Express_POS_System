@@ -1,6 +1,21 @@
+/**
+ * API endpoint for managing employees.
+ * 
+ * @remarks
+ * This endpoint allows fetching and creating employees.
+ * 
+ * @param {NextApiRequest} req - The request object.
+ * @param {NextApiResponse} res - The response object.
+ * @returns {Promise<void>}
+ */
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Pool } from 'pg';
 
+/**
+ * Represents the database connection pool.
+ * 
+ * @type {Pool}
+ */
 const pool = new Pool({
   user: process.env.PSQL_USER,
   host: process.env.PSQL_HOST,
@@ -10,6 +25,13 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false },
 });
 
+/**
+ * Handles the API request for managing employees.
+ * 
+ * @param {NextApiRequest} req - The request object.
+ * @param {NextApiResponse} res - The response object.
+ * @returns {Promise<void>}
+ */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     try {
