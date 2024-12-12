@@ -120,10 +120,6 @@
  * 
  * @module ServerApplication
  */
-
-
-
-
 require('dotenv').config();
 const express = require('express');
 const passport = require('passport');
@@ -155,7 +151,7 @@ app.use(
  * 
  * @type {Pool}
  */
-export const pool = new Pool({
+const pool = new Pool({
    user: process.env.PSQL_USER,
    host: process.env.PSQL_HOST,
    database: process.env.PSQL_DATABASE,
