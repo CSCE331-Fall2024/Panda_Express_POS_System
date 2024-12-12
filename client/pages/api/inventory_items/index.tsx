@@ -14,7 +14,7 @@ import { Pool } from 'pg';
 /**
  * PostgreSQL connection pool.
  */
-const pool = new Pool({
+export const pool = new Pool({
   user: process.env.PSQL_USER,
   host: process.env.PSQL_HOST,
   database: process.env.PSQL_DATABASE,

@@ -1,6 +1,10 @@
 /**
- * @fileoverview Login page component for Panda Express management system
- * @module LoginPage
+ * Login page component for the Panda Express management system.  
+ * 
+ * @remarks
+ * This component handles user authentication, weather display, and theme switching.
+ * It also fetches and displays local weather information and supports dark/light theme switching.
+ * 
  */
 
 import React, { useState, useEffect } from 'react';
@@ -25,7 +29,6 @@ export interface WeatherData {
 
 /**
  * Mapping of weather conditions to their corresponding Lucide icons
- * @const
  */
 export const weatherIcons = {
   /** Sun icon for clear weather */

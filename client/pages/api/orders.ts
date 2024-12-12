@@ -1,4 +1,10 @@
-// pages/api/orders.ts
+/**
+ * API endpoint for managing orders in the database.
+ * 
+ * @param {NextApiRequest} req - The request object.
+ * @param {NextApiResponse} res - The response object.
+ * @returns {Promise<void>}
+ */
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Pool } from 'pg';
 

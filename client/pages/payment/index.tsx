@@ -1,8 +1,10 @@
 /**
- * @fileoverview PaymentScreen component that provides options for payment methods.
- * Users can choose to pay here, pay at the counter, or cancel the order.
+ * PaymentScreen component for displaying payment options.
  * 
- * @package
+ * @remarks
+ * This component allows users to choose between paying here, paying at the counter, or canceling the order.
+ * 
+ * @returns {JSX.Element} The rendered component.
  */
 
 import { useRouter } from "next/router"

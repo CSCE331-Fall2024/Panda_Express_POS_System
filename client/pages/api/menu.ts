@@ -1,4 +1,13 @@
-// pages/api/menu.ts
+/**
+ * API endpoint for fetching menu items.
+ * 
+ * @remarks
+ * This endpoint allows fetching menu items from the database.
+ * 
+ * @param {NextApiRequest} req - The request object.
+ * @param {NextApiResponse} res - The response object.
+ * @returns {Promise<void>}
+ */
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Pool } from 'pg';
 

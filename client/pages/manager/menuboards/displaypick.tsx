@@ -33,6 +33,7 @@ export const ManagerReports: FC = () => {
    */
   const [translations, setTranslations] = useState<{ [key: string]: string }>({});
 
+  
   /**
    * @constant {string[]} staticTexts - Array of static texts used in the component.
    */
@@ -87,13 +88,7 @@ export const ManagerReports: FC = () => {
     localStorage.setItem('language', language);
   }, [language]);
 
-  /**
-   * Translation helper function.
-   *
-   * @function
-   * @param {string} text - The text to translate.
-   * @returns {string} The translated text if available; otherwise, the input text.
-   */
+
   const t = (text: string) => translations[text] || text;
 
   return (
