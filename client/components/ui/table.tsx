@@ -1,3 +1,11 @@
+/**
+ * Represents a table component.
+ * 
+ * @remarks
+ * This component provides a table with customizable styles.
+ * 
+ * @returns {JSX.Element} The rendered table component.
+ */
 import { forwardRef, HTMLAttributes, TdHTMLAttributes, ThHTMLAttributes } from "react"
 import { cn } from "@/lib/utils"
 

@@ -1,14 +1,37 @@
+/**
+ * Represents a theme context component.
+ * 
+ * @remarks
+ * This component provides a theme context with day and night themes.
+ * 
+ * @returns {JSX.Element} The rendered theme context component.
+ */
 import { FC, createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
 type Theme = 'day' | 'night';
 
-interface ThemeContextProps {
+/**
+ * Represents the theme context properties.
+ * 
+ * @interface
+ * @property {Theme} theme - The current theme.
+ * @property {() => void} toggleTheme - The function to toggle the theme.
+ */
+export interface ThemeContextProps {
   theme: Theme;
   toggleTheme: () => void;
 }
 
 const ThemeContext = createContext<ThemeContextProps | undefined>(undefined);
 
+/**
+ * Represents the theme provider component.
+ * 
+ * @remarks
+ * This component provides a theme context with day and night themes.
+ * 
+ * @returns {JSX.Element} The rendered theme provider component.
+ */
 export const ThemeProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useState<Theme>('day'); // Default to 'day'
 
@@ -52,6 +75,14 @@ export const ThemeProvider: FC<{ children: ReactNode }> = ({ children }) => {
   );
 };
 
+/**
+ * Represents a hook to use the theme context.
+ * 
+ * @remarks
+ * This hook provides access to the theme context.
+ * 
+ * @returns {ThemeContextProps} The theme context properties.
+ */
 export const useTheme = (): ThemeContextProps => {
   const context = useContext(ThemeContext);
   if (!context) {

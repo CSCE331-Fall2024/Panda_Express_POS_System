@@ -1,3 +1,11 @@
+/**
+ * Represents a menu display component.
+ * 
+ * @remarks
+ * This component provides a menu display with customizable styles.
+ * 
+ * @returns {JSX.Element} The rendered menu display component.
+ */
 import { FC } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';

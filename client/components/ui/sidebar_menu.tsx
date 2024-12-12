@@ -1,3 +1,11 @@
+/**
+ * Represents a sidebar menu component.
+ * 
+ * @remarks
+ * This component provides a sidebar menu with a logout button.
+ * 
+ * @returns {JSX.Element} The rendered sidebar menu component.
+ */
 import { FC } from 'react';
 import { useRouter } from 'next/router';
 import { LogOut } from 'lucide-react';

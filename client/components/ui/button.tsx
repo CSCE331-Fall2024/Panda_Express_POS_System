@@ -1,3 +1,11 @@
+/**
+ * Represents a button component.
+ * 
+ * @remarks
+ * This component provides a styled button with various variants and sizes.
+ * 
+ * @returns {JSX.Element} The rendered button component.
+ */
 import { ButtonHTMLAttributes, forwardRef } from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"

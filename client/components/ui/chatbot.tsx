@@ -1,3 +1,11 @@
+/**
+ * Represents a chatbot component.
+ * 
+ * @remarks
+ * This component provides a chatbot interface with customizable styles.
+ * 
+ * @returns {JSX.Element} The rendered chatbot component.
+ */
 import { FC, useState, useEffect, useRef } from 'react';
 
 // Define the message type

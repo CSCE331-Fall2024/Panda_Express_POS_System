@@ -1,3 +1,11 @@
+/**
+ * Represents a header component.
+ * 
+ * @remarks
+ * This component provides a header with a title and a subtitle.
+ * 
+ * @returns {JSX.Element} The rendered header component.
+ */
 import { FC } from 'react';
 
 interface HeaderProps {

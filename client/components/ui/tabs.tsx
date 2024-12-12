@@ -1,3 +1,11 @@
+/**
+ * Represents a tabs component.
+ * 
+ * @remarks
+ * This component provides a tabs interface with customizable styles.
+ * 
+ * @returns {JSX.Element} The rendered tabs component.
+ */
 import { ComponentPropsWithoutRef, ElementRef, forwardRef } from "react"
 import { Content, List, Root, Trigger } from "@radix-ui/react-tabs"
 import { cn } from "@/lib/utils"

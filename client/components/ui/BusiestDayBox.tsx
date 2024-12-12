@@ -1,17 +1,41 @@
+/**
+ * Represents the busiest days overview component.
+ * 
+ * @remarks
+ * This component displays the busiest days based on sales data.
+ * 
+ * @returns {JSX.Element} The rendered component.
+ */
 import {FC, CSSProperties} from 'react';
 
-interface BusiestDay {
+/**
+ * Represents the busiest days overview component.
+ * 
+ * @remarks
+ * This component displays the busiest days based on sales data.
+ * 
+ * @returns {JSX.Element} The rendered component.
+ */
+export interface BusiestDay {
   period: string;
   date: string;
   day: string;
   total_sales: number;
 }
 
-interface BusiestDaysBoxProps {
+export interface BusiestDaysBoxProps {
   busiestDaysData: BusiestDay[];
 }
 
-const BusiestDaysBox: FC<BusiestDaysBoxProps> = ({ busiestDaysData }) => {
+/**
+ * Represents the busiest days overview component.
+ * 
+ * @remarks
+ * This component displays the busiest days based on sales data.
+ * 
+ * @returns {JSX.Element} The rendered component.
+ */
+export const BusiestDaysBox: FC<BusiestDaysBoxProps> = ({ busiestDaysData }) => {
   return (
     <div
       style={{

@@ -1,3 +1,11 @@
+/**
+ * Represents a separator component.
+ * 
+ * @remarks
+ * This component provides a separator with customizable styles.
+ * 
+ * @returns {JSX.Element} The rendered separator component.
+ */
 import { ComponentPropsWithoutRef, ElementRef, forwardRef } from "react"
 import { Root } from "@radix-ui/react-separator"
 import { cn } from "@/lib/utils"

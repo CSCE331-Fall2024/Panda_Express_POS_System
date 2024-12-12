@@ -1,3 +1,11 @@
+/**
+ * Represents an input component.
+ * 
+ * @remarks
+ * This component provides a styled input field with various styles.
+ * 
+ * @returns {JSX.Element} The rendered input component.
+ */
 import { ComponentProps, forwardRef } from "react"
 import { cn } from "@/lib/utils"
 

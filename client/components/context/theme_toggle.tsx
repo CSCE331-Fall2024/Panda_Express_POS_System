@@ -1,7 +1,15 @@
+/**
+ * Represents a theme toggle component.
+ * 
+ * @remarks
+ * This component provides a toggle button to switch between day and night themes.
+ * 
+ * @returns {JSX.Element} The rendered theme toggle component.
+ */
 import { FC } from 'react';
 import { useTheme } from '@/components/context/theme_context'; 
 
-const ThemeToggle: FC = () => {
+export const ThemeToggle: FC = () => {
   const { theme, toggleTheme } = useTheme();
 
   return (

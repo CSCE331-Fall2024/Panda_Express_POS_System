@@ -1,3 +1,11 @@
+/**
+ * Represents a scroll area component.
+ * 
+ * @remarks
+ * This component provides a scrollable area with customizable styles.
+ * 
+ * @returns {JSX.Element} The rendered scroll area component.
+ */
 import { ComponentPropsWithoutRef, ElementRef, forwardRef } from "react"
 import {Corner, Root, ScrollAreaScrollbar, ScrollAreaThumb, Viewport} from "@radix-ui/react-scroll-area"
 import { cn } from "@/lib/utils"

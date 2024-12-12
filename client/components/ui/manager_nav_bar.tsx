@@ -1,3 +1,11 @@
+/**
+ * Represents a manager navigation bar component.
+ * 
+ * @remarks
+ * This component provides a navigation bar for the manager mode.
+ * 
+ * @returns {JSX.Element} The rendered manager navigation bar component.
+ */
 import { CSSProperties, FC, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 

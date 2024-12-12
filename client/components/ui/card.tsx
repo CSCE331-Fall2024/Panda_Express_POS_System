@@ -1,3 +1,11 @@
+/**
+ * Represents a card component.
+ * 
+ * @remarks
+ * This component provides a styled card with various sections.
+ * 
+ * @returns {JSX.Element} The rendered card component.
+ */
 import {forwardRef, HTMLAttributes} from "react"
 
 import { cn } from "@/lib/utils"

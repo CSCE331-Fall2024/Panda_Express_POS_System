@@ -1,3 +1,11 @@
+/**
+ * Represents an editable table component.
+ * 
+ * @remarks
+ * This component provides a table with editable cells.
+ * 
+ * @returns {JSX.Element} The rendered editable table component.
+ */
 import { CSSProperties, useState } from "react";
 
 // Base types and interfaces
