@@ -1,4 +1,129 @@
-// server.js
+/**
+ * 
+ * 
+ * Main Express.js server application for restaurant management system for Panda Express, using Google OAuth2 for authentication, Google Translate API for translation, OpenWeatherMap API for weather data, PostgreSQL for database, and Express.js for web server.
+ * 
+ * Server Configuration and Initialization
+ * 
+ * This file sets up an Express.js server with the following key features:
+ * - Google OAuth2 Authentication
+ * - PostgreSQL Database Connection
+ * - Session Management
+ * - API Endpoints for various functionalities
+ * 
+ * @key-dependencies
+ * - Express.js for web server
+ * - Passport.js for authentication
+ * - PostgreSQL for database
+ * - Google OAuth for authentication
+ * 
+ * @configuration-requirements
+ * - .env file with following variables:
+ *   - PSQL_USER, PSQL_HOST, PSQL_DATABASE, PSQL_PASSWORD, PSQL_PORT
+ *   - GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_CLIENT_CALLBACK_URL
+ *   - SESSION_SECRET
+ *   - NEXT_PUBLIC_FRONTEND_BASE_URL
+ * 
+ * @main-endpoints
+ * - /api/auth/google - Initiates Google OAuth authentication
+ * - /api/auth/google/callback - OAuth callback handler
+ * - /api/translate - Handles text translations
+ * - /api/orders - Retrieves order information
+ * - /api/weather - Fetches weather data
+ * - /api/login - Handles staff login
+ * 
+ * @authentication-flow
+ * 1. User initiates login via /api/auth/google
+ * 2. Google OAuth validates user
+ * 3. Server checks user in staff database
+ * 4. Redirects to frontend with staff details
+ * 
+ * 
+ *  * Authentication Strategy
+ * 
+ * Implements Google OAuth strategy for staff authentication
+ * Validates user against internal staff database
+ * 
+ * strategy GoogleStrategy
+ * @authentication-process
+ * - Verify Google email against staff database
+ * - Extract staff_id and position
+ * - Create user session
+ * 
+ * 
+ * Translation Endpoint
+ * 
+ * Provides server-side translation using Google Translate API
+ * 
+ * endpoint /api/translate
+ * method POST
+ * @param {string[]} texts - Array of texts to translate
+ * @param {string} targetLanguage - Target language code
+ * @returns {Object} Translated texts
+ * 
+ * @error-handling
+ * - Validates input parameters
+ * - Handles API key configuration
+ * - Manages translation service errors
+ * 
+ * 
+ * 
+ * Orders Endpoint
+ * 
+ * Retrieves order information with optional filtering
+ * 
+ * endpoint /api/orders
+ * method GET
+ * @query-params 
+ * - year: Filter orders by year
+ * - month: Filter orders by month
+ * - day: Filter orders by day
+ * 
+ * @returns {Object} Orders matching filter criteria
+ * 
+ * @filtering-capabilities
+ * - Supports granular date-based filtering
+ * - Sorts results chronologically
+ * 
+ * Weather Endpoint
+ * 
+ * Fetches weather data for given coordinates
+ * 
+ * endpoint /api/weather
+ * method GET
+ * @query-params
+ * - lat: Latitude
+ * - lon: Longitude
+ * 
+ * @returns {Object} Current weather information
+ * 
+ * @external-api OpenWeatherMap
+ * supports Fahrenheit and Celsius units
+
+ * Login Endpoint
+ * 
+ * Handles staff authentication via username/password
+ * 
+ * endpoint /api/login
+ * method POST
+ * @body-params
+ * - username: Staff username
+ * - password: Staff password
+ * 
+ * @authentication-process
+ * - Verify credentials against staff database
+ * - Determine user role (Manager/Cashier)
+ * 
+ * @returns {Object} User role and staff ID
+ * @throws {401} Unauthorized if credentials invalid
+ * 
+ * 
+ * @module ServerApplication
+ */
+
+
+
+
 require('dotenv').config();
 const express = require('express');
 const passport = require('passport');
@@ -22,8 +147,15 @@ app.use(
   })
 );
 
-// PostgreSQL pool setup
-const pool = new Pool({
+/**
+ * Database Configuration
+ * 
+ * Configures PostgreSQL connection pool with SSL support
+ * Uses environment variables for secure configuration
+ * 
+ * @type {Pool}
+ */
+export const pool = new Pool({
    user: process.env.PSQL_USER,
    host: process.env.PSQL_HOST,
    database: process.env.PSQL_DATABASE,
@@ -82,82 +214,6 @@ passport.use(new GoogleStrategy({
 }));
 
 
-// Configure the OAuth2 Strategy
-// passport.use(
-//  new OAuth2Strategy(
-//    {
-//      authorizationURL: 'https://accounts.google.com/o/oauth2/auth',
-//      tokenURL: 'https://oauth2.googleapis.com/token',
-//      clientID: process.env.GOOGLE_CLIENT_ID,
-//      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-//      callbackURL: process.env.GOOGLE_CLIENT_CALLBACK_URL,
-//    },
-//    async (accessToken, refreshToken, profile, done) => {
-//      try {
-//        // Fetch user info using the access token
-//        const response = await axios.get(
-//          'https://www.googleapis.com/oauth2/v1/userinfo',
-//          {
-//            headers: {
-//              Authorization: `Bearer ${accessToken}`,
-//            },
-//          }
-//        );
-
-
-//        const email = response.data.email;
-//        console.log('User email:', email);
-
-
-//        // Query database to find the user
-//        const query = 'SELECT staff_id, position FROM staff WHERE google_id = $1';
-//        const result = await pool.query(query, [email]);
-
-
-//        if (result.rows.length === 0) {
-//          console.log('User not found in the database.');
-//          return done(null, false, { message: 'User not found in the database.' });
-//        }
-
-
-//        const user = result.rows[0];
-//        console.log('User authenticated:', user);
-//        return done(null, user);
-//      } catch (error) {
-//        console.error('Error fetching user info or querying the database:', error);
-//        return done(error);
-//      }
-//    }
-//  )
-// );
-// Start OAuth2 flow
-// app.get('/api/auth/google', (req, res, next) => {
-//  passport.authenticate('oauth2', {
-//    scope: ['email', 'profile'],
-//    state: crypto.randomBytes(32).toString('hex'), // Use state to prevent CSRF
-//  })(req, res, next);
-// });
-
-
-// // OAuth2 callback
-// app.get(
-//  '/api/auth/google/callback',
-//  passport.authenticate('oauth2', {
-//    failureRedirect: '/?error=authentication_failed',
-//  }),
-//  (req, res) => {
-//    if (!req.user) {
-//      return res.redirect('/?error=User not found');
-//    }
-
-
-//    const baseUrl =
-//      process.env.NEXT_PUBLIC_FRONTEND_BASE_URL || 'https://project-3-team-0b.onrender.com';
-//    const redirectUrl = `${baseUrl}/login?staff_id=${req.user.staff_id}&role=${req.user.position.toLowerCase()}`;
-//    res.redirect(redirectUrl);
-//  }
-// );
-
 
 passport.serializeUser((user, done) => {
  done(null, user.staff_id);
@@ -175,63 +231,6 @@ passport.deserializeUser(async (id, done) => {
 
 
 
-
-
-// // Home route for OAuth authorization
-// app.get('/', (req, res) => {
-//   const state = crypto.randomBytes(32).toString('hex');
-//   req.session.state = state;
-
-
-//   const authorizationUrl = oauth2Client.generateAuthUrl({
-//     access_type: 'offline',
-//     scope: scopes,
-//     include_granted_scopes: true,
-//     state: state
-//   });
-
-
-//   res.redirect(authorizationUrl);
-// });
-// // OAuth2 callback route
-// app.get('/oauth2callback', async (req, res) => {
-//   const { code, state } = req.query;
-
-
-//   if (state !== req.session.state) {
-//     return res.status(403).send('State mismatch. Possible CSRF attack.');
-//   }
-
-
-//   try {
-//     const { tokens } = await oauth2Client.getToken(code);
-//     oauth2Client.setCredentials(tokens);
-//     userCredential = tokens;
-
-
-//     res.send('Authorization successful. You can now access the app.');
-//   } catch (error) {
-//     console.error('Error during OAuth callback:', error);
-//     res.status(500).send('Error during OAuth callback.');
-//   }
-// });
-
-
-
-
-// // Passport session initialization
-// app.use(passport.session());
-
-
-// // Serialize and deserialize user
-// passport.serializeUser((user, done) => {
-//     done(null, user);
-// });
-
-
-// passport.deserializeUser((user, done) => {
-//     done(null, user);
-// });
 
 
 // Endpoint to start Google OAuth2 authentication
@@ -420,7 +419,6 @@ app.get('/api/weather', async (req, res) => {
 });
 
 
-// Example login endpoint
 app.post('/api/login', async (req, res) => {
    const { username, password } = req.body;
    console.log('Received login request:', { username, password });
