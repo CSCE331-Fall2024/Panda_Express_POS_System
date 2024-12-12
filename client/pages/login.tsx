@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Login page component for Panda Express management system
+ * @module LoginPage
+ */
+
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useUser } from '@/components/ui/user_context';
@@ -7,57 +12,101 @@ import { Cloud, Sun, CloudRain, CloudSnow, X } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from 'lucide-react';
 
-const weatherIcons = {
+/**
+ * Weather data interface for component state
+ * @interface
+ */
+export interface WeatherData {
+  /** Temperature in Fahrenheit */
+  temperature?: number;
+  /** Text description of weather conditions */
+  description?: string;
+}
+
+/**
+ * Mapping of weather conditions to their corresponding Lucide icons
+ * @const
+ */
+export const weatherIcons = {
+  /** Sun icon for clear weather */
   clear: <Sun className="h-6 w-6" />,
+  /** Cloud icon for cloudy weather */
   clouds: <Cloud className="h-6 w-6" />,
+  /** Rain cloud icon for rainy weather */
   rain: <CloudRain className="h-6 w-6" />,
+  /** Snow cloud icon for snowy weather */
   snow: <CloudSnow className="h-6 w-6" />,
 };
 
-// Reusable Error Popup Component
-const ErrorPopup: React.FC<{ message: string; onClose: () => void }> = ({ message, onClose }) => {
+/**
+ * Props interface for the ErrorPopup component
+ * @interface
+ */
+export interface ErrorPopupProps {
+  /** Error message to display */
+  message: string;
+  /** Callback function to close the popup */
+  onClose: () => void;
+}
+
+/**
+ * A reusable error popup component that displays error messages in a modal overlay
+ * 
+ * @param props - The component props
+ * @returns A modal component with error message and close button
+ */
+export const ErrorPopup: React.FC<ErrorPopupProps> = ({ message, onClose }) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
-      {/* Overlay */}
       <div
         className="absolute inset-0 bg-black opacity-50"
         onClick={onClose}
       ></div>
       
-      {/* Popup Content */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg z-10 max-w-sm w-full p-6 relative">
-        {/* Close Button */}
         <button
           onClick={onClose}
           className="absolute top-2 right-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
         >
           <X className="h-5 w-5" />
         </button>
-        {/* Icon */}
         <div className="flex justify-center mb-4">
           <CloudRain className="h-8 w-8 text-red-500" />
         </div>
-        {/* Message */}
         <p className="text-center text-red-500 dark:text-red-400">{message}</p>
       </div>
     </div>
   );
 };
 
-const LoginPage: React.FC = () => {
+/**
+ * Main login page component for the Panda Express management system
+ * Handles user authentication, weather display, and theme switching
+ * 
+ * @remarks
+ * This component manages both traditional login and Google OAuth authentication.
+ * It also fetches and displays local weather information and supports dark/light theme switching.
+ * 
+ * @returns The login page component with authentication form and weather display
+ */
+export const LoginPage: React.FC = () => {
   const router = useRouter();
   const { setUser } = useUser();
   const { theme } = useTheme();
+  
+  /**
+   * State for form inputs and UI control
+   */
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [weather, setWeather] = useState<{ temperature?: number; description?: string } | null>(null);
-
-  // State for error popup
+  const [weather, setWeather] = useState<WeatherData | null>(null);
   const [showErrorPopup, setShowErrorPopup] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch weather data based on the user's location
+  /**
+   * Fetches weather data based on user's geolocation
+   */
   useEffect(() => {
     const fetchWeatherForLocation = async () => {
       try {
@@ -70,14 +119,16 @@ const LoginPage: React.FC = () => {
         }
       } catch (error) {
         console.error('Error fetching weather or location:', error);
-        // setError('Unable to fetch weather data.');
       }
     };
 
     fetchWeatherForLocation();
   }, []);
 
-  // Determine the appropriate weather icon based on description
+  /**
+   * Determines the appropriate weather icon based on weather description
+   * @returns The corresponding weather icon component or null
+   */
   const getWeatherIcon = () => {
     if (!weather?.description) return null;
     const description = weather.description.toLowerCase();
@@ -87,15 +138,20 @@ const LoginPage: React.FC = () => {
     if (description.includes('rain')) return weatherIcons.rain;
     if (description.includes('snow')) return weatherIcons.snow;
 
-    return <Cloud className="h-6 w-6" />; // Default icon
+    return <Cloud className="h-6 w-6" />;
   };
 
-  // Toggle dark mode based on the theme
+  /**
+   * Updates document theme based on theme context
+   */
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "night");
   }, [theme]);
 
-  // Handle user login
+  /**
+   * Handles the login form submission
+   * @param e - Form submission event
+   */
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -108,46 +164,38 @@ const LoginPage: React.FC = () => {
         body: JSON.stringify({ username, password }),
       });
 
-      // Parse the response once
       const data = await response.json();
 
       if (!response.ok) {
-        // If response is not ok, set the error message and show popup
         const message = data.message || 'Login failed. Please try again.';
         setError(message);
-        // setErrorMessage(message);
-        // setShowErrorPopup(true);
-        return; // Exit the function early
+        return;
       }
-
-      console.log('Login response data:', data);
       
       setUser({ role: data.role });
       if (data.role) {
         sessionStorage.setItem('staff_id', data.staff_id);
-        console.log(sessionStorage.getItem('staff_id'));
 
         if (data.role === 'cashier') router.push('/cashier');
         else if (data.role === 'manager') router.push('/manager');
       } else { 
         setError('Unauthorized role');
-        // setErrorMessage('Unauthorized role');
-        // setShowErrorPopup(true);
       }
     } catch (err: any) {
-      // console.error('Login error:', err);
-      // setErrorMessage(err.message || 'Network error or server not reachable');
-      // setShowErrorPopup(true);
       setError(err.message || 'Network error or server not reachable');
     }
   };
 
-  // Handle Google login
+  /**
+   * Initiates Google OAuth login flow
+   */
   const handleGoogleLogin = () => {
     window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/auth/google`;
   };
 
-  // Handle URL parameters for staff_id, role, and error
+  /**
+   * Processes URL parameters for OAuth callback
+   */
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const staff_id = urlParams.get('staff_id');
@@ -187,9 +235,6 @@ const LoginPage: React.FC = () => {
         overflow: 'hidden'
       }}
     >
-      {/* Dim Overlay */}
-
-      {/* Full-Width Navbar */}
       <nav
         style={{
           backgroundColor: 'var(--primary)',
@@ -204,14 +249,12 @@ const LoginPage: React.FC = () => {
           zIndex: 1
         }}
       >
-        {/* Panda Express Logo aligned to the left */}
         <img
           src="https://s3.amazonaws.com/PandaExpressWebsite/Responsive/img/home/logo.png"
           alt="Panda Express Logo"
           style={{ width: '80px' }}
         />
-
-        {/* Menu Text */}          
+        
         <a 
           href="/" 
           style={{ 
@@ -226,18 +269,17 @@ const LoginPage: React.FC = () => {
         >
           <span style={{ fontWeight: 'bold' }}>Home</span>
         </a>
-        {/* Weather Data */}
+
         {weather && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-              {getWeatherIcon()} {/* Weather icon */}
-              <span>
-                {weather.temperature !== undefined ? `${Math.round(weather.temperature)}°F` : 'N/A'}
-              </span>
-            </div>
-          )}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            {getWeatherIcon()}
+            <span>
+              {weather.temperature !== undefined ? `${Math.round(weather.temperature)}°F` : 'N/A'}
+            </span>
+          </div>
+        )}
       </nav>
 
-      {/* Login Box - Spans Full Screen Width */}
       <div
         style={{
           display: 'flex',
@@ -247,21 +289,21 @@ const LoginPage: React.FC = () => {
           marginTop: '60px',
           width: '100%',
           maxWidth: '400px',
-          backgroundColor: 'rgba(255, 255, 255, 0.75)', // Slight white background for readability
+          backgroundColor: 'rgba(255, 255, 255, 0.75)',
           borderRadius: '8px',
           position: 'relative',
           zIndex: 2
         }}
       >
-        {/* Content Box */}
         <div style={{ textAlign: 'center', padding: '20px', width: '100%' }}>
           <img
             src="https://s3.amazonaws.com/PandaExpressWebsite/www/px-enrollment-2023-hero-logo.svg"
             alt="Panda Rewards Logo"
             style={{ width: '200px', marginBottom: '20px', display: 'block', marginLeft: 'auto', marginRight: 'auto' }}
           />
-          {/* <h2 className="font-bold" style={{ fontSize: '22px', color: 'var(--primary)', margin: 0 }}>GOOD FORTUNE AWAITS</h2> */}
-          <p style={{fontSize: '18px', marginBottom: '10px'}} className="text-sm text-center font-semibold">Log in below to get started.</p>
+          <p style={{fontSize: '18px', marginBottom: '10px'}} className="text-sm text-center font-semibold">
+            Log in below to get started.
+          </p>
           
           {error && (
             <Alert variant="destructive" className="mb-4">
@@ -271,7 +313,6 @@ const LoginPage: React.FC = () => {
             </Alert>
           )}
 
-          {/* Form */}
           <form onSubmit={handleLogin}>
             <input
               type="text"
@@ -288,7 +329,7 @@ const LoginPage: React.FC = () => {
               }}
             />
             <input
-              type="password" // Corrected input type from " word" to "password"
+              type="password"
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -308,6 +349,7 @@ const LoginPage: React.FC = () => {
               SIGN IN
             </button>
           </form>
+
           <button
             onClick={handleGoogleLogin}
             style={{
@@ -337,7 +379,7 @@ const LoginPage: React.FC = () => {
           </button>
         </div>
       </div>
-      {/* Render Error Popup */}
+
       {showErrorPopup && (
         <ErrorPopup 
           message={errorMessage} 
