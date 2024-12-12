@@ -12,7 +12,15 @@ interface HeaderProps {
   mode: string;
 }
 
-const Header: FC<HeaderProps> = ({ }) => (
+/**
+ * Header component.
+ * 
+ * @remarks
+ * This component provides a header with a title and a subtitle.
+ * 
+ * @returns {JSX.Element} The rendered header component.
+ */
+export const Header: FC<HeaderProps> = ({ }) => (
   <header>
     <h1 className="text-3xl font-bold text-primary" 
         style={{

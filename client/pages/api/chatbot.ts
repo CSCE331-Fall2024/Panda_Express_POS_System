@@ -1,5 +1,13 @@
-// pages/api/chatbot.ts
-
+/**
+ * API endpoint for processing user messages and returning responses.
+ * 
+ * @remarks
+ * This endpoint allows processing user messages and returning responses.
+ * 
+ * @param {NextApiRequest} req - The request object.
+ * @param {NextApiResponse} res - The response object.
+ * @returns {Promise<void>}
+ */
 import { NextApiRequest, NextApiResponse } from 'next';
 
 /**

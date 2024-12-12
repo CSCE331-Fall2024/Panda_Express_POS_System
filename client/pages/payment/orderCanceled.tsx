@@ -16,6 +16,16 @@ import { useRouter } from "next/router"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
+/**
+ * OrderCanceled component.
+ * 
+ * @remarks
+ * This component provides a page that informs the user that their order has been canceled.
+ * It displays a card with a message and a button to return to the home page.
+ * 
+ * 
+ * @returns {JSX.Element} The rendered component.
+ */
 export default function OrderCanceled() {
   const router = useRouter()
   return (

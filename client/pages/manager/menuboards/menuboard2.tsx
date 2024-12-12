@@ -1,6 +1,10 @@
 /**
- * @fileoverview Menu board display component for Panda Express
- * @module Menuboard
+ * Menuboard component for displaying menu items and weather information.
+ * 
+ * @remarks
+ * This component provides a visual display of menu items categorized by type,
+ * along with current weather information. It's designed for digital menu boards
+ * in restaurant locations.
  */
 
 import {FC, useEffect, useState } from 'react';
@@ -49,11 +53,7 @@ export interface WeatherData {
   description?: string;
 }
 
-/**
- * Maps weather conditions to their corresponding Lucide icons
- * 
- * @const
- */
+
 export const weatherIcons = {
   /** Sun icon for clear weather */
   clear: <Sun className="h-6 w-6" />,
@@ -68,7 +68,6 @@ export const weatherIcons = {
 /**
  * Menuboard component that displays menu items and weather information
  * 
- * @component
  * @remarks
  * This component provides a visual display of menu items categorized by type,
  * along with current weather information. It's designed for digital menu boards

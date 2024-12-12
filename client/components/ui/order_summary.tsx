@@ -18,7 +18,15 @@ interface OrderSummaryProps {
   onCheckout: () => void;
 }
 
-const OrderSummary: FC<OrderSummaryProps> = ({ order, total, onRemoveFromOrder, onCheckout }) => (
+/**
+ * OrderSummary component.
+ * 
+ * @remarks
+ * This component provides a summary of the order with customizable styles.
+ * 
+ * @returns {JSX.Element} The rendered order summary component.
+ */
+export const OrderSummary: FC<OrderSummaryProps> = ({ order, total, onRemoveFromOrder, onCheckout }) => (
   <Card
     className="w-80"
     style={{

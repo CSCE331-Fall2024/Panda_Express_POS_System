@@ -1,5 +1,10 @@
-// File: pages/api/translate.ts
-
+/**
+ * API endpoint for text translation.
+ * 
+ * @param {NextApiRequest} req - The request object.
+ * @param {NextApiResponse} res - The response object.
+ * @returns {Promise<void>}
+ */
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 type TranslateRequest = {

@@ -31,7 +31,15 @@ export interface EditableTableProps<T extends BaseItem> {
   onAdd: (item: Omit<T, "id">) => void; // Omit the 'id' field from the item
 }
 
-const EditableTable = <T extends BaseItem>({
+/**
+ * EditableTable component.
+ * 
+ * @remarks
+ * This component provides a table with editable cells.
+ * 
+ * @returns {JSX.Element} The rendered editable table component.
+ */
+export const EditableTable = <T extends BaseItem>({
   items,
   columns,
   idField,

@@ -14,13 +14,8 @@
  * // Usage example:
  * <DiningDollarsPayment />
  *
- * @remarks
- * This component uses the Next.js `useRouter` hook for navigation and `useState` and `useEffect` hooks
- * for managing state and side effects. It also interacts with several API endpoints to process payments
- * and create orders.
  *
- * @function
- * @name DiningDollarsPayment
+ * 
  */
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
