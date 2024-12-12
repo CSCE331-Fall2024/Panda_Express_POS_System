@@ -23,6 +23,16 @@ interface UserContextType {
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
+/** 
+ * Provider component that wraps the application with user context
+ * 
+ * @remarks
+ * This component provides information regarding the staff using the POS system. 
+ * Information provided includes details of their respective roles and their uniquely
+ * assigned staff id.
+ * 
+ * @returns {JSX.Element} - User context provider with user state and methods
+ */
 export const UserProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<{ 
     id?: number; 
@@ -38,6 +48,13 @@ export const UserProvider: FC<{ children: ReactNode }> = ({ children }) => {
     </UserContext.Provider>
   );
 };
+
+/** 
+ * Custom hook to access user context in child components
+ * 
+ * @throws {Error} - If used outside of a UserProvider
+ * @returns {UserContextType} - The user context with user state and methods
+ */
 
 export const useUser = (): UserContextType => {
   const context = useContext(UserContext);

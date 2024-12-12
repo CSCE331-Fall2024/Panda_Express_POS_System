@@ -39,7 +39,21 @@ const buttonVariants = cva(
     },
   }
 )
-
+/** 
+ * Defines the properties for a customizable Button component.
+ * 
+ * @remarks
+ * Combines standard HTML button attributes with custom variant properties
+ * and an optional child rendering prop. 
+ * 
+ * @extends ButtonHTMLAttributes<HTMLButtonElement>
+ * @extends VariantProps<typeof buttonVariants>
+ * 
+ * @property {boolean} [asChild] - Allows rendering the button when true
+ * @property {React.ButtonHTMLAttributes<HTMLButtonElement>} - Standard HTML button attributes
+ * @property {string} [variant] - Visual style variant of the button
+ * 
+ */
 export interface ButtonProps
   extends ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {

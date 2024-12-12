@@ -10,7 +10,16 @@ import {forwardRef, HTMLAttributes} from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
-
+/**
+ * Generate dynamic CSS classes for Alert component variants using class-variance authority.
+ * 
+ * @remarks
+ * Defines styling variants for different alert types with responsive design.
+ * 
+ * @param {string} baseClasses - Base CSS classes applied to all alert variants
+ * @param {Object} options - Configuration for alert variants
+ * @returns {string} Computed CSS classes based on selected variant
+ */
 export const alertVariants = cva(
   "relative w-full rounded-lg border p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground",
   {

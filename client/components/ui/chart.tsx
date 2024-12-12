@@ -13,7 +13,34 @@ import { cn } from "@/lib/utils"
 
 // Format: { THEME_NAME: CSS_SELECTOR }
 const THEMES = { light: "", dark: ".dark" } as const
-
+/**
+ * Represents the configuration for a chart's data series or elements.
+ * 
+ * @typedef {Object} ChartConfig
+ * @remarks 
+ * Provides flexible configuration for chart elements including 
+ * labels, icons, colors, and theme-specific styling.
+ * 
+ * @property {string} key - The unique identifier for the chart element
+ * @property {React.ReactNode} [label] - Optional display label for the element
+ * @property {React.ComponentType} [icon] - Optional icon component
+ * @property {string} [color] - Optional color for the element (mutually exclusive with theme)
+ * @property {Object} [theme] - Theme-specific styling configuration
+ * 
+ * @example
+ * ```typescript
+ * const config: ChartConfig = {
+ *   revenue: {
+ *     label: "Revenue",
+ *     color: "#3182ce",
+ *     theme: {
+ *       light: "...",
+ *       dark: "..."
+ *     }
+ *   }
+ * }
+ * ```
+ */
 export type ChartConfig = {
   [k in string]: {
     label?: React.ReactNode
