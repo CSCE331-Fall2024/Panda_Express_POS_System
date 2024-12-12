@@ -1,7 +1,5 @@
 {
-  "entryPoints": ["client/pages/manager/manager_employees.tsx", 
-  "client/pages/manager/manager_inventoryitems.tsx", "client/pages/manager/manager_menuitems.tsx",
-  "client/pages/manager/manager_orders.tsx", "client/pages/manager/manager_reports.tsx"],
+  "entryPoints": ["client/pages"],
   "entryPointStrategy": "expand",
   "out": "docs",
   "tsconfig": "./client/tsconfig.json",

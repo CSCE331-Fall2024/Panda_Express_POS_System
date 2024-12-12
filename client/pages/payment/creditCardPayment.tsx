@@ -1,6 +1,13 @@
 /**
- * @file creditCardPayment.tsx
- * @description This file contains the CreditCardPayment component which handles the credit card payment process.
+ * This file is part of the Payment section of the application.
+ * It includes the functionality for processing credit card payments.
+ * 
+ * @remarks
+ * This component handles the credit card payment process.
+ * It retrieves payment details from session storage, processes the payment,
+ * creates an order, and associates menu items with the order.
+ * 
+ * @returns {JSX.Element} The rendered component.
  */
 
 import { useState, useEffect } from "react"
@@ -12,8 +19,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
  * CreditCardPayment component handles the credit card payment process.
  * It retrieves payment details from session storage, processes the payment,
  * creates an order, and associates menu items with the order.
- *
- * @component
+ * 
+ * @remarks 
+ * This component handles the credit card payment process.
+ * It retrieves payment details from session storage, processes the payment,
+ * creates an order, and associates menu items with the order.
+ * 
  * @returns {JSX.Element} The rendered component.
  */
 export default function CreditCardPayment() {

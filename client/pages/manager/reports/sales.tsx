@@ -1,3 +1,12 @@
+/**
+ * Sales Report Component
+ * 
+ * @remarks
+ * This component displays a sales report for a given date range. 
+ * It uses the fetchSalesData function to get the sales data from the backend API.
+ * It then processes the data and displays it in a table format.
+ */
+
 // 'use client'
 import { FC, useState } from 'react'
 import { Calendar } from '@/components/ui/calendar'
@@ -6,7 +15,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {pageStyle, overlayStyle, contentStyle, headingStyle, tableHeaderStyle, tableCellStyle} from '@/utils/tableStyles'
 import BackButton from '@/components/ui/back_button'
 
-const Sales: FC = () => {
+/**
+ * Sales Report Component
+ * 
+ * @remarks
+ * This component displays a sales report for a given date range. 
+ * It uses the fetchSalesData function to get the sales data from the backend API.
+ * It then processes the data and displays it in a table format.
+ */
+export const Sales: FC = () => {
   const [dateRange, setDateRange] = useState<{ from: Date; to: Date | undefined }>({
     from: new Date(),
     to: new Date(),
@@ -14,6 +31,9 @@ const Sales: FC = () => {
   const [salesData, setSalesData] = useState<any[]>([])
   const [loading, setLoading] = useState<boolean>(false)
 
+  /**
+   * Generates a sales report for a given date range.
+   */
   const generateReport = async () => {
     setLoading(true)
     try {

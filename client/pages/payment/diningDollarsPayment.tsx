@@ -3,7 +3,11 @@
  * It retrieves payment details from session storage, processes the payment, creates an order,
  * and associates menu items with the order.
  *
- * @component
+ * @remarks
+ * This component handles the payment process using Dining Dollars.
+ * It retrieves payment details from session storage, processes the payment, creates an order,
+ * and associates menu items with the order.
+ *
  * @returns {JSX.Element} The rendered component.
  *
  * @example

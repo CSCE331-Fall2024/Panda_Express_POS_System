@@ -1,4 +1,3 @@
-// File: components/CustomerKiosk.tsx
 /**
  * CustomerPOS Component
  * 
@@ -6,7 +5,12 @@
  * It fetches menu items dynamically, manages state for order and totals, and supports
  * adding/removing items from the order and navigating to checkout
  * 
- * @component
+ * @remarks
+ * This component provides a Point of Sale interface for customers to place orders.
+ * It fetches menu items dynamically, manages state for order and totals, and supports
+ * adding/removing items from the order and navigating to checkout
+ * 
+ * @returns {JSX.Element} The rendered component.
  */
 import { Button } from "@/components/ui/button";
 import { FC, useEffect, useState } from 'react';
@@ -28,6 +32,10 @@ import { useRouter } from "next/router";
 
 /**
  * Represents a single menu item.
+ * 
+ * @remarks
+ * Represents a single menu item.
+ * 
  * @typedef {Object} MenuItem
  * @property {number} menu_item_id - Unique ID for the menu item.
  * @property {number} price - Price of the menu item.
@@ -36,9 +44,18 @@ import { useRouter } from "next/router";
  * @property {string} description - Description of the menu item.
  * @property {boolean} special - Indicates if the item is special.
  * @property {string} image - URL to the item's image.
+ * 
+ * @example
+ * // To use this component, simply import and include it in your Next.js page
+ * import CustomerKiosk from 'path/to/CustomerKiosk';
+ *
+ * function MyApp() {
+ *   return <CustomerKiosk />;
+ * }
+ * 
+ * @returns {JSX.Element} The rendered component.
  */
-
-interface MenuItem {
+export interface MenuItem {
   menu_item_id: number;
   price: number;
   item_type: string;
@@ -48,17 +65,35 @@ interface MenuItem {
   special: boolean;
 }
 /**
- * Interface representing categorized menu items.
+ * Represents categorized menu items.
  * 
- * @interface
+ * @remarks
+ * Represents categorized menu items.
+ * 
+ * @typedef {Object} MenuItems
+ * @property {[key: string]: MenuItem[]} [key: string] - The key is the category of the menu item.
+ * 
+ * @example
+ * // To use this component, simply import and include it in your Next.js page
+ * import CustomerKiosk from 'path/to/CustomerKiosk';
+ *
+ * function MyApp() {
+ *   return <CustomerKiosk />;
+ * }
+ * 
+ * @returns {JSX.Element} The rendered component.
  */
-interface MenuItems {
+export interface MenuItems {
   [key: string]: MenuItem[];
 }
 /**
  * Icons for weather conditions.
+ * 
+ * 
+ * 
+ * @returns {JSX.Element} The rendered component.
  */
-const weatherIcons = {
+export const weatherIcons = {
   clear: <Sun className="h-6 w-6" />,
   clouds: <Cloud className="h-6 w-6" />,
   rain: <CloudRain className="h-6 w-6" />,
@@ -67,7 +102,7 @@ const weatherIcons = {
 
 // Define category translations
   /** @type {Object<string, string>} Maps categories to their translations. */
-const categoryTranslations: Record<string, Record<string, string>> = {
+export const categoryTranslations: Record<string, Record<string, string>> = {
   en: {
     "Combos": "Combos",
     "Combo": "Combo",

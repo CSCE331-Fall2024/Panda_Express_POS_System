@@ -3,8 +3,10 @@
  * It retrieves payment details from session storage and allows the user to choose a payment method.
  * Upon successful payment, it creates an order and associates menu items with the order.
  * 
- * @component
- * @returns {JSX.Element} The PayAtCounter component.
+ * @remarks
+ * This component handles the payment process at the counter.
+ * It retrieves payment details from session storage and allows the user to choose a payment method.
+ * Upon successful payment, it creates an order and associates menu items with the order.
  * 
  * @example
  * // Usage

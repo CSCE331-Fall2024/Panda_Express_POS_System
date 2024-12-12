@@ -2,8 +2,12 @@
  * This file is part of the menu boards page in the Manager section.
  * It includes the functionality for displaying different menu items and uses
  * hooks like `useState` and `useEffect` to fetch and display data dynamically.
+ * 
+ * @remarks
+ * This component displays a list of menu boards for the manager to select from.
+ * It uses the fetchMenuBoards function to get the menu boards from the backend API.
+ * It then processes the data and displays it in a list format.
  */
-
 import { CSSProperties, FC, useEffect, useState } from 'react';
 import { pageStyle, overlayStyle, contentStyle, headingStyle } from '@/utils/tableStyles';
 import BackButton from '@/components/ui/back_button';
@@ -17,9 +21,8 @@ import ManagerNavBar from '@/components/ui/manager_nav_bar';
  * and toggle language preferences. The language can be toggled between English ('en') 
  * and Spanish ('es'), with translations fetched dynamically if needed.
  * 
- * @component
  */
-const ManagerReports: FC = () => {
+export const ManagerReports: FC = () => {
   /**
    * @state {string} language - The current language ('en' or 'es').
    */

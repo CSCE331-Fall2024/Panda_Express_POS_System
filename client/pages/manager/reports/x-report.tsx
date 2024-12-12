@@ -1,3 +1,12 @@
+/**
+ * X Report Component
+ * 
+ * @remarks
+ * This component displays an X Report for a given date.
+ * It uses the fetchXReport function to get the X Report data from the backend API.
+ * It then processes the data and displays it in a table and chart format.
+ */
+
 'use client'
 
 import React, { useState, useEffect } from 'react'
@@ -8,7 +17,25 @@ import { pageStyle, overlayStyle, contentStyle, headingStyle, tableHeaderStyle }
 import BackButton from '@/components/ui/back_button'
 import ManagerNavBar from '@/components/ui/manager_nav_bar';
 
-interface XReportItem {
+/**
+ * Represents a single item in the X Report with transaction and sales data.
+ * 
+ * @remarks
+ * This interface defines the structure of transaction data for each hour.
+ * 
+ * @property {string} hour - The hour of the day.
+ * @property {number} total_transactions - The total number of transactions for the hour.
+ * @property {number} total_sales - The total sales for the hour.
+ * 
+ * @example
+ * ```typescript
+ * const xReportData: XReportItem[] = [
+ *   { hour: '00:00', total_transactions: 10, total_sales: 100, tamu_id_sales: 50, credit_card_sales: 50 },
+ *   { hour: '01:00', total_transactions: 5, total_sales: 50, tamu_id_sales: 25, credit_card_sales: 25 },
+ * ];
+ * ```
+ */
+export interface XReportItem {
   hour: string
   total_transactions: number
   total_sales: number
@@ -16,13 +43,38 @@ interface XReportItem {
   credit_card_sales: number
 }
 
-interface Totals {
+/**
+ * Represents the totals for the X Report.
+ *  
+ * @remarks
+ * This interface defines the structure of totals for the X Report.
+ * 
+ * @property {number} totalTransactions - The total number of transactions.
+ * @property {number} totalTamuIdSales - The total number of TAMU ID sales.
+ * @property {number} totalCreditCardSales - The total number of credit card sales.
+ * @property {number} totalSales - The total sales.
+ * 
+ * @example
+ * ```typescript
+ * const totals: Totals = { totalTransactions: 100, totalTamuIdSales: 50, totalCreditCardSales: 50, totalSales: 100 };
+ * ```
+ */
+export interface Totals {
   totalTransactions: number;
   totalTamuIdSales: number;
   totalCreditCardSales: number;
   totalSales: number;
 }
 
+/**
+ * X Report Component
+ * 
+ * @remarks
+ * This component displays an X Report for a given date.
+ * It uses the fetchXReport function to get the X Report data from the backend API.
+ * It then processes the data and displays it in a table and chart format.
+ * 
+ */
 export default function XReport() {
   // Language state
   const [language, setLanguage] = useState<'en'|'es'>('en');

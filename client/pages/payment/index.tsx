@@ -18,7 +18,10 @@ import {
 /**
  * PaymentScreen component renders the payment options screen.
  * 
- * @component
+ * @remarks
+ * This component renders the payment options screen.
+ * It provides options for paying here, paying at the counter, or canceling the order.
+ * 
  * @returns {JSX.Element} The rendered component.
  */
 export default function PaymentScreen() {

@@ -1,3 +1,13 @@
+/**
+ * This file is part of the Manager section of the application.
+ * It includes the functionality for displaying the manager dashboard and managing various reports and settings.
+ * 
+ * @remarks
+ * This component renders the Manager Dashboard page, displaying a welcome message and navigation options.
+ * It also includes a section to display the busiest days of the week based on sales data.
+ * 
+ * @returns {JSX.Element} The rendered Manager component.
+ */
 import { FC, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import ManagerNavBar from '@/components/ui/manager_nav_bar';
@@ -5,14 +15,34 @@ import { pageStyle, overlayStyle } from '@/utils/tableStyles';
 import { useUser } from '@/components/ui/user_context';
 import BusiestDaysBox from '@/components/ui/BusiestDayBox';
 
-interface BusiestDay {
+/**
+ * @interface
+ * @property {string} period - The period of the busiest day.
+ * @property {string} date - The date of the busiest day.
+ * @property {string} day - The day of the busiest day.
+ * @property {number} total_sales - The total sales for the busiest day.
+ * 
+ * @example
+ * ```typescript
+ * const busiestDay: BusiestDay = { period: 'Morning', date: '2024-01-01', day: 'Monday', total_sales: 1000 };
+ * ```
+ */
+export interface BusiestDay {
   period: string;
   date: string;
   day: string;
   total_sales: number;
 }
 
-const Manager: FC = () => {
+/**
+ * Manager Component
+ * 
+ * This component renders the Manager Dashboard page, displaying a welcome message and navigation options.
+ * It also includes a section to display the busiest days of the week based on sales data.
+ * 
+ * @returns {JSX.Element} The rendered Manager component.
+ */
+export const Manager: FC = () => {
   const router = useRouter();
   const { user, isManager, isCashier } = useUser();
   const [busiestDaysData, setBusiestDaysData] = useState<BusiestDay[]>([]);
