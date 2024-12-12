@@ -1,6 +1,19 @@
+/**
+ * API endpoint for managing inventory items
+ * 
+ * @remarks
+ * This endpoint allows fetching and creating inventory items.
+ * 
+ * @param {NextApiRequest} req - The request object.
+ * @param {NextApiResponse} res - The response object.
+ * @returns {Promise<void>}
+ */
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Pool } from 'pg';
 
+/**
+ * PostgreSQL connection pool.
+ */
 const pool = new Pool({
   user: process.env.PSQL_USER,
   host: process.env.PSQL_HOST,
@@ -9,6 +22,16 @@ const pool = new Pool({
   port: Number(process.env.PSQL_PORT),
   ssl: { rejectUnauthorized: false },
 });
+
+/**
+ * API route handler for fetching non-food inventory items. 
+ * This handler is used for manager and sales statistics and it allows 
+ * for insertions to the non-food inventory items database. 
+ * 
+ * @param {NextApiRequest} req - The request object from Next.js API.
+ * @param {NextApiResponse} res - The response object from Next.js API.
+ * @returns {Promise<void>}
+ */
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {

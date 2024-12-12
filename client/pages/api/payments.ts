@@ -1,3 +1,4 @@
+// pages/api/payments.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Pool } from 'pg';
 
@@ -16,8 +17,9 @@ const pool = new Pool({
 /**
  * API route handler for managing payment records in the database.
  * 
- * @param req - The HTTP request object.
- * @param res - The HTTP response object.
+ * @param {NextApiRequest} req - The request object from Next.js API.
+ * @param {NextApiResponse} res - The response object from Next.js API.
+ * @returns {Promise<void>}
  */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {

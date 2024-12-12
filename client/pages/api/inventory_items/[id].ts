@@ -1,5 +1,5 @@
 /**
- * API endpoint for managing inventory items.
+ * API endpoint for updating inventory items.
  * 
  * @remarks
  * This endpoint allows fetching, updating, and deleting inventory items.
@@ -28,8 +28,8 @@ const pool = new Pool({
 /**
  * Handles the API request for managing inventory items.
  * 
- * @param {NextApiRequest} req - The request object.
- * @param {NextApiResponse} res - The response object.
+ * @param {NextApiRequest} req - The request object from Next.js API.
+ * @param {NextApiResponse} res - The response object from Next.js API.
  * @returns {Promise<void>}
  */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

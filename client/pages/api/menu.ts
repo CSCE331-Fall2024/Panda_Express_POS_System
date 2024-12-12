@@ -1,3 +1,4 @@
+// pages/api/menu.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Pool } from 'pg';
 
@@ -16,8 +17,8 @@ const pool = new Pool({
 /**
  * API route handler for fetching active menu items from the database.
  * 
- * @param req - The HTTP request object.
- * @param res - The HTTP response object.
+ * @param req - The request object from Next.js API.
+ * @param res - The response object from Next.js API.
  */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {

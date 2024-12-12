@@ -1,6 +1,19 @@
+/**
+ * API endpoint for updating menu items
+ * 
+ * @remarks
+ * This endpoint allows fetching and creating menu items.
+ * 
+ * @param {NextApiRequest} req - The request object.
+ * @param {NextApiResponse} res - The response object.
+ * @returns {Promise<void>}
+ */
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Pool } from 'pg';
 
+/**
+ * PostgreSQL connection pool.
+ */
 const pool = new Pool({
   user: process.env.PSQL_USER,
   host: process.env.PSQL_HOST,
@@ -10,6 +23,15 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false },
 });
 
+/**
+ * API route handler for managing menu items in the databae. 
+ * By querying using the id, it allows for deletions, updates, and insertions
+ * to the PostgreSQL database.
+ * 
+ * @param {NextApiRequest} req - The request object from Next.js API.
+ * @param {NextApiResponse} res - The response object from Next.js API.
+ * @returns {Promise<void>}
+ */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
 
