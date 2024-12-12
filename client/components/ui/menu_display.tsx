@@ -15,7 +15,15 @@ interface MenuDisplayProps {
   onAddToOrder: (item: string) => void;
 }
 
-const MenuDisplay: FC<MenuDisplayProps> = ({ menuItems, onAddToOrder }) => (
+/**
+ * MenuDisplay component.
+ * 
+ * @remarks
+ * This component provides a menu display with customizable styles.
+ * 
+ * @returns {JSX.Element} The rendered menu display component.
+ */
+export const MenuDisplay: FC<MenuDisplayProps> = ({ menuItems, onAddToOrder }) => (
   <Tabs defaultValue="combos">
     <TabsList>
       {Object.keys(menuItems).map((category) => (

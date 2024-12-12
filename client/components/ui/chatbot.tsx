@@ -9,13 +9,34 @@
 import { FC, useState, useEffect, useRef } from 'react';
 
 // Define the message type
-interface Message {
+/**
+ * Represents a message in the chatbot.
+ * 
+ * @type {Object}
+ * @property {string} sender - The sender of the message ('user' or 'bot').
+ * @property {string} text - The content of the message.
+ * @property {string[]} options - Optional array of strings for additional options.
+ * 
+ * @remarks
+ * This component provides a chatbot interface with customizable styles.
+ * 
+ * @returns {JSX.Element} The rendered chatbot component.
+ */
+export interface Message {
   sender: 'user' | 'bot';
   text: string;
   options?: string[];
 }
 
-const Chatbot: FC = () => {
+/**
+ * Chatbot component.
+ * 
+ * @remarks
+ * This component provides a chatbot interface with customizable styles.
+ * 
+ * @returns {JSX.Element} The rendered chatbot component.
+ */
+export const Chatbot: FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const messageContainerRef = useRef<HTMLDivElement>(null);

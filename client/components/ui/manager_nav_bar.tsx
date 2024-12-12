@@ -14,7 +14,15 @@ interface ManagerNavBarProps {
   setLanguage: (lang: 'en' | 'es') => void;
 }
 
-const ManagerNavBar: FC<ManagerNavBarProps> = ({ language, setLanguage }) => {
+/**
+ * ManagerNavBar component.
+ * 
+ * @remarks
+ * This component provides a navigation bar for the manager mode.
+ * 
+ * @returns {JSX.Element} The rendered manager navigation bar component.
+ */
+export const ManagerNavBar: FC<ManagerNavBarProps> = ({ language, setLanguage }) => {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
 

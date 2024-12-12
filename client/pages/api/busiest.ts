@@ -5,7 +5,7 @@ import { Pool } from 'pg';
 /**
  * PostgreSQL connection pool.
  */
-const pool = new Pool({
+export const pool = new Pool({
   user: process.env.PSQL_USER,
   host: process.env.PSQL_HOST,
   database: process.env.PSQL_DATABASE,
@@ -22,7 +22,7 @@ const pool = new Pool({
  * @property {string} day - The day name of the busiest day (e.g., Monday).
  * @property {number} total_sales - The total sales for the busiest day.
  */
-interface BusiestDay {
+export interface BusiestDay {
   period: string;
   date: string;
   day: string;

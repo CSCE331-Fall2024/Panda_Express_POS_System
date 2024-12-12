@@ -1,11 +1,17 @@
-// pages/api/menu_order_jt.ts
+/**
+ * API endpoint for associating menu items with an order in the database.
+ * 
+ * @param {NextApiRequest} req - The request object.
+ * @param {NextApiResponse} res - The response object.
+ * @returns {Promise<void>}
+ */
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Pool } from 'pg';
 
 /**
  * PostgreSQL connection pool.
  */
-const pool = new Pool({
+export const pool = new Pool({
   user: process.env.PSQL_USER,
   host: process.env.PSQL_HOST,
   database: process.env.PSQL_DATABASE,
